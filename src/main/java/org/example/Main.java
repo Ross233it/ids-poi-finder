@@ -1,7 +1,15 @@
 package org.example;
 
+import org.httpServer.Server;
+
+import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Server server = new Server(8080);
+        try{
+            server.startServer();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
