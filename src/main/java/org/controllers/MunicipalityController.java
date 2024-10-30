@@ -1,32 +1,16 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpHandler;
 import org.models.Municipality;
-
 import org.services.MunicipalityService;
-
 import com.sun.net.httpserver.HttpExchange;
-
 import java.io.IOException;
 import java.util.Map;
 
-public class MunicipalityController extends ControllerFactory implements HttpHandler {
+public class MunicipalityController extends ControllerFactory  {
     String requestPath;
 
     public MunicipalityController(){
         super(new MunicipalityService());
-    }
-
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        this.requestPath = exchange.getRequestURI().getPath();
-        switch (exchange.getRequestMethod()) {
-            case "GET":  this.index();   break;
-            case "POST": this.create(exchange); break;
-            case "PATCH": this.update(); break;
-            case "DELETE": this.delete(); break;
-            default: this.index();
-        }
     }
 
     public void index(){}
@@ -38,6 +22,7 @@ public class MunicipalityController extends ControllerFactory implements HttpHan
      * @param exchange
      * @throws IOException
      */
+    @Override
     public void create(HttpExchange exchange) throws IOException {
         if(this.requestPath.equals("/api/municipality")){
             Map<String, Object> data = this.getStreamData(exchange);
@@ -51,8 +36,12 @@ public class MunicipalityController extends ControllerFactory implements HttpHan
             this.errorResponse(exchange, "Resource not found 404",404);
     }
 
-    private void delete(){
+    @Override
+    public void delete(){
         System.out.print("Comune: Elimina comune: ");
     }
+
+    @Override
+    protected void index(HttpExchange exchange) throws IOException {}
 }
 

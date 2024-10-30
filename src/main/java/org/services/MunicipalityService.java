@@ -3,9 +3,9 @@ package org.services;
 
 import org.models.Municipality;
 import org.models.informations.GeoLocation;
-import org.repositories.BaseRepository;
-import org.repositories.GeoLocationRepository;
+import org.repositories.MunicipalityRepository;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public class MunicipalityService implements Service<Municipality>{
@@ -15,21 +15,20 @@ public class MunicipalityService implements Service<Municipality>{
      * @return Municipality
      */
     public Municipality create(Map<String, Object> data) {
-        Map<String, Object> geoLocationData = (Map<String, Object>) data.get("geoLocation");
-        String name = (String) geoLocationData.get("name");
-        GeoLocation geoLocation  = new GeoLocation(
-               1,
-               (String)geoLocationData.get("address"),
-               (String)geoLocationData.get("number"),
-               (String)geoLocationData.get("cap"));
-        BaseRepository connector = new GeoLocationRepository();
-        try{
-            connector.openConnection();
+
+        String name = (String) data.get("name");
+
+        GeoLocationService geoLocationService = new GeoLocationService();
+        GeoLocation dbGeoLocation = geoLocationService.create((Map<String, Object>) data.get("geoLocation"));
+
+        Municipality municipality = new Municipality(name, dbGeoLocation);
+
+        MunicipalityRepository municipalityRepository = new MunicipalityRepository();
+        try {
+            municipalityRepository.create(municipality);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        connector.closeConnection();
-       return new Municipality(name, geoLocation);
+        return municipality;
     }
 }

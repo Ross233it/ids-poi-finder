@@ -7,6 +7,5 @@ import java.util.Scanner;
 
 public interface Controller<O> {
 
-    Scanner scanner = null;
 
 }

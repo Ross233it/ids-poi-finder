@@ -39,7 +39,7 @@ public class Routes {
     private void setUpRoutes(String prefix){
         this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
 
-
+//        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
 
 
         this.addRoute("/"+prefix+"/migrate", new MigrationsHandler());

@@ -6,6 +6,8 @@ import org.models.poi.Poi;
 import java.util.ArrayList;
 
 public class Municipality {
+    private int id;
+
     private String name;
 
     private GeoLocation geoLocation;
@@ -24,6 +26,14 @@ public class Municipality {
         this.pois = pois;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -33,7 +43,7 @@ public class Municipality {
     }
 
     public GeoLocation getGeoLocation() {
-        return geoLocation;
+        return this.geoLocation;
     }
 
     public void setGeoLocation(GeoLocation geoLocation) {

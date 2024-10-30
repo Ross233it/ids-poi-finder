@@ -2,7 +2,7 @@ package org.models.informations;
 
 public class GeoLocation implements Information{
 
-    private long id;
+    private int id;
 
     private double latitude;
     private double longitude;
@@ -10,12 +10,10 @@ public class GeoLocation implements Information{
     private String number;
     private String cap;
 
-    public GeoLocation(long id,
+    public GeoLocation(
                        String address,
                        String number,
                        String cap) {
-
-        this.id = id;
         this.address = address;
         this.number = number;
         this.cap = cap;
@@ -23,26 +21,25 @@ public class GeoLocation implements Information{
         this.longitude = 0.00;
     }
 
-    public GeoLocation(long id,
+    public GeoLocation(
                        String address,
                        String number,
                        String cap,
                        double latitude,
                        double longitude) {
-
-        this.id = id;
         this.address = address;
         this.number = number;
         this.cap = cap;
         this.latitude = latitude;
         this.longitude = longitude;
+
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
