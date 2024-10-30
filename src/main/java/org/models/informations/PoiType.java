@@ -1,8 +1,6 @@
 package org.models.informations;
 
 
-
-
 public class PoiType implements Information{
     private boolean isPhisical;
 

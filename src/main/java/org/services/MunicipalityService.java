@@ -25,7 +25,6 @@ public class MunicipalityService implements Service<Municipality>{
         BaseRepository connector = new GeoLocationRepository();
         try{
             connector.openConnection();
-
         }
         catch(Exception e){
             e.printStackTrace();
@@ -33,5 +32,4 @@ public class MunicipalityService implements Service<Municipality>{
         connector.closeConnection();
        return new Municipality(name, geoLocation);
     }
-
 }
