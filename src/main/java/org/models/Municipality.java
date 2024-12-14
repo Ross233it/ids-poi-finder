@@ -14,6 +14,12 @@ public class Municipality {
 
     private ArrayList<Poi> pois;
 
+
+    //todo remove this constructor
+    public Municipality(){
+        this.name ="municipio name";
+    };
+
     public Municipality(String name, GeoLocation geoLocation) {
         this.name = name;
         this.geoLocation = geoLocation;

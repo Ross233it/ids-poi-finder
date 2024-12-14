@@ -7,11 +7,11 @@ import com.sun.net.httpserver.HttpServer;
 public class Server {
     private int serverPort;
     private HttpServer server;
-    private Routes routes;
+    private Router router;
 
     public Server(int serverPort) {
         this.serverPort = serverPort;
-        this.routes = new Routes();
+        this.router = new Router();
     }
 
     /**
@@ -22,7 +22,7 @@ public class Server {
         try {
             com.sun.net.httpserver.HttpServer server = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(this.serverPort), 0);
 
-            routes.registerRoutes(server);
+            router.registerRoutes(server);
 
             server.setExecutor(null);
             server.start();

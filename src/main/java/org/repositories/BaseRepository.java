@@ -11,16 +11,30 @@ public abstract class BaseRepository {
         this.dbConnectionManager = DbConnectionManager.getInstance();
     }
 
-//    public void executePreparedQuery(String query, PreparedStatement preparedStatement){
-//        try {
-//
-//            dbConnectionManager.closeConnection();
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException("Errore durante l'apertura della connessione o l'esecuzione delle query", e);
-//        }
-//    }
+    /**
+     * Ritorna il record di una tabella in base al suo id
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+    public ResultSet getById(int id, String tableName) throws SQLException {
+        String query = "SELECT * FROM " + tableName + " WHERE id = ?";
 
+        try (Connection connection = this.dbConnectionManager.openConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
 

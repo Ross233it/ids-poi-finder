@@ -5,14 +5,19 @@ public class UpQueriesManager extends QueriesManager{
     @Override
     protected void buildQueriesList(){
 
-        //Poi types
-        this.queries.add("CREATE TABLE IF NOT EXISTS poi_types ("+
+        //Poi Categories
+        this.queries.add("CREATE TABLE IF NOT EXISTS categories ("+
                 "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
                 "name VARCHAR(255) UNIQUE NOT NULL,"+
-                "description TEXT," +
-                "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
-                "categories VARCHAR(255) UNIQUE NOT NULL"+
+                "description TEXT"+
                 ");"
+        );
+
+        this.queries.add("CREATE TABLE IF NOT EXISTS tags ("+
+                        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                        "name VARCHAR(255) UNIQUE NOT NULL,"+
+                        "description TEXT"+
+                        ");"
         );
 
         //Geolocations
@@ -27,34 +32,24 @@ public class UpQueriesManager extends QueriesManager{
         );
 
         //Municipalities
-        this.queries.add("CREATE TABLE IF NOT EXISTS municipality (" +
+        //                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
+        this.queries.add("CREATE TABLE IF NOT EXISTS municipalities (" +
                 "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, " +
                 "name VARCHAR(255) NOT NULL, " +
-                "geolocation_id INT UNSIGNED, " +
-                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE CASCADE" +
+                "geolocation_id INT UNSIGNED " +
                 ");"
         );
 
-        //Poi details
-        this.queries.add("CREATE TABLE IF NOT EXISTS poi_details ("+
-                "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                "description TEXT," +
-                "poi_type_id INT UNSIGNED," +
-                "municipality_id INT UNSIGNED," +
-                "geolocation_id INT UNSIGNED," +
-                "FOREIGN KEY (poi_type_id) REFERENCES poi_types(id) ON DELETE SET NULL," +
-                "FOREIGN KEY (municipality_id) REFERENCES municipality(id) ON DELETE CASCADE," +
-                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
-                ")"
-        );
-
         //Pois
+        //                "FOREIGN KEY (municipality_id) REFERENCES municipality(id) ON DELETE CASCADE," +
+//                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
         this.queries.add("CREATE TABLE IF NOT EXISTS pois ("+
                 "id INT UNSIGNED PRIMARY KEY,"+
                 "name VARCHAR(255) NOT NULL,"+
-                "is_logical BOOLEAN NOT NULL,"+
-                "poi_details_id INT UNSIGNED,"+
-                "FOREIGN KEY (poi_details_id) REFERENCES poi_details(id)"+
+                "description TEXT," +
+                "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
+                "municipality_id INT UNSIGNED," +
+                "geolocation_id INT UNSIGNED" +
                 ");"
         );
     }

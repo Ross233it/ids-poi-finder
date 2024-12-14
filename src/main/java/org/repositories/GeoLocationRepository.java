@@ -9,7 +9,8 @@ import java.sql.ResultSet;
 
 import org.models.informations.GeoLocation;
 
-public class GeoLocationRepository extends BaseRepository implements Repository {
+public class GeoLocationRepository extends BaseRepository implements Repository<GeoLocation> {
+    private String tableName = "geolocations";
 
     public GeoLocation create(GeoLocation geoLocation) {
         System.out.println("Creating GeoLocation: ");
@@ -37,5 +38,16 @@ public class GeoLocationRepository extends BaseRepository implements Repository 
             e.printStackTrace();
         }
         return geoLocation;
+    }
+
+
+    /**
+     * Ritorna il record a db in base all'id
+     * @param id l'id
+     * @return ResultSet resultSet
+     * @throws SQLException
+     */
+    public ResultSet getById(int id) throws SQLException {
+        return super.getById(id, this.tableName);
     }
 }

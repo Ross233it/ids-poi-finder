@@ -1,12 +1,12 @@
 package org.models.poi;
 
 import org.models.Municipality;
+import org.models.informations.Category;
 import org.models.informations.GeoLocation;
-import org.models.informations.PoiDetail;
-import org.models.informations.PoiType;
+import org.models.informations.Tag;
+
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PhisicalPoi implements Poi {
     private long id;
@@ -21,37 +21,50 @@ public class PhisicalPoi implements Poi {
 
     private GeoLocation geoLocation;
 
-    private ArrayList<Tags> Tags;
+    private ArrayList<Tag> tags;
 
-    private ArrayList<Category> Categories;
+    private ArrayList<Category> categories;
 
 
-
+    //todo remove test constructor
+    public PhisicalPoi() {
+        this.name= "Test POI";
+        this.description= "Test description";
+        this.isLogical = false;
+        this.municipality = null;
+        this.geoLocation = null;
+        this.tags = new ArrayList<Tag>();
+        this.categories = new ArrayList<Category>();
+    }
 
     public PhisicalPoi(String name,
-                       int municipality_id,
+                       String description,
                        boolean isLogical,
-                       PoiDetail poiDetails){
+                       Municipality municipality,
+                       GeoLocation geoLocation){
         this.name = name;
-        this.municipalityId = municipality_id;
         this.isLogical  = isLogical;
-        this.poiDetails = poiDetails;
+        this.municipality = municipality;
+        this.geoLocation  = geoLocation;
+        this.tags = new ArrayList<Tag>();
+        this.categories = new ArrayList<Category>();
+    }
+    //todo remove
+    public PhisicalPoi(String name,
+                       String description,
+                       boolean isLogical,
+                       int municipality_id,
+                       GeoLocation geoLocation){
+        this.name = name;
+        this.isLogical  = isLogical;
+
+        this.geoLocation  = geoLocation;
+        this.tags = new ArrayList<Tag>();
+        this.categories = new ArrayList<Category>();
     }
 
-    public int getMunicipalityId() {
-        return municipalityId;
-    }
-
-    public void setMunicipalityId(int municipalityId) {
-        this.municipalityId = municipalityId;
-    }
-
-    public void setPoiDetails(PoiDetail poiDetails) {
-        this.poiDetails = poiDetails;
-    }
-
-    public Boolean getLogical() {
-        return isLogical;
+    public Boolean isLogical() {
+        return this.isLogical;
     }
 
     public void setLogical(Boolean logical) {
@@ -78,13 +91,52 @@ public class PhisicalPoi implements Poi {
         this.name = name;
     }
 
-    @Override
-    public PoiDetail getPoiDetails() {
-        return poiDetails;
+    public String getDescription() {
+        return description;
     }
 
-    @Override
-    public void setPoiDetails(PoiDetail poiDetails, Boolean logical_poi) {
-        this.poiDetails = poiDetails;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
+    public Municipality getMunicipality() {
+        return municipality;
+    }
+
+    public void setMunicipality(Municipality municipality) {
+        this.municipality = municipality;
+    }
+
+    public GeoLocation getGeoLocation() {
+        return geoLocation;
+    }
+
+    public void setGeoLocation(GeoLocation geoLocation) {
+        this.geoLocation = geoLocation;
+    }
+
+    public ArrayList<Tag> getTags() {
+        return tags;
+    }
+
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+    }
+
+    public ArrayList<Category> getCategories() {
+        return categories;
+    }
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
+    }
+
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+    }
+
 }

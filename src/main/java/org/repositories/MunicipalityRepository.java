@@ -4,7 +4,8 @@ import org.models.Municipality;
 
 import java.sql.*;
 
-public class MunicipalityRepository extends BaseRepository implements Repository{
+public class MunicipalityRepository extends BaseRepository implements Repository<Municipality>{
+    private String tableName = "municipalities";
 
     public Municipality create(Municipality municipality) throws SQLException {
             String name = municipality.getName();
@@ -29,6 +30,16 @@ public class MunicipalityRepository extends BaseRepository implements Repository
             }
             return municipality;
         }
+
+    /**
+     * Ritorna il record a db in base all'id
+     * @param id l'id
+     * @return ResultSet resultSet
+     * @throws SQLException
+     */
+    public ResultSet getById(Integer id) throws SQLException {
+            return super.getById(id, this.tableName);
+    }
 }
 
 

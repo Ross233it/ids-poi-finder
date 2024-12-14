@@ -3,12 +3,14 @@ package org.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.httpServer.HttpResponses;
 import org.services.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.Map;
 
 public abstract class ControllerFactory implements HttpHandler {
@@ -17,26 +19,39 @@ public abstract class ControllerFactory implements HttpHandler {
 
     protected Service service;
 
+    protected HttpResponses responses;
+
+    protected HttpExchange exchange;
+
     public  ControllerFactory(Service service) {
         this.service = service;
+        this.responses = new HttpResponses();
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         this.requestPath = exchange.getRequestURI().getPath();
+        this.exchange = exchange;
+        String method = exchange.getRequestMethod();
         switch (exchange.getRequestMethod()) {
             case "GET":    this.index();   break;
-            case "POST":   this.create(exchange); break;
+            case "POST":   this.create(); break;
+//                try {
+//                    this.create(exchange);
+//                } catch (SQLException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                break;
             case "PATCH":  this.update(); break;
             case "DELETE": this.delete(); break;
             default: this.index();
         }
     }
-    protected abstract void index();
-    protected abstract void create(HttpExchange exchange) throws IOException;
+    protected abstract void index() throws IOException;
+    protected abstract void create() throws IOException;
     protected abstract void update() throws IOException;
     protected abstract void delete() throws IOException;
-    protected abstract void index(HttpExchange exchange) throws IOException;
+//    protected abstract void index(HttpExchange exchange) throws IOException;
 
     /**
      * Get http request json data
@@ -55,35 +70,7 @@ public abstract class ControllerFactory implements HttpHandler {
         return data;
     }
 
-    /**
-     * Ritorna una risposta json positiva
-     * @param exchange
-     * @param response messaggio da includere nella risposta.
-     * @throws IOException
-     */
-    protected void positiveResponse(HttpExchange exchange, String response) throws IOException {
 
-        exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-        exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes(StandardCharsets.UTF_8));
-        os.close();}
-
-    /**
-     * Ritorna una risposta json negativa
-     * @param exchange
-     * @param response messaggio da includere nella risposta.
-     * @throws IOException
-     */
-    protected void errorResponse(HttpExchange exchange, String response, int errorCode) throws IOException {
-
-        exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-        exchange.sendResponseHeaders(errorCode, response.getBytes(StandardCharsets.UTF_8).length);
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes(StandardCharsets.UTF_8));
-        os.close();}
 
     /**
      * Estrae l'id da una stringa in base ad una espressione regolare

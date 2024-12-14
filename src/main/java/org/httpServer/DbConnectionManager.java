@@ -35,7 +35,7 @@ public class DbConnectionManager {
     public Connection openConnection() throws SQLException {
         if (this.connection == null || this.connection.isClosed()) {
             this.connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connessione aperta");
+            System.out.println("Connessione db aperta");
         }
         return this.connection;
     }
@@ -47,10 +47,25 @@ public class DbConnectionManager {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Connessione chiusa");
+                System.out.println("Connessione db chiusa");
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Verifica la connessione al database
+     * @return true se la connessione è attiva, false altrimenti
+     */
+    public boolean dbCheckConnection() {
+        try {
+            openConnection();
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
