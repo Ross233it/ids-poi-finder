@@ -1,12 +1,21 @@
 package org.models.poi;
 
+import org.models.Municipality;
+import org.models.informations.GeoLocation;
+
+/**
+ * Astrae il concetto di "punto di interesse" inteso come entità
+ * correlata ad un punto del territorio ed ad un Comune Italiano
+ */
 public interface Poi{
+    GeoLocation geoLocation = null;
+    Municipality municipality  = null;
 
-    public long getId();
+    public GeoLocation getGeoLocation();
 
-    public void setId(long id);
+    public void setGeoLocation(GeoLocation geoLocation);
 
-    public String getName();
+    public Municipality getMunicipality();
 
-    public void setName(String name);
+    public void setMunicipality(Municipality municipality);
 }

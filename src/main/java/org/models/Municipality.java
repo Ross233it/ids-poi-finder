@@ -14,23 +14,25 @@ public class Municipality {
 
     private ArrayList<Poi> pois;
 
-
-    //todo remove this constructor
-    public Municipality(){
-        this.name ="municipio name";
+    public Municipality(String name){
+        this.name = name;
     };
 
     public Municipality(String name, GeoLocation geoLocation) {
         this.name = name;
         this.geoLocation = geoLocation;
-        this.pois = new ArrayList<Poi>();
     }
+
 
     public Municipality(String name, GeoLocation geoLocation, ArrayList<Poi> pois) {
         this.name = name;
         this.geoLocation = geoLocation;
         this.pois = pois;
     }
+
+
+
+    public Object[]  getData(){ return new Object[] { this.name };}
 
     public int getId() {
         return id;

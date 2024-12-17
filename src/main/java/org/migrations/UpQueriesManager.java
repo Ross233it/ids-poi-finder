@@ -36,7 +36,16 @@ public class UpQueriesManager extends QueriesManager{
         this.queries.add("CREATE TABLE IF NOT EXISTS municipalities (" +
                 "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, " +
                 "name VARCHAR(255) NOT NULL, " +
+                "province VARCHAR(255) NOT NULL, " +
+                "region VARCHAR(255) NOT NULL, " +
                 "geolocation_id INT UNSIGNED " +
+                ");"
+        );
+        //Roles
+        this.queries.add("CREATE TABLE IF NOT EXISTS roles (" +
+                "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, " +
+                "name VARCHAR(255) NOT NULL, " +
+                "description VARCHAR(255) NOT NULL" +
                 ");"
         );
 
@@ -44,12 +53,15 @@ public class UpQueriesManager extends QueriesManager{
         //                "FOREIGN KEY (municipality_id) REFERENCES municipality(id) ON DELETE CASCADE," +
 //                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
         this.queries.add("CREATE TABLE IF NOT EXISTS pois ("+
-                "id INT UNSIGNED PRIMARY KEY,"+
+                "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"+
                 "name VARCHAR(255) NOT NULL,"+
                 "description TEXT," +
+                "type VARCHAR(100)," +
                 "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
                 "municipality_id INT UNSIGNED," +
-                "geolocation_id INT UNSIGNED" +
+                "geolocation_id INT UNSIGNED," +
+                "author_id INT UNSIGNED," +
+                "publisher_id INT UNSIGNED" +
                 ");"
         );
     }

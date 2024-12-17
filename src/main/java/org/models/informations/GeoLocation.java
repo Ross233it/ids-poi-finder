@@ -32,8 +32,12 @@ public class GeoLocation implements Information{
         this.cap = cap;
         this.latitude = latitude;
         this.longitude = longitude;
-
     }
+
+
+
+    public Object[]  getData(){ return new Object[] {
+            this.address, this.number, this.cap, this.latitude, this.longitude };}
 
     public int getId() {
         return id;

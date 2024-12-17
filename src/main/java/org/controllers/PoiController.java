@@ -2,16 +2,15 @@ package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.models.poi.PhisicalPoi;
+import org.models.poi.BasePoi;
 import org.models.poi.Poi;
 import org.services.PoiService;
 
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
 
-public class PoiController extends ControllerFactory implements HttpHandler/*extends ControllerFactory*/{
+public class PoiController extends BaseController implements HttpHandler{
 
     public  PoiController() {
         super(new PoiService());
@@ -24,18 +23,22 @@ public class PoiController extends ControllerFactory implements HttpHandler/*ext
 
     @Override
     public void create() throws IOException {
-        this.responses.success(this.exchange, "io sono create");
-//        if(this.requestPath.equals("/api/poi")){
-//            Map<String, Object> data = this.getStreamData(exchange);
-//
-//            Poi newPoi = (PhisicalPoi) this.service.create(data);
-//            if(null != newPoi) {
-//                this.responses.success(exchange, "Esito positivo.");
-//            }else
-//                this.responses.error(exchange, 500, "Esito Negativissimo.");
-//        }else
-//            this.responses.error(exchange, 404,"Resource not found 404");
+        try{
+            Map<String, Object> data = this.getStreamData(this.exchange);
+            //todo validate data
+//            if (name == null || description == null || address == null) {
+//                throw new IllegalArgumentException("Geolocation è obbligatoria e deve essere completa.");
+//            }
 
+            Poi newPoi = (BasePoi) this.service.create(data);
+
+            if(null != newPoi) {
+                this.responses.success(this.exchange, "Poi creato con successo");
+            }else
+                this.responses.error(this.exchange, 500, "Esito Negativissimo.");
+        }catch (Exception e) {
+            this.responses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
     @Override

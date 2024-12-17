@@ -42,8 +42,9 @@ public class Router {
      * @param prefix
      */
     private void setUpRoutes(String prefix){
-        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
+//        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
         this.addRoute("/"+prefix+"/poi" ,         new PoiController());
+        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
         this.addRoute("/"+prefix+"/migrate", (HttpHandler) new MigrationsController());
     }
 }

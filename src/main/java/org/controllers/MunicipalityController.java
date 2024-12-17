@@ -1,15 +1,21 @@
 package org.controllers;
 
 import com.sun.net.httpserver.HttpHandler;
+import org.models.Municipality;
 import org.services.MunicipalityService;
 import com.sun.net.httpserver.HttpExchange;
+
 import java.io.IOException;
+import java.util.Map;
 
-public class MunicipalityController extends ControllerFactory  implements HttpHandler {
-    String requestPath;
+public class MunicipalityController extends BaseController implements HttpHandler{
 
-    public MunicipalityController(){
+
+    public  MunicipalityController() {
+
         super(new MunicipalityService());
+        //todo remove
+        System.out.println("costruttore");
     }
 
     @Override
@@ -17,36 +23,42 @@ public class MunicipalityController extends ControllerFactory  implements HttpHa
         super.handle(exchange);
     }
 
-    public void index(){}
-
-    public void update(){}
-
-    /**
-     * Receive data from frontend and respond after creation.
-     * @param exchange
-     * @throws IOException
-     */
     @Override
-    public void create() throws IOException{
-//        if(this.requestPath.equals("/api/municipality")){
-//            Map<String, Object> data = this.getStreamData(exchange);
-//            System.out.println("metodo raggiunto");
-//
-//            Municipality newMunicipality = (Municipality) this.service.create(data);
-//            if(null != newMunicipality) {
-//                this.responses.success(exchange, "Esito positivo.");
-//            }else
-//                this.responses.error(exchange, 500,"Esito Negativissimo.");
-//        }else
-//            this.responses.error(exchange, 404, "Resource not found 404");
+    protected void index() throws IOException {
+
     }
 
     @Override
-    public void delete(){
-        System.out.print("Comune: Elimina comune: ");
+    protected void create() throws IOException {
+        try{
+            Map<String, Object> data = this.getStreamData(this.exchange);
+            //todo validate data
+//            if (name == null || description == null || address == null) {
+//                throw new IllegalArgumentException("Geolocation è obbligatoria e deve essere completa.");
+//            }
+            //todo remove
+            System.out.println("controller raggiunto");
+            Municipality newMunicipality = (Municipality) this.service.create(data);
+
+            if(null != newMunicipality) {
+                this.responses.success(this.exchange, "Poi creato con successo");
+            }else
+                this.responses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
+        }catch (Exception e) {
+            this.responses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
-//    @Override
-//    protected void index(HttpExchange exchange) throws IOException {}
+    @Override
+    protected void update() throws IOException {
+
+    }
+
+    @Override
+    protected void delete() throws IOException {
+
+    }
+
+
 }
 
