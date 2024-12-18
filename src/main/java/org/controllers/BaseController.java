@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public abstract class BaseController implements HttpHandler {
+public abstract class BaseController<T> implements HttpHandler {
 
     String requestPath;
 
@@ -28,27 +28,39 @@ public abstract class BaseController implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        //todo remove
-        System.out.println("handle");
         this.requestPath = exchange.getRequestURI().getPath();
         this.exchange = exchange;
         String method = exchange.getRequestMethod();
         switch (exchange.getRequestMethod()) {
             case "GET":    this.index();   break;
             case "POST":   this.create(); break;
-//                try {
-//                    this.create(exchange);
-//                } catch (SQLException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                break;
             case "PATCH":  this.update(); break;
             case "DELETE": this.delete(); break;
             default: this.index();
         }
     }
+
+    /**
+     * Riceve dati tramite API ed avvia la procedura di creazione di oggetti.
+     * Ritorna una response HTTP al chiamante.
+     * @throws IOException
+     */
+    protected void create() throws IOException {
+        try{
+            Map<String, Object> data = this.getStreamData(this.exchange);
+
+            T newMunicipality = (T) this.service.create(data);
+
+            if(null != newMunicipality) {
+                this.responses.success(this.exchange, "Record creato con successo");
+            }else
+                this.responses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
+        }catch (Exception e) {
+            this.responses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
     protected abstract void index()  throws IOException;
-    protected abstract void create() throws IOException;
     protected abstract void update() throws IOException;
     protected abstract void delete() throws IOException;
 //    protected abstract void index(HttpExchange exchange) throws IOException;

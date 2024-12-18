@@ -2,8 +2,6 @@ package org.example;
 
 import org.httpServer.DbConnectionManager;
 import org.httpServer.Server;
-import org.models.poi.BasePoi;
-import org.models.poi.PoiBuilder;
 
 public class Main {
     public static void main(String[] args) {
