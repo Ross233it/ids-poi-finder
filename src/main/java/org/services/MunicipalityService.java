@@ -3,14 +3,8 @@ package org.services;
 
 import org.models.Municipality;
 import org.models.informations.GeoLocation;
-import org.models.poi.BasePoi;
-import org.models.poi.Poi;
-import org.models.poi.PoiBuilder;
 import org.repositories.MunicipalityRepository;
-import org.repositories.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 public class MunicipalityService implements Service<Municipality>{
@@ -26,6 +20,7 @@ public class MunicipalityService implements Service<Municipality>{
     public Municipality create(Map<String, Object> objectData){
         //todo remove
         System.out.println("service raggiunto");
+
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService();
         GeoLocation geoLocation = service.create(geoLoc);

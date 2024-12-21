@@ -1,7 +1,7 @@
 package org.services;
 import org.models.informations.GeoLocation;
-import org.models.poi.BasePoi;
 import org.models.poi.Poi;
+import org.models.poi.IPoi;
 import org.models.poi.PoiBuilder;
 import org.repositories.PoiRepository;
 
@@ -12,7 +12,7 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class PoiService implements Service<Poi> {
+public class PoiService implements Service<IPoi> {
 //    @Override
     PoiRepository repository;
 
@@ -26,11 +26,11 @@ public class PoiService implements Service<Poi> {
      * @param objectData
      * @return
      */
-    public  Poi create(Map<String, Object> objectData){
+    public IPoi create(Map<String, Object> objectData){
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService();
         GeoLocation geoLocation = service.create(geoLoc);
-        BasePoi poi = new PoiBuilder(
+        Poi poi = new PoiBuilder(
                 (String)  objectData.get("name"),
                 (String)  objectData.get("description"),
                 (Boolean) objectData.get("isLogical")).

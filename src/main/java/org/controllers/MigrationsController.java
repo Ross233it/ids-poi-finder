@@ -14,13 +14,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+
+/**
+ * Questa classe si occupa di gestire le migrazioni del database. Si attiva tramite
+ * una richiesta http
+ * E' una classe di servizio per strutturare il database in modo automatico senza l'ausilio di orm o framework.
+ */
 public class MigrationsController implements HttpHandler {
 
     private ArrayList<String> upQueries;
 
     private ArrayList<String> downQueries;
 
-    private final HttpResponses httpResponses;
 
     /**
      * Costruttore
@@ -30,10 +35,13 @@ public class MigrationsController implements HttpHandler {
         QueriesManager downQueryManager  = new DownQueriesManager();
         this.upQueries = (ArrayList<String>) upQueryManager.getQueries();
         this.downQueries = (ArrayList<String>) downQueryManager.getQueries();
-        this.httpResponses = new HttpResponses();
     }
 
-
+    /**
+     * Questo handler si occupa di eseguire le migrazioni del database
+     * @param exchange contiene la request dal client e consente di invare risposte.
+     * @throws IOException
+     */
     public void handle(HttpExchange exchange) throws IOException {
         DbConnectionManager dbConnectionManager = DbConnectionManager.getInstance();
 
@@ -50,12 +58,11 @@ public class MigrationsController implements HttpHandler {
                 }
             dbConnectionManager.closeConnection();
             System.out.println("MIGRATIONS TERMINATE CON SUCCESSO");
-            httpResponses.success(exchange, "Migrations Terminate con successo");
+            HttpResponses.success(exchange, "Migrations Terminate con successo");
         } catch (SQLException e) {
             System.out.println("QUERY FALLITA "+e.getMessage());
-            httpResponses.error(exchange, 500,"Si sono verificati errori nella query "+e.getMessage());
+            HttpResponses.error(exchange, 500,"Si sono verificati errori nella query "+e.getMessage());
             throw new RuntimeException("Errore durante l'apertura della connessione o l'esecuzione delle query", e);
         }
     }
-
 }

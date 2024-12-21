@@ -1,13 +1,13 @@
 package org.repositories;
 
-import org.models.poi.BasePoi;
+import org.models.poi.Poi;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class PoiRepository extends BaseRepository<BasePoi> implements Repository<BasePoi> {
+public class PoiRepository extends BaseRepository<Poi> implements Repository<Poi> {
 
 
     public PoiRepository(String tableName) {
@@ -15,12 +15,12 @@ public class PoiRepository extends BaseRepository<BasePoi> implements Repository
     }
 
     @Override
-    public BasePoi readById(int id) throws SQLException {
+    public Poi readById(int id) throws SQLException {
         return null;
     }
 
 //    @Override
-    public BasePoi create(BasePoi poi) throws Exception {
+    public Poi create(Poi poi) throws Exception {
         if (poi == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
         }
@@ -34,7 +34,7 @@ public class PoiRepository extends BaseRepository<BasePoi> implements Repository
     }
 
     @Override
-    public Boolean update(BasePoi entity) throws SQLException {
+    public Boolean update(Poi entity) throws SQLException {
         return null;
     }
 

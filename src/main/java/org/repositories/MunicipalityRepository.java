@@ -1,7 +1,6 @@
 package org.repositories;
 
 import org.models.Municipality;
-import org.models.poi.BasePoi;
 
 import java.sql.*;
 import java.util.Arrays;

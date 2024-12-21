@@ -4,6 +4,28 @@ public class UpQueriesManager extends QueriesManager{
 
     @Override
     protected void buildQueriesList(){
+        //Users
+        this.queries.add("CREATE TABLE IF NOT EXISTS users ("+
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "username VARCHAR(50) NOT NULL UNIQUE," +
+                "email VARCHAR(100) NOT NULL UNIQUE," +
+                "password VARCHAR(25) NOT NULL," +
+                "role ENUM('platformAdmin', 'contributor', 'authContributor', 'tourist', 'animator') NOT NULL," +
+                "access_token VARCHAR(255) DEFAULT NULL" +
+                ");"
+        );
+
+        //todo cript password
+//        String hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt(saltRounds));
+        //utenti di esempio
+        this.queries.add("INSERT INTO users (username, email, password, role, access_token)"+
+        "VALUES"+
+            "('user1', 'user1@example.com', 'password', 'platformAdmin', NULL),"+
+            "('user2', 'user2@example.com', 'password', 'contributor', NULL),"+
+            "('user3', 'user3@example.com', 'password', 'authContributor', NULL),"+
+            "('user4', 'user4@example.com', 'password', 'animator', NULL),"+
+            "('user5', 'user5@example.com', 'password', 'tourist', NULL);"
+        );
 
         //Poi Categories
         this.queries.add("CREATE TABLE IF NOT EXISTS categories ("+
@@ -13,6 +35,7 @@ public class UpQueriesManager extends QueriesManager{
                 ");"
         );
 
+        //Tags
         this.queries.add("CREATE TABLE IF NOT EXISTS tags ("+
                         "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
                         "name VARCHAR(255) UNIQUE NOT NULL,"+

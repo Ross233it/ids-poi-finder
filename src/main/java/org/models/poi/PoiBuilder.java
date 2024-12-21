@@ -43,8 +43,8 @@ public class  PoiBuilder {
         return this;
     }
 
-    public BasePoi build() {
-        return new BasePoi(this);
+    public Poi build() {
+        return new Poi(this);
     }
 
     /*** getters ***/

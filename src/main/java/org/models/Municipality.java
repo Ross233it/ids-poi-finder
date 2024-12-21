@@ -1,7 +1,7 @@
 package org.models;
 
 import org.models.informations.GeoLocation;
-import org.models.poi.Poi;
+import org.models.poi.IPoi;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ public class Municipality {
 
     private GeoLocation geoLocation;
 
-    private ArrayList<Poi> pois;
+    private ArrayList<IPoi> pois;
 
     public Municipality(String name){
         this.name = name;
@@ -24,7 +24,7 @@ public class Municipality {
     }
 
 
-    public Municipality(String name, GeoLocation geoLocation, ArrayList<Poi> pois) {
+    public Municipality(String name, GeoLocation geoLocation, ArrayList<IPoi> pois) {
         this.name = name;
         this.geoLocation = geoLocation;
         this.pois = pois;

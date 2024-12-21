@@ -2,9 +2,7 @@ package org.httpServer;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.controllers.MunicipalityController;
-import org.controllers.PoiController;
-import org.controllers.MigrationsController;
+import org.controllers.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +40,12 @@ public class Router {
      * @param prefix
      */
     private void setUpRoutes(String prefix){
-//        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
-        this.addRoute("/"+prefix+"/poi" ,         new PoiController());
-        this.addRoute("/"+prefix+"/municipality", new MunicipalityController());
-        this.addRoute("/"+prefix+"/migrate", (HttpHandler) new MigrationsController());
+        ControllerFactory factory = new ControllerFactory();
+        this.addRoute("/"+prefix+"/poi" ,             factory.createController("PoiController"));
+        this.addRoute("/"+prefix+"/municipality",     factory.createController("MunicipalityController"));
+        this.addRoute("/"+prefix+"/user",             factory.createController("UserController"));
+        this.addRoute("/"+prefix+"/user/assign-role", factory.createController("UserController"));
+        this.addRoute("/"+prefix+"/migrate",          new MigrationsController());
     }
 }
 

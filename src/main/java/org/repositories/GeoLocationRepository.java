@@ -1,14 +1,9 @@
 package org.repositories;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
 
 import org.models.informations.GeoLocation;
-import org.models.poi.BasePoi;
 
 public class GeoLocationRepository extends BaseRepository<GeoLocation> {
 

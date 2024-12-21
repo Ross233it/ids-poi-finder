@@ -1,11 +1,7 @@
 package org.services;
 
 import org.models.informations.GeoLocation;
-import org.models.poi.BasePoi;
-import org.models.poi.Poi;
-import org.models.poi.PoiBuilder;
 import org.repositories.GeoLocationRepository;
-import org.repositories.PoiRepository;
 
 
 import java.util.Map;
