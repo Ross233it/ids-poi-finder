@@ -6,21 +6,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class RegisteredUserRepository extends BaseRepository<User> implements Repository<User> {
+public class RegisteredUserRepository extends Repository<User> implements IRepository<User> {
 
 
     public RegisteredUserRepository(String tableName) {
         super(tableName);
-    }
-
-    @Override
-    public User readById(int id) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Boolean update(User entity) throws SQLException {
-        return null;
     }
 
 
@@ -30,7 +20,7 @@ public class RegisteredUserRepository extends BaseRepository<User> implements Re
         }
         List<String> columns = Arrays.asList("username", "email", "password", "role");
         Object[] data = user.getData();
-        super.create(columns,data);
+        super.save(columns,data);
         return user;
     }
 

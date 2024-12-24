@@ -33,11 +33,17 @@ public class DbConnectionManager {
      * @throws SQLException
      */
     public Connection openConnection() throws SQLException {
-        if (this.connection == null || this.connection.isClosed()) {
-            this.connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connessione db aperta");
+        try{
+            if (this.connection == null || this.connection.isClosed()) {
+                this.connection = DriverManager.getConnection(url, user, password);
+                System.out.println("Connessione db aperta");
+            }
+            return this.connection;
         }
-        return this.connection;
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

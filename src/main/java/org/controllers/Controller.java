@@ -2,7 +2,8 @@ package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.HttpResponses;
-import org.services.Service;
+import org.httpServer.HttpUtilities;
+import org.services.IService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,11 +12,11 @@ public abstract class Controller<T> implements IController {
 
     protected String requestPath;
 
-    protected Service service;
+    protected IService service;
 
     protected HttpExchange exchange;
 
-    public Controller(Service service) {
+    public Controller(IService service) {
         this.service = service;
     }
 
@@ -40,7 +41,23 @@ public abstract class Controller<T> implements IController {
 
     @Override
     public void index() throws IOException {
+        System.out.println(
+                "Richiesta ricevuta: " + this.requestPath + " - " + this.exchange.getRequestMethod()
+        );
 
+        try{
+            String parsedData = null;
+            if(HttpUtilities.getQueryId(this.requestPath) == null)
+                parsedData = this.service.index();
+            else
+                parsedData = this.service.getById(HttpUtilities.getQueryId(this.requestPath));
+            if(parsedData == null)
+                HttpResponses.error(this.exchange, 404, "Nessun record trovato");
+            else
+                HttpResponses.success(this.exchange, parsedData);
+        }catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
     @Override

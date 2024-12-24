@@ -37,6 +37,7 @@ public class RegisteredUser implements User{
         return this.role.equals(role);
     }
 
+
     //todo convertire ruoli in id se c'e' tempo
     /**
      * Ritorna un id

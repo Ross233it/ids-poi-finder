@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class MunicipalityRepository extends BaseRepository<Municipality> implements Repository<Municipality> {
+public class MunicipalityRepository extends Repository<Municipality> implements IRepository<Municipality> {
 
     private String tableName = "municipalities";
 
@@ -15,15 +15,6 @@ public class MunicipalityRepository extends BaseRepository<Municipality> impleme
         super(tableName);
     }
 
-    @Override
-    public Municipality readById(int id) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Boolean update(Municipality entity) throws SQLException {
-        return null;
-    }
 
     //    @Override
     public Municipality create(Municipality municipality) throws Exception {
@@ -35,33 +26,9 @@ public class MunicipalityRepository extends BaseRepository<Municipality> impleme
         Object[] data = municipality.getData();
         Object[] newData = Arrays.copyOf(data, data.length + 1);
         newData[newData.length - 1] = geolocationId;
-        super.create(columns, newData);
+        super.save(columns, newData);
         return municipality;
     }
-
-//    public Municipality create(Municipality municipality) throws SQLException {
-//            String name = municipality.getName();
-//            String query = "INSERT INTO municipality (name, geolocation_id) VALUES (?, ?)";
-//
-//            try (Connection connection = this.dbConnectionManager.openConnection();
-//                 PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
-//                    preparedStatement.setString(1, municipality.getName());
-//                    preparedStatement.setInt(2, municipality.getGeoLocation().getId());
-//                int recordNum = preparedStatement.executeUpdate();
-//
-//                if (recordNum > 0) {
-//                    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-//                        if (generatedKeys.next()) {
-//                            int generatedId = generatedKeys.getInt(1);
-//                            municipality.setId(generatedId);
-//                        }
-//                    }
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//            return municipality;
-//        }
 
     /**
      * Ritorna il record a db in base all'id

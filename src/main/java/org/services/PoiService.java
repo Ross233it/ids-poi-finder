@@ -3,7 +3,8 @@ import org.models.informations.GeoLocation;
 import org.models.poi.Poi;
 import org.models.poi.IPoi;
 import org.models.poi.PoiBuilder;
-import org.repositories.PoiRepository;
+import org.repositories.IRepository;import org.repositories.PoiRepository;
+
 
 import java.util.Map;
 
@@ -12,20 +13,38 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class PoiService implements Service<IPoi> {
-//    @Override
-    PoiRepository repository;
+public class PoiService extends Service<IPoi> {
 
-    public PoiService() {
-        this.repository = new PoiRepository("pois");
+//    PoiRepository repository;
+
+    public PoiService(PoiRepository repository) {
+        super(repository);
     }
 
+    public String index() {
+        try {
+            return this.repository.index();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public String getById(String id) {
+        try {
+            return this.repository.getById(Integer.parseInt(id), null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
      * @param objectData
      * @return
      */
+    @Override
     public IPoi create(Map<String, Object> objectData){
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService();
@@ -43,40 +62,4 @@ public class PoiService implements Service<IPoi> {
         System.out.println(objectData);
         return poi;
     }
-
-//    public Poi create(Map<String, Object> data) throws SQLException {
-//        String name = (String) data.get("name");
-//        String description = (String) data.get("description");
-//        Boolean isLogical  = (Boolean) data.get("isLogical");
-//        Integer municipalityId = (Integer) data.get("municipalityId");
-//
-//
-//        MunicipalityService municipalityService = new MunicipalityService();
-//        ResultSet dbMunicipality = (ResultSet) municipalityService.getById(municipalityId);
-//        //todo
-//        while (dbMunicipality.next()) {
-//            int id = dbMunicipality.getInt("id");
-//            String myname = dbMunicipality.getString("name");
-//            int geolocationId = dbMunicipality.getInt("geolocation_id");
-//
-//            System.out.println(id + " | " + myname + " | " + geolocationId);
-//        }
-//
-//
-//        Municipality municipality = new Municipality();
-//
-//        GeoLocationService geoLocationService = new GeoLocationService();
-//        GeoLocation dbGeoLocation = geoLocationService.create((Map<String, Object>) data.get("geoLocation"));
-//
-////        Poi poi = new BasePoi(name, description, isLogical, municipality,  dbGeoLocation);
-//
-//        GeoLocationRepository geoLocationRepository = new GeoLocationRepository();
-////        try {
-////            geoLocationRepository.create(municipality);
-////        } catch (SQLException e) {
-////            throw new RuntimeException(e);
-////        }
-////        return poi;
-//    };
-
 }

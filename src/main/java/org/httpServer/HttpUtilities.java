@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -45,5 +46,16 @@ public class HttpUtilities {
             }
         }
         return null;
+    }
+
+    /**
+     * Estrae l'id da una stringa in base ad una espressione regolare
+     * @param requestPath
+     * @return
+     */
+    public static String getQueryId(String requestPath) {
+        String[] segments = requestPath.split("/");
+        String id = segments.length > 3 ? segments[3] : null;
+        return id;
     }
 }

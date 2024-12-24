@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.models.informations.GeoLocation;
 
-public class GeoLocationRepository extends BaseRepository<GeoLocation> {
+public class GeoLocationRepository extends Repository<GeoLocation> {
 
 
     public GeoLocationRepository(String tableName) {
@@ -26,16 +26,6 @@ public class GeoLocationRepository extends BaseRepository<GeoLocation> {
             return geoLoc;
     }
 
-    @Override
-    public GeoLocation readById(int id) throws SQLException {
-        return null;
-    }
-
-
-    @Override
-    public Boolean update(GeoLocation entity) throws SQLException {
-        return null;
-    }
 
     @Override
     public int delete(int id) throws SQLException {

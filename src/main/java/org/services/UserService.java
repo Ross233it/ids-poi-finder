@@ -11,7 +11,7 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class UserService implements Service<User> {
+public class UserService implements IService<User> {
 //    @Override
     RegisteredUserRepository repository;
 
@@ -19,6 +19,11 @@ public class UserService implements Service<User> {
         this.repository = new RegisteredUserRepository("users");
     }
 
+
+    @Override
+    public String index() {
+        return "";
+    }
 
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
@@ -43,6 +48,11 @@ public class UserService implements Service<User> {
         }
         System.out.println(objectData);
         return user;
+    }
+
+    @Override
+    public String getById(String id) {
+        return "";
     }
 
 //    public Poi create(Map<String, Object> data) throws SQLException {

@@ -7,7 +7,7 @@ import org.repositories.MunicipalityRepository;
 
 import java.util.Map;
 
-public class MunicipalityService implements Service<Municipality>{
+public class MunicipalityService implements IService<Municipality> {
 
 
     private final MunicipalityRepository repository;
@@ -15,6 +15,11 @@ public class MunicipalityService implements Service<Municipality>{
 
     public MunicipalityService() {
         this.repository = new MunicipalityRepository("municipalities");
+    }
+
+    @Override
+    public String index() {
+        return "";
     }
 
     public Municipality create(Map<String, Object> objectData){
@@ -33,6 +38,11 @@ public class MunicipalityService implements Service<Municipality>{
         }
         System.out.println(objectData);
         return municipality;
+    }
+
+    @Override
+    public String getById(String id) {
+        return "";
     }
 //    /**
 //     * Create a new Municipality via Builder

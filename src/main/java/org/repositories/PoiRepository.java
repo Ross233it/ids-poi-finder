@@ -1,25 +1,40 @@
 package org.repositories;
 
+
 import org.models.poi.Poi;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Ha la responsabilità di gestire la persistenza dei dati in relazione ai Point of Interest.
+ * Costruisce le query specifiche per la gestione dei Point of Interest.
+ */
 
-public class PoiRepository extends BaseRepository<Poi> implements Repository<Poi> {
+public class PoiRepository extends Repository<Poi> implements IRepository<Poi> {
 
 
     public PoiRepository(String tableName) {
-        super(tableName);
+        super("pois");
     }
 
     @Override
-    public Poi readById(int id) throws SQLException {
-        return null;
+    public String getById(int id, String query) {
+        try {
+            if (query == null || query.isEmpty()){
+                query = "SELECT * FROM pois AS p";
+                query += " JOIN geolocations AS g ON p.geolocation_id = g.id";
+                query += " WHERE p.id = ? ;" ;
+            }
+
+            return super.getById(id, query);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-//    @Override
+    @Override
     public Poi create(Poi poi) throws Exception {
         if (poi == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
@@ -29,13 +44,13 @@ public class PoiRepository extends BaseRepository<Poi> implements Repository<Poi
         Object[] data = poi.getData();
         Object[] newData = Arrays.copyOf(data, data.length + 1);
         newData[newData.length - 1] = geolocationId;
-        super.create(columns, newData);
+        super.save(columns, newData);
         return poi;
     }
 
     @Override
-    public Boolean update(Poi entity) throws SQLException {
-        return null;
+    public Poi update(Poi entity) throws SQLException {
+        return entity;
     }
 
     @Override

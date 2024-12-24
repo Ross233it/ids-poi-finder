@@ -19,10 +19,10 @@ public interface IController<O> extends HttpHandler {
  * @param exchange
  * @throws IOException
  */
-   public void handle(HttpExchange exchange) throws IOException;
-   public void index()  throws IOException;
-   public void create() throws IOException;
-   public void update() throws IOException;
-   public void delete() throws IOException;
+   void handle(HttpExchange exchange) throws IOException;
+   void index()  throws IOException;
+   void create() throws IOException;
+   void update() throws IOException;
+   void delete() throws IOException;
 
 }
