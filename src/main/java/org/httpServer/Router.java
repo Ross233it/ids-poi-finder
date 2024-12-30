@@ -41,11 +41,12 @@ public class Router {
      */
     private void setUpRoutes(String prefix){
         ControllerFactory factory = new ControllerFactory();
-        this.addRoute("/"+prefix+"/poi" ,             factory.createController("PoiController"));
-        this.addRoute("/"+prefix+"/municipality",     factory.createController("MunicipalityController"));
-        this.addRoute("/"+prefix+"/user",             factory.createController("UserController"));
-        this.addRoute("/"+prefix+"/user/assign-role", factory.createController("UserController"));
-        this.addRoute("/"+prefix+"/migrate",          new MigrationsController());
+        this.addRoute("/"+prefix+"/poi" ,               factory.createController("PoiController"));
+        this.addRoute("/"+prefix+"/municipality",       factory.createController("MunicipalityController"));
+        this.addRoute("/"+prefix+"/user",               factory.createController("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/user/set-role",   factory.createController("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/user/login",         factory.createController("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/migrate",            new MigrationsController());
     }
 }
 

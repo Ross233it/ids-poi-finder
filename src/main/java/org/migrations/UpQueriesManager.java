@@ -1,5 +1,7 @@
 package org.migrations;
 
+import org.httpServer.AuthUtilities;
+
 public class UpQueriesManager extends QueriesManager{
 
     @Override
@@ -9,22 +11,24 @@ public class UpQueriesManager extends QueriesManager{
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "username VARCHAR(50) NOT NULL UNIQUE," +
                 "email VARCHAR(100) NOT NULL UNIQUE," +
-                "password VARCHAR(25) NOT NULL," +
+                "password VARCHAR(255) NOT NULL," +
                 "role ENUM('platformAdmin', 'contributor', 'authContributor', 'tourist', 'animator') NOT NULL," +
+                "salt VARCHAR(255) DEFAULT NULL," +
                 "access_token VARCHAR(255) DEFAULT NULL" +
                 ");"
         );
 
-        //todo cript password
-//        String hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt(saltRounds));
-        //utenti di esempio
-        this.queries.add("INSERT INTO users (username, email, password, role, access_token)"+
+        //users data
+        String salt = AuthUtilities.generateSalt();
+        String password = AuthUtilities.hashPassword("password", salt);
+
+        this.queries.add("INSERT INTO users (username, email, password, role, salt, access_token)"+
         "VALUES"+
-            "('user1', 'user1@example.com', 'password', 'platformAdmin', NULL),"+
-            "('user2', 'user2@example.com', 'password', 'contributor', NULL),"+
-            "('user3', 'user3@example.com', 'password', 'authContributor', NULL),"+
-            "('user4', 'user4@example.com', 'password', 'animator', NULL),"+
-            "('user5', 'user5@example.com', 'password', 'tourist', NULL);"
+            "('user1', 'user1@example.com','"+  password + "','platformAdmin', '"+ salt +"' , NULL),"+
+            "('user2', 'user2@example.com','"+  password + "','contributor', '"+ salt +"' , NULL),"+
+            "('user3', 'user3@example.com','"+  password + "','authContributor', '"+ salt +"' , NULL),"+
+            "('user4', 'user4@example.com','"+  password + "','tourist', '"+ salt +"' , NULL),"+
+            "('user5', 'user5@example.com','"+  password + "','animator', '"+ salt +"' , NULL)"
         );
 
         //Poi Categories

@@ -15,8 +15,6 @@ import java.util.Map;
 
 public class PoiService extends Service<IPoi> {
 
-//    PoiRepository repository;
-
     public PoiService(PoiRepository repository) {
         super(repository);
     }

@@ -2,21 +2,20 @@ package org.repositories;
 
 import org.models.Municipality;
 
-import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class MunicipalityRepository extends Repository<Municipality> implements IRepository<Municipality> {
+public class MunicipalityRepository extends Repository<Municipality> {
 
-    private String tableName = "municipalities";
+
 
 
     public MunicipalityRepository(String tableName) {
-        super(tableName);
+        super("municipalities");
     }
 
 
-    //    @Override
+    @Override
     public Municipality create(Municipality municipality) throws Exception {
         if (municipality == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
@@ -29,16 +28,6 @@ public class MunicipalityRepository extends Repository<Municipality> implements 
         super.save(columns, newData);
         return municipality;
     }
-
-    /**
-     * Ritorna il record a db in base all'id
-     * @param id l'id
-     * @return ResultSet resultSet
-     * @throws SQLException
-     */
-//    public ResultSet getById(Integer id) throws SQLException {
-//            return super.getById(id, this.tableName);
-//    }
 }
 
 

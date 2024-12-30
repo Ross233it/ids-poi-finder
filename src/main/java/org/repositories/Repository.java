@@ -29,7 +29,7 @@ public abstract class Repository<D> implements IRepository<D> {
         String query = "SELECT * FROM " + this.tableName;
         ResultSet resultSet = statement.executeQuery(query);
 
-        String data = DbUtilities.mapJsonData(resultSet);
+        String data = DbUtilities.mapDbDataToJson(resultSet);
         connection.close();
         return data;
     }
@@ -48,17 +48,12 @@ public abstract class Repository<D> implements IRepository<D> {
         if(query == null || query.isEmpty())
             query = "SELECT * FROM " + this.tableName + " WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, id);
+                          preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        String data = DbUtilities.mapJsonData(resultSet);
-        return data;
-    }
 
-    public void save(List<String> columns, Object ...data ) throws Exception {
-        String columnNames  = String.join(", ", columns);
-        String placeholders = String.join(", ", columns.stream().map(col -> "?").toList());
-        String query = "INSERT INTO " + this.tableName + " (" + columnNames + ") VALUES (" + placeholders + ");";
-        this.executeQuery(query, data);
+        String data = DbUtilities.mapDbDataToJson(resultSet);
+
+        return data;
     }
 
     @Override
@@ -77,10 +72,10 @@ public abstract class Repository<D> implements IRepository<D> {
      * Esegue una query con statment preparato per parametri dinamici.
      * @param query
      * @param params
-     * @return
+     * @return id dell'elemento inserito o modificato
      * @throws SQLException
      */
-    public int executeQuery(String query, Object ...params) throws SQLException{
+    protected int executeQuery(String query, Object ...params) throws SQLException{
         Connection connection = dbConnectionManager.openConnection();
         PreparedStatement  preparedStatement = connection.prepareStatement( query, Statement.RETURN_GENERATED_KEYS );
 
@@ -90,11 +85,25 @@ public abstract class Repository<D> implements IRepository<D> {
         }
         preparedStatement.executeUpdate();
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-        connection.close();
         if (generatedKeys.next()) {
             return generatedKeys.getInt(1);
         }
-        return 0;
+        int value = 0;
+        connection.close();
+        return value;
+    }
+
+    /**
+     * Salva un nuovo elemento nella tabella
+     * @param columns nomi delle colonne nella tabella
+     * @param data valori da inserire nelle colonne
+     * @throws Exception
+     */
+    protected void save(List<String> columns, Object ...data ) throws Exception {
+        String columnNames  = String.join(", ", columns);
+        String placeholders = String.join(", ", columns.stream().map(col -> "?").toList());
+        String query = "INSERT INTO " + this.tableName + " (" + columnNames + ") VALUES (" + placeholders + ");";
+        this.executeQuery(query, data);
     }
 }
 

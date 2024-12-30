@@ -30,21 +30,11 @@ public abstract class Controller<T> implements IController {
         this.requestPath = exchange.getRequestURI().getPath();
         this.exchange = exchange;
         String method = exchange.getRequestMethod();
-        switch (exchange.getRequestMethod()) {
-            case "GET":    this.index();   break;
-            case "POST":   this.create(); break;
-            case "PATCH":  this.update(); break;
-            case "DELETE": this.delete(); break;
-            default: this.index();
-        }
+        this.handleRoutes(method);
     }
 
     @Override
     public void index() throws IOException {
-        System.out.println(
-                "Richiesta ricevuta: " + this.requestPath + " - " + this.exchange.getRequestMethod()
-        );
-
         try{
             String parsedData = null;
             if(HttpUtilities.getQueryId(this.requestPath) == null)
@@ -88,6 +78,20 @@ public abstract class Controller<T> implements IController {
                 HttpResponses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
         }catch (Exception e) {
                 HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
+    /**
+     * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
+     * @throws IOException
+     */
+    protected void handleRoutes(String method) throws IOException {
+        switch (method) {
+            case "GET":    this.index();  break;
+            case "POST":   this.create(); break;
+            case "PATCH":  this.update(); break;
+            case "DELETE": this.delete(); break;
+            default:       this.index();
         }
     }
 }

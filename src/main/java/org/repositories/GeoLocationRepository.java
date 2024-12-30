@@ -9,10 +9,10 @@ public class GeoLocationRepository extends Repository<GeoLocation> {
 
 
     public GeoLocationRepository(String tableName) {
-        super( tableName );
+        super( "geolocations" );
     }
 
-//    @Override
+    @Override
     public GeoLocation create(GeoLocation geoLoc) throws Exception {
             if (geoLoc == null) {
                 throw new IllegalArgumentException("L'entity non può essere null.");
@@ -24,11 +24,5 @@ public class GeoLocationRepository extends Repository<GeoLocation> {
             int geoLocId = this.executeQuery(query, data);
             geoLoc.setId(geoLocId);
             return geoLoc;
-    }
-
-
-    @Override
-    public int delete(int id) throws SQLException {
-        return 0;
     }
 }

@@ -1,6 +1,5 @@
 package org.controllers;
 
-
 import org.models.poi.Poi;
 import org.repositories.PoiRepository;
 import org.services.PoiService;

@@ -1,6 +1,5 @@
 package org.repositories;
 
-
 import org.models.poi.Poi;
 
 import java.sql.SQLException;
@@ -12,13 +11,19 @@ import java.util.List;
  * Costruisce le query specifiche per la gestione dei Point of Interest.
  */
 
-public class PoiRepository extends Repository<Poi> implements IRepository<Poi> {
+public class PoiRepository extends Repository<Poi> {
 
 
     public PoiRepository(String tableName) {
         super("pois");
     }
 
+    /**
+     * Ritorna il Poi che ha uno specifico id.
+     * @param id
+     * @param query
+     * @return
+     */
     @Override
     public String getById(int id, String query) {
         try {
@@ -27,7 +32,6 @@ public class PoiRepository extends Repository<Poi> implements IRepository<Poi> {
                 query += " JOIN geolocations AS g ON p.geolocation_id = g.id";
                 query += " WHERE p.id = ? ;" ;
             }
-
             return super.getById(id, query);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -51,10 +55,5 @@ public class PoiRepository extends Repository<Poi> implements IRepository<Poi> {
     @Override
     public Poi update(Poi entity) throws SQLException {
         return entity;
-    }
-
-    @Override
-    public int delete(int id) throws SQLException {
-        return 0;
     }
 }

@@ -17,7 +17,6 @@ public class Service<D> implements IService<D> {
         this.repository = repository;
     }
 
-
     public String index() {
         try {
             return this.repository.index();

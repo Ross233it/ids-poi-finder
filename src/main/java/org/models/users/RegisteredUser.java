@@ -1,19 +1,27 @@
 package org.models.users;
 
-public class RegisteredUser implements User{
+import org.httpServer.AuthUtilities;
+
+/**
+ * Questa classe rappresenta un utente registrato all'interno del sistema
+ */
+public class RegisteredUser implements IUser {
     private String username;
 
     private String email;
 
     private String password;
 
-    private String role;
+    private String salt = null;
 
-    public RegisteredUser(String username, String email, String password, String role) {
+    private String role = null;
+
+    public String accessToken = null;
+
+    public RegisteredUser(String username, String email, String password) {
         this.username = username;
         this.email    = email;
         this.password = password;
-        this.role     = role;
     }
 
     /** getters **/
@@ -21,10 +29,13 @@ public class RegisteredUser implements User{
     public String getEmail()    { return email; }
     public String getPassword() { return password; }
     public String getRole()     { return role; }
+    public String getSalt()     { return salt; }
+    public String getToken()    { return this.accessToken; }
     public Object[]  getData()  { return new Object[] {
             this.getUsername(),
             this.getEmail(),
             this.getPassword(),
+            this.getSalt(),
             this.getRoleId()}
     ;}
 
@@ -36,7 +47,6 @@ public class RegisteredUser implements User{
     public Boolean hasRole(String role) {
         return this.role.equals(role);
     }
-
 
     //todo convertire ruoli in id se c'e' tempo
     /**
@@ -57,12 +67,13 @@ public class RegisteredUser implements User{
         }
     }
 
-    //todo riuovere se non necessari
     /** setters **/
+
+    public void setAccessToken(String token){
+        this.accessToken = AuthUtilities.generateAccessToken(this.username);};
+    public void setSalt(String salt)         { this.salt = salt; }
     public void setUsername(String username) { this.username = username; }
     public void setEmail(String email)       { this.email = email; }
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role)         { this.role = role; }
-
-
 }

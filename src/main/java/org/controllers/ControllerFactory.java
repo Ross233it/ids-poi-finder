@@ -19,8 +19,8 @@ public class ControllerFactory {
      */
     private Controller getController(String controllerName) {
         switch (controllerName) {
-            case "UserController":
-                return new UserController();
+            case "RegisteredUserController":
+                return new RegisteredUserController();
             case "PoiController":
                 return new PoiController();
             case "MunicipalityController":
