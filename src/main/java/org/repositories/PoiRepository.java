@@ -1,10 +1,12 @@
 package org.repositories;
 
 import org.models.poi.Poi;
+import org.models.users.RegisteredUser;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ha la responsabilità di gestire la persistenza dei dati in relazione ai Point of Interest.
@@ -25,11 +27,12 @@ public class PoiRepository extends Repository<Poi> {
      * @return
      */
     @Override
-    public String getById(int id, String query) {
+    public Map<String, Object> getById(int id, String query) {
         try {
             if (query == null || query.isEmpty()){
                 query = "SELECT * FROM pois AS p";
                 query += " JOIN geolocations AS g ON p.geolocation_id = g.id";
+                query += " JOIN municipalities AS m ON p.municipality_id = p.id";
                 query += " WHERE p.id = ? ;" ;
             }
             return super.getById(id, query);
@@ -55,5 +58,10 @@ public class PoiRepository extends Repository<Poi> {
     @Override
     public Poi update(Poi entity) throws SQLException {
         return entity;
+    }
+
+    @Override
+    public int delete(RegisteredUser user) throws SQLException {
+        return 0;
     }
 }

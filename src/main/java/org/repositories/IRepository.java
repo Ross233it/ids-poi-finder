@@ -1,6 +1,7 @@
 package org.repositories;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 
 /**
@@ -24,7 +25,7 @@ public interface IRepository<D> {
      * @return
      * @throws Exception
      */
-    String  getById(int id, String query)  throws Exception;
+    Map<String, Object> getById(int id, String query)  throws Exception;
 
     /**
      * Crea un nuovo elemento
@@ -40,7 +41,7 @@ public interface IRepository<D> {
      * @return
      * @throws Exception
      */
-    D  update(D entity) throws SQLException;
+    D  update(D entity) throws Exception;
 
     /**
      * Cancella un elemento esistente
@@ -48,5 +49,5 @@ public interface IRepository<D> {
      * @return
      * @throws Exception
      */
-    int     delete(int id)   throws SQLException;
+    int     delete(D entity)   throws SQLException;
 }

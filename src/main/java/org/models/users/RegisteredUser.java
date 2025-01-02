@@ -6,6 +6,8 @@ import org.httpServer.AuthUtilities;
  * Questa classe rappresenta un utente registrato all'interno del sistema
  */
 public class RegisteredUser implements IUser {
+    private int id;
+
     private String username;
 
     private String email;
@@ -25,19 +27,24 @@ public class RegisteredUser implements IUser {
     }
 
     /** getters **/
+    public int    getId()       { return id; }
     public String getUsername() { return username; }
     public String getEmail()    { return email; }
     public String getPassword() { return password; }
     public String getRole()     { return role; }
     public String getSalt()     { return salt; }
     public String getToken()    { return this.accessToken; }
-    public Object[]  getData()  { return new Object[] {
+    public Object[]getData()    { return new Object[] {
+            this.getId(),
             this.getUsername(),
             this.getEmail(),
             this.getPassword(),
             this.getSalt(),
             this.getRoleId()}
     ;}
+
+
+
 
     /**
      * Verifica se un utente ha un determinato ruolo
@@ -68,7 +75,7 @@ public class RegisteredUser implements IUser {
     }
 
     /** setters **/
-
+    public void setId(int id)                { this.id = id; }
     public void setAccessToken(String token){
         this.accessToken = AuthUtilities.generateAccessToken(this.username);};
     public void setSalt(String salt)         { this.salt = salt; }

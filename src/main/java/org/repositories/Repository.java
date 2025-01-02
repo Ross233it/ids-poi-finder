@@ -2,6 +2,8 @@ package org.repositories;
 
 import org.httpServer.DbConnectionManager;
 import org.httpServer.DbUtilities;
+import org.models.users.IUser;
+import org.models.users.RegisteredUser;
 
 import java.sql.*;
 import java.util.*;
@@ -28,43 +30,42 @@ public abstract class Repository<D> implements IRepository<D> {
         Statement statement = connection.createStatement();
         String query = "SELECT * FROM " + this.tableName;
         ResultSet resultSet = statement.executeQuery(query);
-
         String data = DbUtilities.mapDbDataToJson(resultSet);
         connection.close();
         return data;
     }
 
     /**
-     * Ritorna un elemento della tabella in base all'id con eventuali
-     * join con altre tabelle.
+     * Ritorna un elemento della tabella in base all'id
      * @param id
      * @param query
      * @return
      * @throws Exception
      */
     @Override
-    public String getById(int id, String query) throws Exception {
+    public Map<String, Object> getById(int id, String query) throws Exception {
         Connection connection = dbConnectionManager.openConnection();
         if(query == null || query.isEmpty())
             query = "SELECT * FROM " + this.tableName + " WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
                           preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-
-        String data = DbUtilities.mapDbDataToJson(resultSet);
-
-        return data;
+        List<Map<String, Object>> data = DbUtilities.mapDbDataToList(resultSet);
+        if (!data.isEmpty()) {
+            Map<String, Object> userData = (Map<String, Object>) data.get(0);
+            connection.close();
+            return userData;
+        } else
+            return null;
     }
 
     @Override
-    public int delete(int id) throws SQLException {
-        String query = "DELETE FROM " + this.tableName + " WHERE id = ?" ;
-        Object params = new Object[]{id};
-        return this.executeQuery(query, id);
+    public int delete(D entity) throws SQLException {
+        return 0;
     }
 
     @Override
-    public D update(D entity) throws SQLException {
+    public D update(D entity) throws Exception {
         return entity;
     }
 
@@ -95,15 +96,19 @@ public abstract class Repository<D> implements IRepository<D> {
 
     /**
      * Salva un nuovo elemento nella tabella
+     *
      * @param columns nomi delle colonne nella tabella
-     * @param data valori da inserire nelle colonne
+     * @param data    valori da inserire nelle colonne
      * @throws Exception
      */
-    protected void save(List<String> columns, Object ...data ) throws Exception {
+    protected void save(List<String> columns, Object ...data) throws Exception {
         String columnNames  = String.join(", ", columns);
         String placeholders = String.join(", ", columns.stream().map(col -> "?").toList());
         String query = "INSERT INTO " + this.tableName + " (" + columnNames + ") VALUES (" + placeholders + ");";
         this.executeQuery(query, data);
     }
+
+
+    public abstract int delete(RegisteredUser user) throws SQLException;
 }
 

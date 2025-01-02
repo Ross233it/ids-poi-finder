@@ -53,9 +53,15 @@ public class HttpUtilities {
      * @param requestPath
      * @return
      */
-    public static String getQueryId(String requestPath) {
+    public static int getQueryId(String requestPath) throws IllegalArgumentException {
         String[] segments = requestPath.split("/");
-        String id = segments.length > 3 ? segments[3] : null;
-        return id;
+        if (segments.length > 3) {
+            try {
+                return Integer.parseInt(segments[3]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Il valore dell'id non è un numero valido: " + segments[3], e);
+            }
+        }
+        throw new IllegalArgumentException("Nessun id trovato nella URL: " + requestPath);
     }
 }

@@ -26,8 +26,13 @@ public class Service<D> implements IService<D> {
     }
 
     @Override
-    public String getById(String id) {
-       return "";
+    public D getObjectById(int id) throws Exception {
+       return null;
+    }
+
+    @Override
+    public D delete(int id) throws Exception {
+        return null;
     }
 
     /**

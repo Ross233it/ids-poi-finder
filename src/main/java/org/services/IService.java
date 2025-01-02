@@ -1,7 +1,5 @@
 package org.services;
 
-import org.repositories.IRepository;
-
 import java.util.Map;
 public interface IService<D>{
 
@@ -9,5 +7,7 @@ public interface IService<D>{
 
     D create(Map<String, Object> data);
 
-    String getById(String id);
+    D getObjectById(int id) throws Exception;
+
+    D delete(int id) throws Exception;
 }

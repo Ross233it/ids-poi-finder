@@ -38,8 +38,13 @@ public class GeoLocationService  implements IService<GeoLocation> {
     }
 
     @Override
-    public String getById(String id) {
-        return "";
+    public  GeoLocation getObjectById(int id) {
+        return null;
+    }
+
+    @Override
+    public GeoLocation delete(int id) throws Exception {
+        return null;
     }
 
 }

@@ -36,11 +36,7 @@ public abstract class Controller<T> implements IController {
     @Override
     public void index() throws IOException {
         try{
-            String parsedData = null;
-            if(HttpUtilities.getQueryId(this.requestPath) == null)
-                parsedData = this.service.index();
-            else
-                parsedData = this.service.getById(HttpUtilities.getQueryId(this.requestPath));
+            String parsedData = this.service.index();
             if(parsedData == null)
                 HttpResponses.error(this.exchange, 404, "Nessun record trovato");
             else

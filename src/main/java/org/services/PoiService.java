@@ -1,10 +1,10 @@
 package org.services;
+import org.models.Municipality;
 import org.models.informations.GeoLocation;
 import org.models.poi.Poi;
 import org.models.poi.IPoi;
 import org.models.poi.PoiBuilder;
-import org.repositories.IRepository;import org.repositories.PoiRepository;
-
+import org.repositories.PoiRepository;
 
 import java.util.Map;
 
@@ -29,9 +29,23 @@ public class PoiService extends Service<IPoi> {
 
 
     @Override
-    public String getById(String id) {
+    public IPoi getObjectById(int id) throws Exception {
         try {
-            return this.repository.getById(Integer.parseInt(id), null);
+            Map<String, Object> poiData = ((PoiRepository) this.repository).getById(id, "");
+            if (poiData == null) {
+                return null;
+            }else{
+                GeoLocationService geoLocationService   = new GeoLocationService();
+                MunicipalityService municipalityService = new MunicipalityService();
+                GeoLocation geoLocation   = geoLocationService.getObjectById((Integer) poiData.get("geolocation_id"));
+                Municipality municipality = municipalityService.getObjectById((Integer) poiData.get("municipality_id"));
+
+                return new PoiBuilder(
+                        (String) poiData.get("name"),
+                        (String) poiData.get("description"),
+                        (Boolean) poiData.get("is_logical")).
+                        geoLocation(geoLocation).municipality(municipality).build();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 
 public class HttpResponses  extends HttpUtilities{
 
@@ -41,5 +42,44 @@ public class HttpResponses  extends HttpUtilities{
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(message.getBytes());
         }
+    }
+
+    /**
+     * Recupera i parametri di un oggetto qualsiasi e li trasforma in una stringa json
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     */
+    public static String objectToJson(Object obj) throws IllegalAccessException {
+        if (obj == null) {
+            return "{}";
+        }
+
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+
+        Field[] fields = obj.getClass().getDeclaredFields();
+
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
+            field.setAccessible(true);
+
+            String fieldName = field.getName();
+            Object fieldValue = field.get(obj);
+
+            jsonBuilder.append("\"").append(fieldName).append("\": ");
+
+            if (fieldValue instanceof String) {
+                jsonBuilder.append("\"").append(fieldValue).append("\"");
+            } else {
+                jsonBuilder.append(fieldValue);
+            }
+
+            if (i < fields.length - 1) {
+                jsonBuilder.append(", ");
+            }
+        }
+        jsonBuilder.append("}");
+        return jsonBuilder.toString();
     }
 }

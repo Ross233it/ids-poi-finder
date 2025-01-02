@@ -12,7 +12,7 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class RegisteredUserService extends Service<IUser> {
+public class RegisteredUserService extends Service<RegisteredUser> {
 
 
     public RegisteredUserService(RegisteredUserRepository repository) {
@@ -31,7 +31,7 @@ public class RegisteredUserService extends Service<IUser> {
      * @param objectData
      * @return
      */
-    public IUser create(Map<String, Object> objectData){
+    public RegisteredUser create(Map<String, Object> objectData){
 
         String salt = AuthUtilities.generateSalt();
         objectData.put("password", AuthUtilities.hashPassword((String) objectData.get("password"), salt));
@@ -53,9 +53,25 @@ public class RegisteredUserService extends Service<IUser> {
         return user;
     }
 
+    /**
+     * Ritorna un oggetto utente in base all'id e ai dati recuperati dallo strato di persistenza.
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
-    public String getById(String id) {
-        return "";
+    public RegisteredUser getObjectById(int id) throws Exception {
+        Map<String, Object> userData = ((RegisteredUserRepository) this.repository).getById(id, "");
+        if(userData == null)
+            return null;
+
+        RegisteredUser user = new RegisteredUser(
+                (String) userData.get("username"),
+                (String) userData.get("email"),
+                (String) userData.get("password")
+        );
+        user.setRole(userData.get("role").toString());
+        return user;
     }
 
     /**
@@ -76,6 +92,44 @@ public class RegisteredUserService extends Service<IUser> {
             }
             else
                 return "";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Imposta un nuovo ruolo per un utente.
+     * @param data informazioni per l'aggiornamento del ruolo
+     * @return RegisteredUser user con il nuovo ruolo
+     */
+    public RegisteredUser setRole(Map<String, Object> data){
+        try {
+            int userId = (int) data.get("id");
+            String newRole = (String) data.get("role");
+            RegisteredUser user = this.getObjectById(userId);
+                           user.setRole(newRole);
+                           user.setId(userId);
+            ((RegisteredUserRepository) this.repository).setRole(user);
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Imposta un nuovo ruolo per un utente.
+     * @param id informazioni per l'aggiornamento del ruolo
+     * @return RegisteredUser user con il nuovo ruolo
+     */
+    public RegisteredUser delete(int id) throws Exception {
+        try {
+            RegisteredUser user = this.getObjectById(id);
+            if(user == null)
+                return null;
+            user.setId(id);
+            this.repository.delete(user);
+            return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

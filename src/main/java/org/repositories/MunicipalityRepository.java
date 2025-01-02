@@ -1,17 +1,21 @@
 package org.repositories;
 
 import org.models.Municipality;
+import org.models.users.RegisteredUser;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 public class MunicipalityRepository extends Repository<Municipality> {
 
-
-
-
     public MunicipalityRepository(String tableName) {
         super("municipalities");
+    }
+
+    @Override
+    public int delete(RegisteredUser user) throws SQLException {
+        return 0;
     }
 
 

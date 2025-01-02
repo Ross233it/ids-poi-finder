@@ -5,6 +5,7 @@ import org.models.Municipality;
 import org.models.informations.GeoLocation;
 import org.repositories.MunicipalityRepository;
 
+import java.io.ObjectStreamException;
 import java.util.Map;
 
 public class MunicipalityService implements IService<Municipality> {
@@ -23,8 +24,6 @@ public class MunicipalityService implements IService<Municipality> {
     }
 
     public Municipality create(Map<String, Object> objectData){
-        //todo remove
-        System.out.println("service raggiunto");
 
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService();
@@ -41,31 +40,12 @@ public class MunicipalityService implements IService<Municipality> {
     }
 
     @Override
-    public String getById(String id) {
-        return "";
+    public Municipality getObjectById(int id) throws Exception {
+        return null;
     }
-//    /**
-//     * Create a new Municipality via Builder
-//     * @return Municipality
-//     */
-//    public Municipality create(Map<String, Object> data) {
-//        String name = (String) data.get("name");
-//
-//        GeoLocationService geoLocationService = new GeoLocationService();
-//        GeoLocation dbGeoLocation = geoLocationService.create((Map<String, Object>) data.get("geoLocation"));
-//
-//        Municipality municipality = new Municipality(name, dbGeoLocation);
-//
-//        try {
-//            repository.create(municipality);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return municipality;
-//    }
-//
-//    public ResultSet getById(Integer id)throws SQLException {
-//         return this.repository.getById(id);
-//    }
 
+    @Override
+    public Municipality delete(int id) throws Exception {
+        return null;
+    }
 }
