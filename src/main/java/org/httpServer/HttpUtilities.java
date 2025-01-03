@@ -28,40 +28,21 @@ public class HttpUtilities {
         return data;
     }
 
-    /**
-     * Estrae l'id da una stringa in base ad una espressione regolare
-     * @param url
-     * @param regex
-     * @param totalParts
-     * @param idPosition
-     * @return Integer l'id dell'oggetto da ricercare
-     */
-    public static Integer extractIdFromUrl(String url, String regex, int totalParts, int idPosition) {
-        String[] parts = url.split("/");
-        if (parts.length == totalParts) {
-            try {
-                return Integer.valueOf(parts[idPosition]);
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
-        return null;
-    }
 
     /**
      * Estrae l'id da una stringa in base ad una espressione regolare
      * @param requestPath
      * @return
      */
-    public static int getQueryId(String requestPath) throws IllegalArgumentException {
+    public static int getQueryId(String requestPath){
         String[] segments = requestPath.split("/");
         if (segments.length > 3) {
             try {
                 return Integer.parseInt(segments[3]);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Il valore dell'id non è un numero valido: " + segments[3], e);
+               return 0;
             }
         }
-        throw new IllegalArgumentException("Nessun id trovato nella URL: " + requestPath);
+        return 0;
     }
 }

@@ -2,7 +2,6 @@ package org.services;
 
 import org.httpServer.AuthUtilities;
 import org.models.users.RegisteredUser;
-import org.models.users.IUser;
 import org.repositories.RegisteredUserRepository;
 
 import java.util.Map;
@@ -19,58 +18,28 @@ public class RegisteredUserService extends Service<RegisteredUser> {
        super(repository);
     }
 
-
     @Override
     public String index() {
         return "";
     }
 
-
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
+     * fornisce una password criptata e un salt per i futuri token di autenticazione.
      * @param objectData
      * @return
      */
     public RegisteredUser create(Map<String, Object> objectData){
-
         String salt = AuthUtilities.generateSalt();
         objectData.put("password", AuthUtilities.hashPassword((String) objectData.get("password"), salt));
-
-        RegisteredUser user = new RegisteredUser(
-                (String)  objectData.get("username"),
-                (String)  objectData.get("email"),
-                (String)  objectData.get("password")
-        );
-        user.setRole("contributor");
+        objectData.put("role", "contributor");
+        RegisteredUser user = this.buildEntity(objectData);
         user.setSalt(salt);
-
         try {
             this.repository.create(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        System.out.println(objectData);
-        return user;
-    }
-
-    /**
-     * Ritorna un oggetto utente in base all'id e ai dati recuperati dallo strato di persistenza.
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public RegisteredUser getObjectById(int id) throws Exception {
-        Map<String, Object> userData = ((RegisteredUserRepository) this.repository).getById(id, "");
-        if(userData == null)
-            return null;
-
-        RegisteredUser user = new RegisteredUser(
-                (String) userData.get("username"),
-                (String) userData.get("email"),
-                (String) userData.get("password")
-        );
-        user.setRole(userData.get("role").toString());
         return user;
     }
 
@@ -135,4 +104,13 @@ public class RegisteredUserService extends Service<RegisteredUser> {
         }
     }
 
+    @Override
+    protected RegisteredUser buildEntity(Map<String, Object> data) {
+        return new RegisteredUser(
+                (String) data.get("username"),
+                (String) data.get("email"),
+                (String) data.get("password"),
+                (String) data.get("role")
+        );
+    }
 }

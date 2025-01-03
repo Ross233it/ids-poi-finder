@@ -20,23 +20,6 @@ public class RegisteredUserController extends Controller<IUser> {
         super(new RegisteredUserService(new RegisteredUserRepository("users")));
     }
 
-
-    /**
-     * Gestisce la richiesta di creazione di un nuovo utente
-     * @throws IOException
-     */
-    public void show(int id) throws Exception {
-        try {
-            RegisteredUser user = ((RegisteredUserService) this.service).getObjectById(id);
-            if(user == null)
-                HttpResponses.error(this.exchange, 404, "Utente non trovato");
-            else
-                HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
-    }
-
     /**
      * Gestisce la richiesta di login
      * @throws IOException

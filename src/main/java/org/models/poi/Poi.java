@@ -1,13 +1,14 @@
 package org.models.poi;
 
+import org.models.Model;
 import org.models.Municipality;
 import org.models.informations.Category;
 import org.models.informations.GeoLocation;
 import org.models.informations.Tag;
 import java.util.List;
 
-public class Poi implements IPoi {
-    private long id;
+public class Poi extends Model implements IPoi {
+    private int id;
 
     private String name;
 
@@ -41,7 +42,7 @@ public class Poi implements IPoi {
 
     @Override
     public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
-
+    public void setId(int id)  { this.id = id; }
     @Override
     public GeoLocation getGeoLocation() {
         return geoLocation;
@@ -52,11 +53,11 @@ public class Poi implements IPoi {
         this.geoLocation = geoLocation;
     }
 
-    public long    getId()         { return id; }
+    public int     getId()         { return id; }
     public String  getName()       { return name; }
     public String  getDescription(){ return description; }
     public Boolean getIsLogical()  { return isLogical; }
-    public Object[]  getData(){ return new Object[] { this.name, this.description, this.isLogical };}
+    public Object[]  getData()     { return new Object[] { this.name, this.description, this.isLogical };}
 
     /** tags **/
     public List<Tag> getTags() {

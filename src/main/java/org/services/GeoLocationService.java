@@ -2,16 +2,15 @@ package org.services;
 
 import org.models.informations.GeoLocation;
 import org.repositories.GeoLocationRepository;
+import org.repositories.MunicipalityRepository;
 
 
 import java.util.Map;
 
-public class GeoLocationService  implements IService<GeoLocation> {
+public class GeoLocationService  extends Service<GeoLocation> {
 
-    GeoLocationRepository repository;
-
-    public GeoLocationService() {
-        this.repository = new GeoLocationRepository("geolocations");
+    public GeoLocationService(GeoLocationRepository repository) {
+        super(repository);
     }
 
     @Override
@@ -19,32 +18,18 @@ public class GeoLocationService  implements IService<GeoLocation> {
         return "";
     }
 
-    public  GeoLocation create(Map<String, Object> objectData){
-
-        GeoLocation geoLoc = new GeoLocation(
-                (String) objectData.get("address"),
-                (String) objectData.get("number"),
-                (String) objectData.get("cap"),
-                (double) objectData.get("latitude"),
-                (double) objectData.get("longitude")
-        );
-        try {
-            geoLoc = this.repository.create(geoLoc);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(objectData);
-        return geoLoc;
-    }
-
-    @Override
-    public  GeoLocation getObjectById(int id) {
-        return null;
-    }
-
     @Override
     public GeoLocation delete(int id) throws Exception {
         return null;
     }
 
+    @Override
+    protected GeoLocation buildEntity(Map<String, Object> geolocationData) {
+        return new GeoLocation(
+                (String) geolocationData.get("address"),
+                (String) geolocationData.get("number"),
+                (String) geolocationData.get("cap"),
+                (double) geolocationData.get("latitude"),
+                (double) geolocationData.get("longitude"));
+    }
 }

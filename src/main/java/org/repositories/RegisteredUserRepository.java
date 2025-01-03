@@ -12,12 +12,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class RegisteredUserRepository extends Repository<IUser> {
+public class RegisteredUserRepository extends Repository<RegisteredUser> {
 
 
     public RegisteredUserRepository(String tableName) {
         super(tableName);
     }
+
     //todo rifattorizzare le query nel repository principale
     /**
      * Ritorna il record dell'utente in base all'username
@@ -58,16 +59,22 @@ public class RegisteredUserRepository extends Repository<IUser> {
         return result > 0;
     }
 
-    public IUser create(IUser user) throws Exception {
+    /**
+     * Crea un nuovo utente registrato
+     * @param user RegisteredUser l'utente da creare
+     * @return RegisteredUser l'utente creato
+     * @throws Exception
+     */
+    @Override
+    public RegisteredUser create(RegisteredUser user) throws Exception {
         if (user == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
         }
         List<String> columns = Arrays.asList("id", "username", "email", "password", "salt","role");
         Object[] data = user.getData();
-        super.save(columns, data);
+        super.insert(columns, data);
         return user;
     }
-
 
     /**
      * Aggiorna il ruolo di un utente esistente
@@ -75,22 +82,12 @@ public class RegisteredUserRepository extends Repository<IUser> {
      * @return RegisteredUser l'utente aggiornato
      * @throws SQLException
      */
-    public IUser setRole(RegisteredUser user) throws SQLException {
+    public RegisteredUser setRole(RegisteredUser user) throws SQLException {
         int id = user.getId();
         String role = user.getRole();
         Object[] data = new Object[]{role, id};
         String query = "UPDATE " + this.tableName + " SET role = ? WHERE id = ?";
-        this.executeQuery(query, data);
+        DbUtilities.executeQuery(query, data);
         return user;
-    }
-
-    @Override
-    public int delete(RegisteredUser user) throws SQLException {
-        //todo remove logs
-        System.out.println("User Repository delete user");
-        int id = user.getId();
-        Object[] data = new Object[]{id};
-        String query = "DELETE FROM " + this.tableName + " WHERE id = ?";
-        return this.executeQuery(query, data);
     }
 }

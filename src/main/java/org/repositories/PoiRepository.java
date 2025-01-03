@@ -31,8 +31,8 @@ public class PoiRepository extends Repository<Poi> {
         try {
             if (query == null || query.isEmpty()){
                 query = "SELECT * FROM pois AS p";
-                query += " JOIN geolocations AS g ON p.geolocation_id = g.id";
-                query += " JOIN municipalities AS m ON p.municipality_id = p.id";
+                query += " LEFT JOIN geolocations AS g ON p.geolocation_id = g.id";
+                query += " LEFT JOIN municipalities AS m ON p.municipality_id = p.id";
                 query += " WHERE p.id = ? ;" ;
             }
             return super.getById(id, query);
@@ -46,22 +46,20 @@ public class PoiRepository extends Repository<Poi> {
         if (poi == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
         }
-        int geolocationId = poi.getGeoLocation().getId();
-        List<String> columns = Arrays.asList("name", "description", "is_logical", "geolocation_id");
+        int geolocationId  = poi.getGeoLocation().getId();
+        int municipalityId = poi.getMunicipality().getId();
+
+        List<String> columns = Arrays.asList("name", "description", "is_logical", "geolocation_id", "municipality_id");
         Object[] data = poi.getData();
-        Object[] newData = Arrays.copyOf(data, data.length + 1);
-        newData[newData.length - 1] = geolocationId;
-        super.save(columns, newData);
+        Object[] newData = Arrays.copyOf(data, data.length + 2);
+        newData[newData.length - 2] = geolocationId;
+        newData[newData.length - 1] = municipalityId;
+        super.insert(columns, newData);
         return poi;
     }
 
     @Override
     public Poi update(Poi entity) throws SQLException {
         return entity;
-    }
-
-    @Override
-    public int delete(RegisteredUser user) throws SQLException {
-        return 0;
     }
 }

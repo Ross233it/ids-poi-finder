@@ -2,13 +2,12 @@ package org.repositories;
 
 import org.httpServer.DbConnectionManager;
 import org.httpServer.DbUtilities;
-import org.models.users.IUser;
-import org.models.users.RegisteredUser;
+import org.models.Model;
 
 import java.sql.*;
 import java.util.*;
 
-public abstract class Repository<D> implements IRepository<D> {
+public abstract class Repository<D extends Model> implements IRepository<D> {
 
     protected DbConnectionManager dbConnectionManager;
 
@@ -59,56 +58,30 @@ public abstract class Repository<D> implements IRepository<D> {
             return null;
     }
 
-    @Override
-    public int delete(D entity) throws SQLException {
-        return 0;
-    }
-
-    @Override
-    public D update(D entity) throws Exception {
-        return entity;
-    }
-
     /**
-     * Esegue una query con statment preparato per parametri dinamici.
-     * @param query
-     * @param params
-     * @return id dell'elemento inserito o modificato
-     * @throws SQLException
-     */
-    protected int executeQuery(String query, Object ...params) throws SQLException{
-        Connection connection = dbConnectionManager.openConnection();
-        PreparedStatement  preparedStatement = connection.prepareStatement( query, Statement.RETURN_GENERATED_KEYS );
-
-        for (int i = 0; i < params.length; i++) {
-            System.out.println(params[i].toString());
-            preparedStatement.setObject(i + 1, params[i]);
-        }
-        preparedStatement.executeUpdate();
-        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-        if (generatedKeys.next()) {
-            return generatedKeys.getInt(1);
-        }
-        int value = 0;
-        connection.close();
-        return value;
-    }
-
-    /**
-     * Salva un nuovo elemento nella tabella
-     *
-     * @param columns nomi delle colonne nella tabella
-     * @param data    valori da inserire nelle colonne
+     * Salva un nuovo elemento nello strato di persistenza
+     * @param  columns nomi delle colonne nella tabella
+     * @param  data    valori da inserire nelle colonne
      * @throws Exception
      */
-    protected void save(List<String> columns, Object ...data) throws Exception {
+    protected void insert(List<String> columns, Object ...data) throws Exception {
         String columnNames  = String.join(", ", columns);
         String placeholders = String.join(", ", columns.stream().map(col -> "?").toList());
         String query = "INSERT INTO " + this.tableName + " (" + columnNames + ") VALUES (" + placeholders + ");";
-        this.executeQuery(query, data);
+        DbUtilities.executeQuery(query, data);
     }
 
+    @Override
+    public int delete(D entity) throws SQLException {
+        int id = entity.getId();
+        Object[] data = new Object[]{id};
+        String query = "DELETE FROM " + this.tableName + " WHERE id = ?";
+        return DbUtilities.executeQuery(query, data);
+    }
 
-    public abstract int delete(RegisteredUser user) throws SQLException;
+    @Override
+    public D update(D entity) throws SQLException {
+        return entity;
+    }
 }
 

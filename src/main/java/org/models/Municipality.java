@@ -5,7 +5,7 @@ import org.models.poi.IPoi;
 
 import java.util.ArrayList;
 
-public class Municipality {
+public class Municipality extends Model {
     private int id;
 
     private String name;
@@ -30,6 +30,7 @@ public class Municipality {
         this.pois = pois;
     }
 
+    /** setters **/
 
 
     public Object[]  getData(){ return new Object[] { this.name };}

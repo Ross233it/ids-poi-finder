@@ -1,6 +1,8 @@
 package org.models.informations;
 
-public class GeoLocation implements Information{
+import org.models.Model;
+
+public class GeoLocation extends Model implements Information{
 
     private int id;
 

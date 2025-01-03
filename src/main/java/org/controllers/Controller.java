@@ -46,14 +46,41 @@ public abstract class Controller<T> implements IController {
         }
     }
 
+    /**
+     * Gestisce la richiesta di visualizzazione di una specifica risorsa.
+     * @param id identificativo univoco della risorsa.
+     * @throws IOException
+     */
+    @Override
+    public void show(int id) throws IOException {
+        try {
+            T item = (T) this.service.getObjectById(id);
+            if(item == null)
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
+            else
+                HttpResponses.success(this.exchange, HttpResponses.objectToJson(item));
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
+
     @Override
     public void update() throws IOException {
 
     }
 
     @Override
-    public void delete() throws IOException {
-
+    public void delete(int id) throws IOException {
+        try {
+            T deleted = (T) this.service.delete(id);
+            if(deleted != null)
+                HttpResponses.success(this.exchange, "Record eliminato con successo");
+            else
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
     /**
@@ -82,12 +109,28 @@ public abstract class Controller<T> implements IController {
      * @throws IOException
      */
     protected void handleRoutes(String method) throws IOException {
-        switch (method) {
-            case "GET":    this.index();  break;
-            case "POST":   this.create(); break;
-            case "PATCH":  this.update(); break;
-            case "DELETE": this.delete(); break;
-            default:       this.index();
+        int id = HttpUtilities.getQueryId(this.requestPath);
+        switch (method.toUpperCase()) {
+            case "GET":
+                if( id > 0)
+                    this.show(id);
+                else
+                    this.index();
+                break;
+            case "POST":
+                this.create();
+                break;
+            case "PATCH":
+                this.update();
+                break;
+            case "DELETE":
+                if(id > 0)
+                    this.show(id);
+                else
+                    this.delete(id);
+                break;
+            default:
+                this.index();
         }
     }
 }

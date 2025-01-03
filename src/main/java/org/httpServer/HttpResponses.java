@@ -54,7 +54,6 @@ public class HttpResponses  extends HttpUtilities{
         if (obj == null) {
             return "{}";
         }
-
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
 

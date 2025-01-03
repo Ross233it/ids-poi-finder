@@ -1,11 +1,12 @@
 package org.models.users;
 
 import org.httpServer.AuthUtilities;
+import org.models.Model;
 
 /**
  * Questa classe rappresenta un utente registrato all'interno del sistema
  */
-public class RegisteredUser implements IUser {
+public class RegisteredUser extends Model implements IUser {
     private int id;
 
     private String username;
@@ -18,12 +19,13 @@ public class RegisteredUser implements IUser {
 
     private String role = null;
 
-    public String accessToken = null;
+    public  String accessToken = null;
 
-    public RegisteredUser(String username, String email, String password) {
+    public RegisteredUser(String username, String email, String password, String role) {
         this.username = username;
         this.email    = email;
         this.password = password;
+        this.role     = role;
     }
 
     /** getters **/
