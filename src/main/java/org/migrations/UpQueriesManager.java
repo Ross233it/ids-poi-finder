@@ -58,8 +58,18 @@ public class UpQueriesManager extends QueriesManager{
                 ")"
         );
 
+        //Geolocations content
+        this.queries.add("INSERT INTO geolocations (latitude, longitude, address, number, cap)"+
+                "VALUES"+
+                "(43.7139, 13.2174, 'Via Roma', '1', '60019')," +
+                "(43.6158, 13.5189, 'Via Verdi', '1546', '60121')," +
+                "(43.5196, 13.1070, 'Via XX Settembre', '10/A', '60035')," +
+                "(43.5875, 12.8903, 'Piazza Garibaldi', '23', '61040')," +
+                "(43.6167, 13.3928, 'Via della Tauromachia', '211', '60015')," +
+                "(43.9137, 12.9126, 'Via Caduti della Resistenza', '1001', '61121')"
+        );
+
         //Municipalities
-        //                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
         this.queries.add("CREATE TABLE IF NOT EXISTS municipalities (" +
                 "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, " +
                 "name VARCHAR(255) NOT NULL, " +
@@ -67,6 +77,17 @@ public class UpQueriesManager extends QueriesManager{
                 "region VARCHAR(255) NOT NULL, " +
                 "geolocation_id INT UNSIGNED " +
                 ");"
+        );
+
+        //Municipalities content
+        this.queries.add("INSERT INTO municipalities (name, province, region, geolocation_id)"+
+                "VALUES"+
+                "('Comune di Senigallia', 'AN', 'Marche', 1)," +
+                "('Comune di Ancona', 'AN', 'Marche', 2)," +
+                "('Comune di Jesi', 'AN', 'Marche',3)," +
+                "('Comune di Mondavio', 'PU', 'Marche',4)," +
+                "('Comune di Falconara Marittima','AN', 'Marche', 5)," +
+                "('Comune di Pesaro','PU', 'Marche', 6)"
         );
         //Roles
         this.queries.add("CREATE TABLE IF NOT EXISTS roles (" +
@@ -77,13 +98,12 @@ public class UpQueriesManager extends QueriesManager{
         );
 
         //Pois
-        //                "FOREIGN KEY (municipality_id) REFERENCES municipality(id) ON DELETE CASCADE," +
-//                "FOREIGN KEY (geolocation_id) REFERENCES geolocations(id) ON DELETE SET NULL" +
         this.queries.add("CREATE TABLE IF NOT EXISTS pois ("+
                 "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,"+
                 "name VARCHAR(255) NOT NULL,"+
                 "description TEXT," +
                 "type VARCHAR(100)," +
+                "status ENUM('published', 'pending', 'deleted') NOT NULL," +
                 "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
                 "municipality_id INT UNSIGNED," +
                 "geolocation_id INT UNSIGNED," +
@@ -92,6 +112,4 @@ public class UpQueriesManager extends QueriesManager{
                 ");"
         );
     }
-
-
 }

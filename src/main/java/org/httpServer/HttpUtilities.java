@@ -5,8 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class HttpUtilities {
@@ -44,5 +44,23 @@ public class HttpUtilities {
             }
         }
         return 0;
+    }
+
+    /**
+     * Estrae il token dalla header della richiesta.
+     * @param exchange
+     * @return Il token se presente, null altrimenti.
+     */
+    public static String getRequestToken(HttpExchange exchange) {
+        Map<String, List<String>> headers = exchange.getRequestHeaders();
+        List<String> authHeader = headers.get("Authorization");
+
+        if (authHeader != null && !authHeader.isEmpty()) {
+            String headerValue = authHeader.get(0);
+            if (headerValue.startsWith("Bearer ")) {
+                return headerValue.substring(7);
+            }
+        }
+        return null;
     }
 }

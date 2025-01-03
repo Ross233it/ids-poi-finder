@@ -1,7 +1,6 @@
 package org.repositories;
 
 import org.httpServer.DbUtilities;
-import org.models.users.IUser;
 import org.models.users.RegisteredUser;
 
 import java.sql.Connection;
@@ -83,7 +82,7 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      * @throws SQLException
      */
     public RegisteredUser setRole(RegisteredUser user) throws SQLException {
-        int id = user.getId();
+        long id = user.getId();
         String role = user.getRole();
         Object[] data = new Object[]{role, id};
         String query = "UPDATE " + this.tableName + " SET role = ? WHERE id = ?";

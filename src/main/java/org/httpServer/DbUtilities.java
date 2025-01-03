@@ -47,7 +47,7 @@ public class DbUtilities {
             System.out.println("Chiudo la connessione al database");
             connection.close();
         }
-        return 0;
+        return 1;
     }
 
 
@@ -83,6 +83,18 @@ public class DbUtilities {
         return objectMapper.writeValueAsString(resultList);
     }
 
-
-
+    /**
+     * Verifica il formato dell'id e lo converte in Long
+     * @param id
+     * @return
+     */
+    public static Long castDbIdToLong(Object id) {
+        if (id instanceof Integer) {
+            return ((Integer) id).longValue();
+        } else if (id instanceof Long) {
+            return (Long) id;
+        } else {
+            return null;
+        }
+    }
 }

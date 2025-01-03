@@ -14,7 +14,7 @@ public class MunicipalityController extends Controller<Municipality> {
     }
 
     @Override
-    public void show(int id) throws IOException {
+    public void show(long id) throws IOException {
         try {
             Municipality item = (Municipality) this.service.getObjectById(id);
             if(item == null)

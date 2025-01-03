@@ -15,30 +15,8 @@ import java.util.Map;
 
 public class PoiRepository extends Repository<Poi> {
 
-
     public PoiRepository(String tableName) {
         super("pois");
-    }
-
-    /**
-     * Ritorna il Poi che ha uno specifico id.
-     * @param id
-     * @param query
-     * @return
-     */
-    @Override
-    public Map<String, Object> getById(int id, String query) {
-        try {
-            if (query == null || query.isEmpty()){
-                query = "SELECT * FROM pois AS p";
-                query += " LEFT JOIN geolocations AS g ON p.geolocation_id = g.id";
-                query += " LEFT JOIN municipalities AS m ON p.municipality_id = p.id";
-                query += " WHERE p.id = ? ;" ;
-            }
-            return super.getById(id, query);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -46,10 +24,10 @@ public class PoiRepository extends Repository<Poi> {
         if (poi == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
         }
-        int geolocationId  = poi.getGeoLocation().getId();
-        int municipalityId = poi.getMunicipality().getId();
+        long geolocationId  = poi.getGeoLocation().getId();
+        long municipalityId = poi.getMunicipality().getId();
 
-        List<String> columns = Arrays.asList("name", "description", "is_logical", "geolocation_id", "municipality_id");
+        List<String> columns = Arrays.asList("name", "description", "is_logical", "status", "geolocation_id", "municipality_id");
         Object[] data = poi.getData();
         Object[] newData = Arrays.copyOf(data, data.length + 2);
         newData[newData.length - 2] = geolocationId;

@@ -48,7 +48,7 @@ public class Service<D extends Model> implements IService<D> {
      * @throws Exception
      */
     @Override
-    public D getObjectById(int id) throws Exception {
+    public D getObjectById(long id) throws Exception {
         Map<String, Object> entityData =  this.repository.getById(id, "");
         if(entityData == null)
             return null;
@@ -58,7 +58,7 @@ public class Service<D extends Model> implements IService<D> {
     }
 
     @Override
-    public D delete(int id) throws Exception {
+    public D delete(long id) throws Exception {
         D entity = this.getObjectById(id);
         if(entity == null)
             return null;

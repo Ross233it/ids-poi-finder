@@ -42,18 +42,18 @@ public abstract class Repository<D extends Model> implements IRepository<D> {
      * @throws Exception
      */
     @Override
-    public Map<String, Object> getById(int id, String query) throws Exception {
+    public Map<String, Object> getById(long id, String query) throws Exception {
         Connection connection = dbConnectionManager.openConnection();
         if(query == null || query.isEmpty())
             query = "SELECT * FROM " + this.tableName + " WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-                          preparedStatement.setInt(1, id);
+                          preparedStatement.setLong(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Map<String, Object>> data = DbUtilities.mapDbDataToList(resultSet);
         if (!data.isEmpty()) {
-            Map<String, Object> userData = (Map<String, Object>) data.get(0);
+            Map<String, Object> objectData = (Map<String, Object>) data.get(0);
             connection.close();
-            return userData;
+            return objectData;
         } else
             return null;
     }
@@ -73,7 +73,7 @@ public abstract class Repository<D extends Model> implements IRepository<D> {
 
     @Override
     public int delete(D entity) throws SQLException {
-        int id = entity.getId();
+        long id = entity.getId();
         Object[] data = new Object[]{id};
         String query = "DELETE FROM " + this.tableName + " WHERE id = ?";
         return DbUtilities.executeQuery(query, data);

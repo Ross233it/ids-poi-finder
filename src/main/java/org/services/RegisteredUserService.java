@@ -54,6 +54,8 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             String username = (String) data.get("username");
             String password = (String) data.get("password");
             Map<String, Object> userData = ((RegisteredUserRepository) this.repository).getByUsername(username);
+            if (userData == null)
+                return "";
             if(AuthUtilities.verifyPassword(password, (String) userData.get("salt"), (String) userData.get("password"))){
                 String accessToken =  AuthUtilities.generateAccessToken(username);
                 ((RegisteredUserRepository) this.repository).saveAccessToken(accessToken, username);

@@ -1,11 +1,8 @@
 package org.repositories;
 
 
-import java.sql.SQLException;
-
 import org.httpServer.DbUtilities;
-import org.models.informations.GeoLocation;
-import org.models.users.RegisteredUser;
+import org.models.GeoLocation;
 
 public class GeoLocationRepository extends Repository<GeoLocation> {
 

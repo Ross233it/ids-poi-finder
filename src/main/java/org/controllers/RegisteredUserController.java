@@ -31,7 +31,7 @@ public class RegisteredUserController extends Controller<IUser> {
             if(accessToken == null || accessToken == "")
                 HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
             else
-                HttpResponses.success(this.exchange, accessToken );
+                HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
         } catch (Exception e) {
             HttpResponses.error(this.exchange, 500, e.getMessage());
         }

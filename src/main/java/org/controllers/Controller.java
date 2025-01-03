@@ -47,43 +47,6 @@ public abstract class Controller<T> implements IController {
     }
 
     /**
-     * Gestisce la richiesta di visualizzazione di una specifica risorsa.
-     * @param id identificativo univoco della risorsa.
-     * @throws IOException
-     */
-    @Override
-    public void show(int id) throws IOException {
-        try {
-            T item = (T) this.service.getObjectById(id);
-            if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-            else
-                HttpResponses.success(this.exchange, HttpResponses.objectToJson(item));
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
-    }
-
-
-    @Override
-    public void update() throws IOException {
-
-    }
-
-    @Override
-    public void delete(int id) throws IOException {
-        try {
-            T deleted = (T) this.service.delete(id);
-            if(deleted != null)
-                HttpResponses.success(this.exchange, "Record eliminato con successo");
-            else
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
-    }
-
-    /**
      * Riceve dati tramite API ed avvia la procedura di creazione di oggetti.
      * Ritorna una response HTTP al chiamante.
      * @throws IOException
@@ -100,9 +63,54 @@ public abstract class Controller<T> implements IController {
             }else
                 HttpResponses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
         }catch (Exception e) {
-                HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.exchange, 500, e.getMessage());
         }
     }
+
+    /**
+     * Gestisce la richiesta di visualizzazione di una specifica risorsa.
+     * @param id identificativo univoco della risorsa.
+     * @throws IOException
+     */
+    @Override
+    public void show(long id) throws IOException {
+        try {
+            T item = (T) this.service.getObjectById(id);
+            if(item == null)
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
+            else
+                HttpResponses.success(this.exchange, HttpResponses.objectToJson(item));
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
+
+    /**
+     * Gestisce la richiesta di aggiornamento di una specifica risorsa.
+     * @throws IOException
+     */
+    @Override
+    public void update() throws IOException {    }
+
+    /**
+     * Gestisce la richiesta di eliminazione di una specifica risorsa.
+     * @param id
+     * @throws IOException
+     */
+    @Override
+    public void delete(long id) throws IOException {
+        try {
+            T deleted = (T) this.service.delete(id);
+            if(deleted != null)
+                HttpResponses.success(this.exchange, "Record eliminato con successo");
+            else
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
 
     /**
      * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
@@ -124,10 +132,7 @@ public abstract class Controller<T> implements IController {
                 this.update();
                 break;
             case "DELETE":
-                if(id > 0)
-                    this.show(id);
-                else
-                    this.delete(id);
+                this.delete(id);
                 break;
             default:
                 this.index();

@@ -2,6 +2,8 @@ package org.repositories;
 
 import org.httpServer.DbUtilities;
 import org.models.Municipality;
+
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,10 +19,10 @@ public class MunicipalityRepository extends Repository<Municipality> {
         if (municipality == null) {
             throw new IllegalArgumentException("L'entity non può essere null.");
         }
-        int geolocationId = municipality.getGeoLocation().getId();
+        long geolocationId = municipality.getGeoLocation().getId();
         String query = "INSERT INTO "
                 + this.tableName +
-                " (name, geolocation_id) VALUES (?, ?)";
+                " (name, province, region, geolocation_id) VALUES (?, ?, ?, ?)";
         Object[] data = municipality.getData();
         Object[] newData = Arrays.copyOf(data, data.length + 1);
         newData[newData.length - 1] = geolocationId;

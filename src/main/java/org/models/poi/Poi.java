@@ -2,17 +2,15 @@ package org.models.poi;
 
 import org.models.Model;
 import org.models.Municipality;
-import org.models.informations.Category;
-import org.models.informations.GeoLocation;
-import org.models.informations.Tag;
+import org.models.taxonomy.Category;
+import org.models.GeoLocation;
+import org.models.taxonomy.Tag;
 import java.util.List;
 
 public class Poi extends Model implements IPoi {
-    private int id;
+    private String  name;
 
-    private String name;
-
-    private String description;
+    private String  description;
 
     private Boolean isLogical = false;
 
@@ -24,6 +22,8 @@ public class Poi extends Model implements IPoi {
 
     private List<Category> categories;
 
+    private String status;
+
     public Poi(PoiBuilder builder) {
         this.name =        builder.getName();
         this.description = builder.getDescription();
@@ -32,56 +32,76 @@ public class Poi extends Model implements IPoi {
         this.geoLocation = builder.getGeoLocation();
         this.tags =        builder.getTags();
         this.categories =  builder.getCategories();
+        this.status =      builder.getStatus();
+    }
+
+
+    //todo implments toString
+    @Override
+    public String toString() {
+        return "";
     }
 
     /** getters **/
+
+    /**
+     * Restituisce i dati dell'oggetto
+     * @return Object[] array di oggetti
+     */
     @Override
-    public Municipality getMunicipality() {
-        return municipality;
+    public Object[] getData(){ return new Object[] {
+            this.name,
+            this.description,
+            this.isLogical,
+            this.status
+        };
     }
 
     @Override
-    public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
-    public void setId(int id)  { this.id = id; }
-    @Override
-    public GeoLocation getGeoLocation() {
-        return geoLocation;
-    }
+    public Municipality getMunicipality() {return municipality;}
 
+    @Override
+    public GeoLocation getGeoLocation() { return geoLocation; }
+
+    public String  getName()       { return name; }
+
+    /** setters **/
     @Override
     public void setGeoLocation(GeoLocation geoLocation) {
         this.geoLocation = geoLocation;
     }
 
-    public int     getId()         { return id; }
-    public String  getName()       { return name; }
-    public String  getDescription(){ return description; }
-    public Boolean getIsLogical()  { return isLogical; }
-    public Object[]  getData()     { return new Object[] { this.name, this.description, this.isLogical };}
+    @Override
+    public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
 
-    /** tags **/
-    public List<Tag> getTags() {
-        return this.tags;
-    }
+    public void setStatus(String status) { this.status = status; }
 
-    public void addTag(Tag tag) {
-        this.tags.add(tag);
-    }
 
-    public void removeTag(Tag tag) {
-        this.tags.remove(tag);
-    }
 
-    /** categories **/
-    public List<Category> getCategories() {
-        return this.categories;
-    }
-
-    public void addCategory(Category category) {
-        this.categories.add(category);
-    }
-
-    public void removeCategory(Category category) {
-        this.categories.remove(category);
-    }
+    //todo remove and refactor this
+//    /** tags **/
+//    public List<Tag> getTags() {
+//        return this.tags;
+//    }
+//
+//    public void addTag(Tag tag) {
+//        this.tags.add(tag);
+//    }
+//
+//    public void removeTag(Tag tag) {
+//        this.tags.remove(tag);
+//    }
+//
+//    /** categories **/
+//    public List<Category> getCategories() {
+//        return this.categories;
+//    }
+//
+//    public void addCategory(Category category) {
+//        this.categories.add(category);
+//    }
+//
+//    public void removeCategory(Category category) {
+//        this.categories.remove(category);
+//    }
 }

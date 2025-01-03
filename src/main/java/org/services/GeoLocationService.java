@@ -1,8 +1,7 @@
 package org.services;
 
-import org.models.informations.GeoLocation;
+import org.models.GeoLocation;
 import org.repositories.GeoLocationRepository;
-import org.repositories.MunicipalityRepository;
 
 
 import java.util.Map;
@@ -19,7 +18,7 @@ public class GeoLocationService  extends Service<GeoLocation> {
     }
 
     @Override
-    public GeoLocation delete(int id) throws Exception {
+    public GeoLocation delete(long id) throws Exception {
         return null;
     }
 

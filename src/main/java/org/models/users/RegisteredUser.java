@@ -7,7 +7,7 @@ import org.models.Model;
  * Questa classe rappresenta un utente registrato all'interno del sistema
  */
 public class RegisteredUser extends Model implements IUser {
-    private int id;
+    private long id;
 
     private String username;
 
@@ -29,7 +29,7 @@ public class RegisteredUser extends Model implements IUser {
     }
 
     /** getters **/
-    public int    getId()       { return id; }
+    public long   getId()       { return id; }
     public String getUsername() { return username; }
     public String getEmail()    { return email; }
     public String getPassword() { return password; }
@@ -42,10 +42,14 @@ public class RegisteredUser extends Model implements IUser {
             this.getEmail(),
             this.getPassword(),
             this.getSalt(),
-            this.getRoleId()}
-    ;}
+            this.getRoleId()
+        };
+    }
 
-
+    @Override
+    public String toString() {
+        return "";
+    }
 
 
     /**
@@ -77,7 +81,7 @@ public class RegisteredUser extends Model implements IUser {
     }
 
     /** setters **/
-    public void setId(int id)                { this.id = id; }
+    public void setId(long id)               { this.id = id; }
     public void setAccessToken(String token){
         this.accessToken = AuthUtilities.generateAccessToken(this.username);};
     public void setSalt(String salt)         { this.salt = salt; }

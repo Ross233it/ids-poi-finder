@@ -1,6 +1,7 @@
 package org.services;
+import org.httpServer.DbUtilities;
 import org.models.Municipality;
-import org.models.informations.GeoLocation;
+import org.models.GeoLocation;
 import org.models.poi.Poi;
 import org.models.poi.PoiBuilder;
 import org.repositories.GeoLocationRepository;
@@ -20,14 +21,6 @@ public class PoiService extends Service<Poi> {
         super(repository);
     }
 
-    public String index() {
-        try {
-            return this.repository.index();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * Ritorna un oggetto Poi e tutti i suoi dettagli a partire dall'identifcativo unico.
      * @param id identificativo unico del Poi
@@ -35,7 +28,7 @@ public class PoiService extends Service<Poi> {
      * @throws Exception
      */
     @Override
-    public Poi getObjectById(int id) throws Exception {
+    public Poi getObjectById(long id) throws Exception {
         try {
             Map<String, Object> poiData = ((PoiRepository) this.repository).getById(id, "");
             if (poiData == null) {
@@ -75,7 +68,7 @@ public class PoiService extends Service<Poi> {
      */
     @Override
     protected Poi buildEntity(Map<String, Object> poiData) throws Exception {
-        GeoLocation geoLocation = (GeoLocation) poiData.get("geoLocation");
+        GeoLocation geoLocation   = (GeoLocation)  poiData.get("geoLocation");
         Municipality municipality = (Municipality) poiData.get("municipality");
 
         Poi poi = new PoiBuilder(
@@ -85,7 +78,6 @@ public class PoiService extends Service<Poi> {
                 geoLocation(geoLocation).
                 municipality(municipality).
                 build();
-
         return poi;
     }
 
@@ -97,8 +89,10 @@ public class PoiService extends Service<Poi> {
      * @throws Exception
      */
     private Map<String, Object> buidldMunicipality(Map<String, Object> poiData) throws Exception {
+
         MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository("municipalities"));
-        int municipalityId = (int) poiData.get("municipality_id");
+        Long municipalityId = DbUtilities.castDbIdToLong(poiData.get("municipality_id"));
+
         if(municipalityId>0){
             Municipality municipality = municipalityService.getObjectById(municipalityId);
             poiData.put("municipality", municipality);
@@ -114,19 +108,29 @@ public class PoiService extends Service<Poi> {
      * @throws Exception
      */
     private Map<String, Object> buildGeolocation(Map<String, Object> poiData) throws Exception {
-
         GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
         GeoLocation geoLocation = null;
         Map<String, Object> geoLoc = (Map<String, Object>) poiData.get("geoLocation");
-        Object geoLocationIdObj = poiData.get("geolocation_id");
-
-        if(geoLocationIdObj != null){
-            int geoLocationId = ((Long) geoLocationIdObj).intValue();
+        Long geoLocationId = DbUtilities.castDbIdToLong(poiData.get("geolocation_id"));
+        if(geoLocationId != null){
             geoLocation = geoLocationService.getObjectById(geoLocationId);
         }else if (geoLoc != null){
             geoLocation = geoLocationService.create(geoLoc);
         }
         poiData.put("geoLocation", geoLocation);
         return poiData;
+    }
+
+    public Poi setStatus(Map<String, Object> data) throws Exception {
+        Long poiId = DbUtilities.castDbIdToLong(data.get("id"));
+        if(poiId > 0){
+            Poi poi = this.getObjectById(poiId);
+            if(poi != null){
+                poi.setStatus((String) data.get("status"));
+                this.repository.update(poi);
+                return poi;
+            }
+        }
+        return null;
     }
 }

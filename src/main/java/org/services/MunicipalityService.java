@@ -1,8 +1,7 @@
 package org.services;
 
-
 import org.models.Municipality;
-import org.models.informations.GeoLocation;
+import org.models.GeoLocation;
 import org.repositories.GeoLocationRepository;
 import org.repositories.MunicipalityRepository;
 import java.util.Map;
@@ -24,7 +23,11 @@ public class MunicipalityService extends Service<Municipality> {
         GeoLocationService service = new GeoLocationService(new GeoLocationRepository("geolocations"));
         GeoLocation geoLocation = service.create(geoLoc);
         Municipality municipality = new Municipality(
-                (String)  objectData.get("name"), geoLocation);
+                (String)  objectData.get("name"),
+                (String)  objectData.get("province"),
+                (String)  objectData.get("region")
+                );
+        municipality.setGeoLocation(geoLocation);
         try {
             this.repository.create(municipality);
         } catch (Exception e) {
@@ -42,7 +45,7 @@ public class MunicipalityService extends Service<Municipality> {
      * @throws Exception
      */
     @Override
-    public Municipality getObjectById(int id) throws Exception {
+    public Municipality getObjectById(long id) throws Exception {
         Map<String, Object> municipalityData = (this.repository).getById(id, "");
         if(municipalityData == null)
             return null;

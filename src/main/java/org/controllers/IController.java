@@ -21,9 +21,9 @@ public interface IController<O> extends HttpHandler {
  */
    void handle(HttpExchange exchange) throws IOException;
    void index()        throws IOException;
-   void show(int id)   throws IOException;
+   void show(long id)   throws IOException;
    void create()       throws IOException;
    void update()       throws IOException;
-   void delete(int id) throws IOException;
+   void delete(long id) throws IOException;
 
 }

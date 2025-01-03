@@ -27,7 +27,7 @@ public interface IRepository<D extends Model> {
      * @return
      * @throws Exception
      */
-    Map<String, Object> getById(int id, String query)  throws Exception;
+    Map<String, Object> getById(long id, String query)  throws Exception;
 
     /**
      * Crea un nuovo elemento

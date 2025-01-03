@@ -1,9 +1,9 @@
 package org.models.poi;
 
 import org.models.Municipality;
-import org.models.informations.Category;
-import org.models.informations.GeoLocation;
-import org.models.informations.Tag;
+import org.models.taxonomy.Category;
+import org.models.GeoLocation;
+import org.models.taxonomy.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,13 @@ public class  PoiBuilder {
     private GeoLocation    geoLocation;
     private List<Tag>      tags = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
+    private String         status;
 
     public PoiBuilder(String name, String description, boolean isLogical) {
         this.name = name;
         this.description = description;
         this.isLogical = isLogical;
+        this.status = "pending";
     }
 
     public PoiBuilder municipality(Municipality municipality) {
@@ -50,6 +52,7 @@ public class  PoiBuilder {
     /*** getters ***/
 
     public String        getName()        { return name;}
+    public String        getStatus()      { return status;}
     public String        getDescription() { return description; }
     public boolean       getIsLogical()   { return isLogical; }
     public Municipality  getMunicipality(){ return municipality; }
