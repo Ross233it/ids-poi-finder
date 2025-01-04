@@ -1,6 +1,6 @@
 package org.models;
 
-public class GeoLocation extends Model{
+public class GeoLocation extends Content {
 
     private double latitude;
 

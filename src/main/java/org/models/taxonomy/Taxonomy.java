@@ -1,8 +1,8 @@
 package org.models.taxonomy;
 
-import org.models.Model;
+import org.models.Content;
 
-public abstract  class Taxonomy extends Model {
+public abstract  class Taxonomy extends Content {
 
     String name;
 

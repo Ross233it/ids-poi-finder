@@ -1,9 +1,11 @@
 package org.models.users;
 
-public interface IUser {
+import org.models.IModel;
 
-    Object[] getData();
+public interface IUser extends IModel {
 
     Boolean hasRole(String role);
+
+    String getRole();
 
 }

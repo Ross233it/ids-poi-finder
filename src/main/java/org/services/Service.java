@@ -1,6 +1,6 @@
 package org.services;
 
-import org.models.Model;
+import org.models.Content;
 import org.repositories.Repository;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class Service<D extends Model> implements IService<D> {
+public class Service<D extends Content> implements IService<D> {
 
     Repository repository;
 

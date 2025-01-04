@@ -1,6 +1,6 @@
 package org.models.activities;
 
-import org.models.poi.Poi;
+import org.models.poi.IPoi;
 import org.models.users.RegisteredUser;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Itinerary extends Activity {
    
-    private List<Poi> poiList;
+    private List<IPoi> poiList;
 
     public Itinerary(String name, String description, RegisteredUser author) {
         super(name, description, author);
@@ -20,6 +20,7 @@ public class Itinerary extends Activity {
     }
 
     /** Getters **/
+
     @Override
     public Object[] getData() {
         return new Object[] {
@@ -28,18 +29,22 @@ public class Itinerary extends Activity {
                 getStatus(),
                 getAuthor(),
                 getValidator(),
-                poiList
+                getPoiList()
         };
     }
-    public List<Poi> getPoiList() { return poiList; }
+    
+    public List<IPoi> getPoiList() { return poiList; }
 
     /** Setters **/
-    public void setPoiList(List<Poi> poiList) { this.poiList = poiList; }
+
+    public void setPoiList(List<IPoi> poiList) { this.poiList = poiList; }
 
     /** Metodi aggiuntivi **/
-    public void addPoi(Poi poi) { poiList.add(poi); }
 
-    public void removePoi(Poi poi) { poiList.remove(poi); }
+    @Override
+    public void addPoi(IPoi poi) { poiList.add(poi); }
+
+    public void removePoi(IPoi poi) { poiList.remove(poi); }
 
     @Override
     public String toString() {

@@ -1,6 +1,6 @@
 package org.repositories;
 
-import org.models.Model;
+import org.models.Content;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  * sistema e lo strato di persistenza.
  * @param <D>
  */
-public interface IRepository<D extends Model> {
+public interface IRepository<D extends Content> {
 
     /**
      * Restituisce tutti gli elementi di una tabella

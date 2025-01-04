@@ -1,13 +1,15 @@
 package org.models.activities;
 
-import org.models.Model;
+import org.models.Content;
+import org.models.poi.IPoi;
+import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 
 /**
  * Questa classe astrae il concetto di attività intesa come contenuto volto a
  * promuovere l'interazione tra utenti o la partecipazione ad eventi.
  */
-public abstract class Activity extends Model {
+public abstract class Activity extends Content {
     private String name;
     private String description;
     private String status;
@@ -62,4 +64,8 @@ public abstract class Activity extends Model {
     public RegisteredUser getAuthor() { return author; }
 
     public RegisteredUser getValidator() { return validator; }
+
+    public abstract void addPoi(IPoi poi);
+
+    public abstract void removePoi(IPoi poi);
 }

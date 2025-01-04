@@ -1,9 +1,9 @@
 package org.services;
 
-import org.models.Model;
+import org.models.Content;
 
 import java.util.Map;
-public interface IService<D extends Model>{
+public interface IService<D extends Content>{
 
     String index() ;
 

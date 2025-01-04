@@ -1,13 +1,13 @@
 package org.models.poi;
 
-import org.models.Model;
+import org.models.Content;
 import org.models.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;
 import java.util.List;
 
-public class Poi extends Model implements IPoi {
+public class Poi extends  IPoi {
     private String  name;
 
     private String  description;

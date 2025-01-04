@@ -1,6 +1,6 @@
 package org.models.activities;
 
-import org.models.poi.Poi;
+import org.models.poi.IPoi;
 import org.models.users.RegisteredUser;
 
 import java.util.Set;
@@ -12,7 +12,9 @@ import java.util.HashSet;
  */
 public class Experience extends Activity {
 
-    private Set<Poi> poiSet;
+    private Set<IPoi> poiSet;
+
+    private String date;
 
     public Experience(String name, String description, RegisteredUser author) {
         super(name, description, author);
@@ -32,18 +34,23 @@ public class Experience extends Activity {
         };
     }
 
-    public Set<Poi> getPoiSet() { return poiSet; }
+    /** Getters **/
+
+    public Set<IPoi> getPoiSet() { return poiSet; }
+
+    public String getDate() { return date; }
+
+
 
     /** Setters **/
-    public void setPoiSet(Set<Poi> poiSet) { this.poiSet = poiSet; }
 
-    public void addPoi(Poi poi) {
-        poiSet.add(poi);
-    }
+    public void setPoiSet(Set<IPoi> poiSet) { this.poiSet = poiSet; }
 
-    public void removePoi(Poi poi) {
-        poiSet.remove(poi);
-    }
+    public void setDate(String date) { this.date = date; }
+
+
+
+    /** Metodi aggiuntivi **/
 
     @Override
     public String toString() {
@@ -56,11 +63,17 @@ public class Experience extends Activity {
                 .append("\"validator\": \"").append(getValidator() != null ? getValidator().getUsername() : "null").append("\", ")
                 .append("\"poiSet\": [");
 
-        for (Poi poi : poiSet) {
+        for (IPoi poi : poiSet) {
             sb.append(poi.toString()).append(", ");
         }   
         if (!poiSet.isEmpty()) sb.delete(sb.length() - 2, sb.length());
         sb.append("]}");
         return sb.toString();
     }
+
+    @Override
+    public void addPoi(IPoi poi) { poiSet.add(poi); }
+
+    @Override
+    public void removePoi(IPoi poi) { poiSet.remove(poi); }
 }

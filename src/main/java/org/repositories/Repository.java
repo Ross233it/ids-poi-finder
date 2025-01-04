@@ -2,12 +2,12 @@ package org.repositories;
 
 import org.httpServer.DbConnectionManager;
 import org.httpServer.DbUtilities;
-import org.models.Model;
+import org.models.Content;
 
 import java.sql.*;
 import java.util.*;
 
-public abstract class Repository<D extends Model> implements IRepository<D> {
+public abstract class Repository<D extends Content> implements IRepository<D> {
 
     protected DbConnectionManager dbConnectionManager;
 

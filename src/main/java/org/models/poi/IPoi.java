@@ -1,5 +1,7 @@
 package org.models.poi;
 
+import org.models.Content;
+import org.models.IModel;
 import org.models.Municipality;
 import org.models.GeoLocation;
 
@@ -7,13 +9,13 @@ import org.models.GeoLocation;
  * Astrae il concetto di "punto di interesse" inteso come entità
  * correlata ad un punto del territorio ed ad un Comune Italiano
  */
-public interface IPoi {
+public abstract class IPoi extends Content {
 
-    public GeoLocation getGeoLocation();
+    public abstract GeoLocation getGeoLocation();
 
-    public void setGeoLocation(GeoLocation geoLocation);
+    public abstract void setGeoLocation(GeoLocation geoLocation);
 
-    public Municipality getMunicipality();
+    public abstract Municipality getMunicipality();
 
-    public void setMunicipality(Municipality municipality);
+    public abstract void setMunicipality(Municipality municipality);
 }

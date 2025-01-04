@@ -4,7 +4,7 @@ import org.models.poi.IPoi;
 
 import java.util.ArrayList;
 
-public class Municipality extends Model {
+public class Municipality extends Content {
 
     private String name;
     private String region;
