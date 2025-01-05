@@ -17,7 +17,7 @@ import java.util.Map;
 public class RegisteredUserController extends Controller<IUser> {
 
     public RegisteredUserController() {
-        super(new RegisteredUserService(new RegisteredUserRepository("users")));
+        super(new RegisteredUserService());
     }
 
     /**
@@ -37,23 +37,29 @@ public class RegisteredUserController extends Controller<IUser> {
         }
     }
 
+    public void checkUser(){}
+
+
     /**
      * Gestisce la richiesta di impostazione nuovo ruolo per un utente.
      * @throws Exception
      */
     public void setRole() throws Exception{
-        try {
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
-            if(data.get("role") == null || data.get("id") == null)
-                HttpResponses.error(this.exchange, 404, "Dati mancanti");
-            RegisteredUser user = ((RegisteredUserService) this.service).setRole(data);
-            if(user == null)
-                HttpResponses.error(this.exchange, 404, "Modifica fallita");
-            else
-                HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
-        } catch (Exception e) {
-                HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
+        if(this.currentUser != null && this.currentUser.hasRole("platformAdmin")){
+            try {
+                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                if(data.get("role") == null || data.get("id") == null)
+                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
+                RegisteredUser user = ((RegisteredUserService) this.service).setRole(data);
+                if(user == null)
+                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
+                else
+                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
+            } catch (Exception e) {
+                    HttpResponses.error(this.exchange, 500, e.getMessage());
+            }
+        }else
+            HttpResponses.error(this.exchange, 401, "Operazione non autorizzata");
     }
 
     /**

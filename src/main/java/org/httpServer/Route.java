@@ -2,15 +2,19 @@ package org.httpServer;
 
 import com.sun.net.httpserver.HttpHandler;
 
+/**
+ * Questa classe ha la responsabilità di rappresentare le rotte raggiungibili
+ * tramite richieste http.
+ */
 public class Route {
     private String path;
 
     private HttpHandler handler;
 
     /**
-     * Create a new string
-     * @param path the endpoint for requests
-     * @param handler the handler for the route
+     * Crea una nuova rotta
+     * @param path il percorso da contattare per la richiesta
+     * @param handler il gestore http per la rotta.
      */
     public Route(String path, HttpHandler handler) {
             this.path = path;
@@ -18,15 +22,15 @@ public class Route {
     }
 
     /**
-     * Returns endpoint for http requests
-     * @return
+     * Ritorna l'endpoint della rotta
+     * @return String path
      */
     public String getPath() {
         return path;
     }
 
     /**
-     * Returns the handler of a routes
+     * Ritorna l'handler correlato alla rotta
      * @return
      */
     public HttpHandler getHandler() {

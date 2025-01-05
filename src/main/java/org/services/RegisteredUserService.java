@@ -14,8 +14,8 @@ import java.util.Map;
 public class RegisteredUserService extends Service<RegisteredUser> {
 
 
-    public RegisteredUserService(RegisteredUserRepository repository) {
-       super(repository);
+    public RegisteredUserService() {
+       super(new RegisteredUserRepository("users"));
     }
 
     @Override
@@ -68,6 +68,23 @@ public class RegisteredUserService extends Service<RegisteredUser> {
         }
     }
 
+    /**
+     * Recupera un utente con uno specifico access token.
+     * @param token String il token di accesso
+     * @return user se creato correttamente, null altrimenti
+     */
+    public RegisteredUser getByAccessToken(String token) {
+        try {
+            Map<String, Object> userData =  ((RegisteredUserRepository)this.repository).getByAccessToken(token);
+            if(userData == null)
+                return null;
+            RegisteredUser user = this.buildEntity(userData);
+            user.setAccessToken(token);
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Imposta un nuovo ruolo per un utente.

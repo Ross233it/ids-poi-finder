@@ -18,7 +18,6 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
         super(tableName);
     }
 
-    //todo rifattorizzare le query nel repository principale
     /**
      * Ritorna il record dell'utente in base all'username
      * @param username String il nome utente
@@ -27,20 +26,26 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      */
     public  Map<String, Object> getByUsername(String username) throws Exception {
             String query = "SELECT * FROM " + this.tableName + " WHERE username = ? OR email = ?";
-            Connection connection = dbConnectionManager.openConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<Map<String, Object>> data = DbUtilities.mapDbDataToList(resultSet);
-            if(!data.isEmpty()){
-                Map<String, Object> userData = (Map<String, Object>) data.get(0);
-                connection.close();
-                return userData;
-            }
-            else
+            List<Map<String, Object>> data = DbUtilities.executeSelectQuery(query, new Object[]{username, username});
+            if (!data.isEmpty()) {
+                return data.get(0);
+            } else
                 return null;
+    }
+
+    /**
+     * Ritorna il record dell'utente in base all'access token
+     * @param token String il token di accesso
+     * @return List<Map<String, Object>> userData i dati dell'utente
+     * @throws Exception
+     */
+    public  Map<String, Object> getByAccessToken(String token) throws Exception {
+        String query = "SELECT * FROM " + this.tableName + " WHERE access_token = ?";
+        List<Map<String, Object>> data =  DbUtilities.executeSelectQuery(query, new Object[]{token});
+        if (!data.isEmpty()) {
+            return data.get(0);
+        } else
+            return null;
     }
 
     /**
@@ -48,14 +53,9 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      * utilizzi futuri legati all'autenticazione.
      * @return true se il token viene salvato correttamente.
      */
-    public boolean saveAccessToken(String token, String username) throws Exception {
+    public int saveAccessToken(String token, String username) throws Exception {
         String query = "UPDATE " + this.tableName + " SET access_token = ? WHERE username = ?";
-        Connection connection = dbConnectionManager.openConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, token);
-        preparedStatement.setString(2, username);
-        int result = preparedStatement.executeUpdate();
-        return result > 0;
+        return DbUtilities.executeQuery(query, new Object[]{token, username});
     }
 
     /**

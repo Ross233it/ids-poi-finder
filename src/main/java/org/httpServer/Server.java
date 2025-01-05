@@ -4,9 +4,15 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
 
+/**
+ * Questa classe rappresenta ed inizializza un server Http
+ */
 public class Server {
+
     private int serverPort;
+
     private HttpServer server;
+
     private Router router;
 
     public Server(int serverPort) {
@@ -15,7 +21,7 @@ public class Server {
     }
 
     /**
-     * Starts an http server and register a set of routes
+     * Avvia il server http e registra tutte le rotte configurate nel router.
      * @throws IOException
      */
     public void startServer() throws IOException {
@@ -33,6 +39,9 @@ public class Server {
         }
     }
 
+    /**
+     * Arresta il server se avviato.
+     */
     public void stopServer() {
         if (server != null) {
             server.stop(0);

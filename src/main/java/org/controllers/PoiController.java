@@ -43,17 +43,20 @@ public class PoiController extends Controller<Poi> {
      * @throws Exception
      */
     public void setStatus() throws Exception{
-        try {
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
-            if(data.get("status") == null || data.get("id") == null)
-                HttpResponses.error(this.exchange, 404, "Dati mancanti");
-            Poi poi = ((PoiService) this.service).setStatus(data);
-            if(poi == null)
-                HttpResponses.error(this.exchange, 404, "Modifica fallita");
-            else
-                HttpResponses.success(this.exchange, HttpResponses.objectToJson(poi));
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
+        if(this.currentUser.hasRole("platformAdmin")){
+            try {
+                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                if(data.get("status") == null || data.get("id") == null)
+                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
+                Poi poi = ((PoiService) this.service).setStatus(data);
+                if(poi == null)
+                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
+                else
+                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(poi));
+            } catch (Exception e) {
+                HttpResponses.error(this.exchange, 500, e.getMessage());
+            }
+        } else
+            HttpResponses.error(this.exchange,401, "Non Autorizzato" );
     }
 }

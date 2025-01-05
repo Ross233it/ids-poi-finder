@@ -1,5 +1,5 @@
 package org.services;
-import org.httpServer.DbUtilities;
+
 import org.models.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -91,7 +91,7 @@ public class PoiService extends Service<Poi> {
     private Map<String, Object> buidldMunicipality(Map<String, Object> poiData) throws Exception {
 
         MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository("municipalities"));
-        Long municipalityId = DbUtilities.castDbIdToLong(poiData.get("municipality_id"));
+        Long municipalityId = (Long) poiData.get("municipality_id");
 
         if(municipalityId>0){
             Municipality municipality = municipalityService.getObjectById(municipalityId);
@@ -111,7 +111,7 @@ public class PoiService extends Service<Poi> {
         GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
         GeoLocation geoLocation = null;
         Map<String, Object> geoLoc = (Map<String, Object>) poiData.get("geoLocation");
-        Long geoLocationId = DbUtilities.castDbIdToLong(poiData.get("geolocation_id"));
+        Long geoLocationId = (Long) poiData.get("geolocation_id");
         if(geoLocationId != null){
             geoLocation = geoLocationService.getObjectById(geoLocationId);
         }else if (geoLoc != null){
@@ -121,8 +121,14 @@ public class PoiService extends Service<Poi> {
         return poiData;
     }
 
+    /**
+     * Aggiorna lo stato di un Poi
+     * @param data i dati del Poi
+     * @return Poi poi con il nuovo stato
+     * @throws Exception
+     */
     public Poi setStatus(Map<String, Object> data) throws Exception {
-        Long poiId = DbUtilities.castDbIdToLong(data.get("id"));
+        Long poiId = (Long) data.get("id");
         if(poiId > 0){
             Poi poi = this.getObjectById(poiId);
             if(poi != null){

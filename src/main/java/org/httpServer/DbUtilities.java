@@ -12,7 +12,7 @@ import java.util.Map;
 public class DbUtilities {
 
     /**
-     * Esegue una query con statment preparato per parametri dinamici.
+     * Esegue una query di insert o update con statment preparato per parametri dinamici.
      * @param query
      * @param params
      * @return id dell'elemento inserito o modificato
@@ -26,11 +26,13 @@ public class DbUtilities {
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject(i + 1, params[i]);
             }
-
+            //todo remove logs
             System.out.println("Eseguendo query: " + query);
             System.out.println("Parametri: " + java.util.Arrays.toString(params));
 
             int rowsAffected = preparedStatement.executeUpdate();
+
+            //todo remove logs
             System.out.println("Righe interessate: " + rowsAffected);
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -50,9 +52,58 @@ public class DbUtilities {
         return 1;
     }
 
+    /**
+     * Esegue una query di selezione con statment preparato per parametri dinamici.
+     * @param query la query select da eseguire
+     * @param params i parametri da passare alla query
+     * @return List<Map<String, Object>> risultati della query
+     * @throws SQLException
+     */
+    public static List<Map<String, Object>> executeSelectQuery(String query, Object... params) throws SQLException {
+        DbConnectionManager dbConnectionManager = DbConnectionManager.getInstance();
+        Connection connection = dbConnectionManager.openConnection();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatement.setObject(i + 1, params[i]);
+            }
+
+            System.out.println("Eseguendo query: " + query);
+            System.out.println("Parametri: " + java.util.Arrays.toString(params));
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<Map<String, Object>> results = new ArrayList<>();
+
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                while (resultSet.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        row.put(metaData.getColumnName(i), resultSet.getObject(i));
+                    }
+                    results.add(row);
+                }
+
+                System.out.println("Risultati ottenuti: " + results.size());
+                return results;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            System.out.println("Chiudo la connessione al database");
+            connection.close();
+        }
+    }
 
 
-    public static List<Map<String, Object>> mapDbDataToList(ResultSet resultSet) throws SQLException, JsonProcessingException {
+    /**
+     * Mappa i dati di una query in una lista di mappe chiave-valore
+     * @param resultSet i risultati della query
+     * @return List<Map<String, Object>> lista di mappe chiave-valore
+     */
+    public static List<Map<String, Object>> mapDbDataToList(ResultSet resultSet) throws SQLException {
         List<Map<String, Object>> resultList = new ArrayList<>();
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
@@ -77,24 +128,9 @@ public class DbUtilities {
      * @throws JsonProcessingException
      */
     public static String mapDbDataToJson(ResultSet resultSet) throws SQLException, JsonProcessingException {
-        ResultSetMetaData metaData = resultSet.getMetaData();
         List<Map<String, Object>> resultList = mapDbDataToList(resultSet);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(resultList);
     }
 
-    /**
-     * Verifica il formato dell'id e lo converte in Long
-     * @param id
-     * @return
-     */
-    public static Long castDbIdToLong(Object id) {
-        if (id instanceof Integer) {
-            return ((Integer) id).longValue();
-        } else if (id instanceof Long) {
-            return (Long) id;
-        } else {
-            return null;
-        }
-    }
 }

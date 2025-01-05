@@ -7,6 +7,9 @@ import org.controllers.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Questa classe definisce tutti gli end point raggiungibili nella piattaforma.
+ */
 public class Router {
 
     private List<Route> routes;
@@ -17,17 +20,17 @@ public class Router {
     }
 
     /**
-     * Add a route to routes list
-     * @param path the endpoint to reach the route
-     * @param handler the handler to menage the request
+     * Aggiunge una rotta alla lista degli endpoint
+     * @param path l'endpoint raggiungibile dalla richiesta
+     * @param handler l'handler http per gestire la rotta
      */
     private void addRoute(String path, HttpHandler handler) {
         routes.add(new Route(path, handler));
     }
 
     /**
-     * Register a group of routes to a server.
-     * @param server
+     * Registra un insieme di rotte nel server
+     * @param server il server che utilizzerà le rotte.
      */
    public void registerRoutes(HttpServer server) {
         for (Route route : routes) {
@@ -36,8 +39,9 @@ public class Router {
     }
 
     /**
-     * Defines all routes of the system for registration
-     * @param prefix
+     * Definisce tutte le rotte raggiungibili nella piattaforma ed il relativo
+     * handler - presente nelle classi Controller.
+     * @param prefix il prefisso della rotta - "api" in questo contesto
      */
     private void setUpRoutes(String prefix){
         ControllerFactory factory = new ControllerFactory();

@@ -1,15 +1,21 @@
 package org.httpServer;
 
+import com.sun.net.httpserver.HttpExchange;
+
+//import java.awt.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Classe di utilità per la gestione dell'autenticazione
  */
 
 public class AuthUtilities {
+
 
     /**
      * Genera un salt casuale.
@@ -69,5 +75,22 @@ public class AuthUtilities {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Errore nella generazione del token", e);
         }
+    }
+
+    /**
+     * Recupera l'access token dall'intestazione della chiamata http
+     * @param exchange HttpExchange
+     */
+    public static String getAccessToken(HttpExchange exchange) {
+        Map<String, List<String>> headers = exchange.getRequestHeaders();
+        List<String> authHeader = (headers.get("Authorization"));
+        if (authHeader != null && !authHeader.isEmpty()) {
+            String accessToken = authHeader.get(0);
+            if (!accessToken.isEmpty()) {
+                accessToken = accessToken.replaceFirst("^Bearer\\s", "");
+                return accessToken;
+            }
+        }
+        return "";
     }
 }

@@ -1,9 +1,14 @@
 package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.httpServer.AuthUtilities;
+import org.httpServer.DbUtilities;
 import org.httpServer.HttpResponses;
 import org.httpServer.HttpUtilities;
+import org.models.users.RegisteredUser;
+import org.repositories.RegisteredUserRepository;
 import org.services.IService;
+import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,6 +20,8 @@ public abstract class Controller<T> implements IController {
     protected IService service;
 
     protected HttpExchange exchange;
+
+    protected RegisteredUser currentUser;
 
     public Controller(IService service) {
         this.service = service;
@@ -30,6 +37,11 @@ public abstract class Controller<T> implements IController {
         this.requestPath = exchange.getRequestURI().getPath();
         this.exchange = exchange;
         String method = exchange.getRequestMethod();
+        String accessToken = AuthUtilities.getAccessToken(exchange);
+        if(accessToken != null && accessToken != ""){
+            RegisteredUserService userService = new RegisteredUserService();
+            this.currentUser = userService.getByAccessToken(accessToken);
+        }
         this.handleRoutes(method);
     }
 

@@ -44,7 +44,14 @@ public class RegisteredUser extends Content implements IUser {
 
     @Override
     public String toString() {
-        return "";
+        return "{" +
+                "\"username\": \"" + username + "\"," +
+                "\"email\": \"" + email + "\"," +
+                "\"password\": \"" + password + "\"," +
+                "\"salt\": " + (salt != null ? "\"" + salt + "\"" : null) + "," +
+                "\"role\": " + (role != null ? "\"" + role + "\"" : null) + "," +
+                "\"accessToken\": " + (accessToken != null ? "\"" + accessToken + "\"" : null) +
+                "}";
     }
 
     /**
