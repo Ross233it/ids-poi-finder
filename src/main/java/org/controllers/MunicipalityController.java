@@ -13,8 +13,14 @@ public class MunicipalityController extends Controller<Municipality> {
         super(new MunicipalityService(new MunicipalityRepository("municipalities")));
     }
 
+    /**
+     * Gestisce la richiesta http di visualizzazione di un municipio e dei suoi dettagli
+     * @param id identificativo univoco della risorsa.
+     * @throws IOException
+     */
     @Override
     public void show(long id) throws IOException {
+        if(this.currentUser.hasRole("platformAdmin")){
         try {
             Municipality item = (Municipality) this.service.getObjectById(id);
             if(item == null)
@@ -27,7 +33,10 @@ public class MunicipalityController extends Controller<Municipality> {
             }
         } catch (Exception e) {
             HttpResponses.error(this.exchange, 500, e.getMessage());
+            }
         }
+        else
+            HttpResponses.error(this.exchange, 403, "Non hai i permessi per visualizzare questa risorsa");
     }
 }
 

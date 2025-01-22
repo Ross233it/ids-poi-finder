@@ -2,10 +2,8 @@ package org.controllers;
 
 import org.httpServer.HttpResponses;
 import org.models.poi.Poi;
-import org.models.users.RegisteredUser;
 import org.repositories.PoiRepository;
 import org.services.PoiService;
-import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -16,6 +14,11 @@ public class PoiController extends Controller<Poi> {
         super(new PoiService(new PoiRepository("pois")));
     }
 
+    /**
+     * Gestisce la richiesta http di visualizzazione di un poi e dei suoi dettagli
+     * @param id identificativo univoco della risorsa.
+     * @throws IOException
+     */
     @Override
     public void show(long id) throws IOException {
         try {

@@ -34,7 +34,7 @@ public class Service<D extends Content> implements IService<D> {
     public D create(Map<String, Object> objectData) throws Exception {
         D entity = this.buildEntity(objectData);
         try {
-            this.repository.create(entity);
+            this.repository.create(entity, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

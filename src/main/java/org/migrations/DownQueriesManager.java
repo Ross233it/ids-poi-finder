@@ -10,5 +10,10 @@ public class DownQueriesManager extends QueriesManager{
         this.queries.add("DROP TABLE IF EXISTS poi_details");
         this.queries.add("DROP TABLE IF EXISTS pois");
         this.queries.add("DROP TABLE IF EXISTS users");
+        this.queries.add("DROP TABLE IF EXISTS activities");
+        this.queries.add("DROP TABLE IF EXISTS pois_activities");
+        this.queries.add("DROP TABLE IF EXISTS contests");
+        this.queries.add("DROP TABLE IF EXISTS itineraries");
+
     }
 }

@@ -2,7 +2,6 @@ package org.models.activities;
 
 import org.models.Content;
 import org.models.poi.IPoi;
-import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 
 /**
@@ -15,14 +14,14 @@ public abstract class Activity extends Content {
     private String status;
 
     private RegisteredUser author;
-    private RegisteredUser validator;
+    private RegisteredUser approver;
 
 
     public Activity(String name, String description, RegisteredUser author) {
         this.name = name;
         this.description = description;
         this.author = author;
-        this.validator = null;
+        this.approver = null;
         this.status = "pending";
     }
 
@@ -36,7 +35,7 @@ public abstract class Activity extends Content {
 
     public void setAuthor(RegisteredUser author) { this.author = author;}
 
-    public void setValidator(RegisteredUser validator) { this.validator = validator; }
+    public void setValidator(RegisteredUser approver) { this.approver = approver; }
 
     /** getters **/
 
@@ -63,7 +62,7 @@ public abstract class Activity extends Content {
 
     public RegisteredUser getAuthor() { return author; }
 
-    public RegisteredUser getValidator() { return validator; }
+    public RegisteredUser getValidator() { return approver; }
 
     public abstract void addPoi(IPoi poi);
 

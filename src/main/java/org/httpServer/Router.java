@@ -40,7 +40,8 @@ public class Router {
 
     /**
      * Definisce tutte le rotte raggiungibili nella piattaforma ed il relativo
-     * handler - presente nelle classi Controller.
+     * handler -
+     * Ogni controller può personalizzare le sue rotte definendo il proprio setup.
      * @param prefix il prefisso della rotta - "api" in questo contesto
      */
     private void setUpRoutes(String prefix){
@@ -50,7 +51,9 @@ public class Router {
         this.addRoute("/"+prefix+"/user",            factory.createController("RegisteredUserController"));
         this.addRoute("/"+prefix+"/user/set-role",   factory.createController("RegisteredUserController"));
         this.addRoute("/"+prefix+"/user/login",      factory.createController("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/activity",        factory.createController("ActivityController"));
         this.addRoute("/"+prefix+"/migrate",         new MigrationsController());
     }
+
 }
 

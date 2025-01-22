@@ -29,7 +29,7 @@ public class MunicipalityService extends Service<Municipality> {
                 );
         municipality.setGeoLocation(geoLocation);
         try {
-            this.repository.create(municipality);
+            this.repository.create(municipality, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

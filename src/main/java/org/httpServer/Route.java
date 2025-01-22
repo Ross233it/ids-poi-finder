@@ -7,8 +7,15 @@ import com.sun.net.httpserver.HttpHandler;
  * tramite richieste http.
  */
 public class Route {
+
+    /**
+     * L'end point della rotta
+     */
     private String path;
 
+    /**
+     * Il metodo che gestisce le richieste sulla rotta
+     */
     private HttpHandler handler;
 
     /**

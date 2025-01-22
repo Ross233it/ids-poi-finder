@@ -4,7 +4,6 @@ import org.httpServer.HttpResponses;
 import org.httpServer.HttpUtilities;
 import org.models.users.IUser;
 import org.models.users.RegisteredUser;
-import org.repositories.RegisteredUserRepository;
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
@@ -37,9 +36,6 @@ public class RegisteredUserController extends Controller<IUser> {
         }
     }
 
-    public void checkUser(){}
-
-
     /**
      * Gestisce la richiesta di impostazione nuovo ruolo per un utente.
      * @throws Exception
@@ -66,6 +62,7 @@ public class RegisteredUserController extends Controller<IUser> {
      * Gestisce la richiesta di eliminazione di un utente
      * @throws IOException
      */
+
     public void delete() throws IOException {
         try {
             int id = HttpUtilities.getQueryId(this.requestPath);
@@ -88,42 +85,42 @@ public class RegisteredUserController extends Controller<IUser> {
      * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
      * @throws IOException
      */
-    @Override
-    protected void handleRoutes(String method) throws IOException {
-        switch (method) {
-            case "GET":
-                int id = HttpUtilities.getQueryId(this.requestPath);
-                if(id > 0) {
-                    try {
-                        this.show(id);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                else
-                    this.index();
-                break;
-            case "POST":
-                if(this.requestPath.equals("/api/user/login")) {
-                    try {
-                        this.login(); break;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                this.create(); break;
 
-            case "PATCH":
-                if(this.requestPath.equals("/api/user/set-role")) {
-                    try {
-                        this.setRole(); break;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                this.update(); break;
-            case "DELETE": this.delete(); break;
-            default:       this.index();
+    @Override
+    protected void handleGetCalls() throws IOException {
+        int id = HttpUtilities.getQueryId(this.requestPath);
+        if(id > 0) {
+            try {
+                this.show(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+        else
+            this.index();
+    }
+
+    @Override
+    protected void handlePostCalls()throws IOException{
+        if(this.requestPath.equals("/api/user/login")) {
+            try {
+                this.login();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }else
+            this.create();
+    }
+
+    @Override
+    protected void handlePatchCalls() throws IOException{
+        if(this.requestPath.equals("/api/user/set-role")) {
+            try {
+                this.setRole();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }else
+            this.update();
     }
 }

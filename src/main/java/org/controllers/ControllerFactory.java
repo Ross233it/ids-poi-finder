@@ -25,6 +25,8 @@ public class ControllerFactory {
                 return new PoiController();
             case "MunicipalityController":
                 return new MunicipalityController();
+            case "ActivityController":
+                return new ActivityController();
             default:
                 return null;
         }

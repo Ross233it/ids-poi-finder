@@ -3,6 +3,7 @@ package org.repositories;
 import org.httpServer.DbConnectionManager;
 import org.httpServer.DbUtilities;
 import org.models.Content;
+import org.models.activities.Activity;
 
 import java.sql.*;
 import java.util.*;
@@ -32,6 +33,17 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
         String data = DbUtilities.mapDbDataToJson(resultSet);
         connection.close();
         return data;
+    }
+
+    @Override
+    public D create(D entity, String query) throws Exception {
+        if (entity == null) {
+            throw new IllegalArgumentException("L'entity non può essere null.");
+        }
+        Object[] data = entity.getData();
+        long entityId = DbUtilities.executeQuery(query, data);
+        entity.setId(entityId);
+        return entity;
     }
 
     /**

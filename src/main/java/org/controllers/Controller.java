@@ -1,48 +1,17 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.AuthUtilities;
-import org.httpServer.DbUtilities;
+import org.httpServer.HttpRequestHandler;
 import org.httpServer.HttpResponses;
 import org.httpServer.HttpUtilities;
-import org.models.users.RegisteredUser;
-import org.repositories.RegisteredUserRepository;
 import org.services.IService;
-import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.util.Map;
 
-public abstract class Controller<T> implements IController {
-
-    protected String requestPath;
-
-    protected IService service;
-
-    protected HttpExchange exchange;
-
-    protected RegisteredUser currentUser;
+public abstract class Controller<T>  extends HttpRequestHandler implements IController<T> {
 
     public Controller(IService service) {
         this.service = service;
-    }
-
-    /**
-     * Questo metodo ha la responsabilità di gestire le richieste http in arrivo
-     * @param exchange
-     * @throws IOException
-     */
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        this.requestPath = exchange.getRequestURI().getPath();
-        this.exchange = exchange;
-        String method = exchange.getRequestMethod();
-        String accessToken = AuthUtilities.getAccessToken(exchange);
-        if(accessToken != null && accessToken != ""){
-            RegisteredUserService userService = new RegisteredUserService();
-            this.currentUser = userService.getByAccessToken(accessToken);
-        }
-        this.handleRoutes(method);
     }
 
     @Override
@@ -123,31 +92,41 @@ public abstract class Controller<T> implements IController {
         }
     }
 
-
     /**
-     * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
+     * Gestisce i differenti endpoint per le request http di tipo GET
      * @throws IOException
      */
-    protected void handleRoutes(String method) throws IOException {
+    protected void handleGetCalls() throws IOException {
         int id = HttpUtilities.getQueryId(this.requestPath);
-        switch (method.toUpperCase()) {
-            case "GET":
-                if( id > 0)
-                    this.show(id);
-                else
-                    this.index();
-                break;
-            case "POST":
-                this.create();
-                break;
-            case "PATCH":
-                this.update();
-                break;
-            case "DELETE":
-                this.delete(id);
-                break;
-            default:
-                this.index();
-        }
+        if( id > 0)
+            this.show(id);
+        else
+            this.index();
+    }
+
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo POST
+     * @throws IOException
+     */
+    protected void handlePostCalls()throws IOException{
+            this.create();
+    }
+
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo PATCH
+     * @throws IOException
+     */
+    protected void handlePatchCalls() throws IOException{
+        this.update();
+    }
+
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo DELETE
+     * @throws IOException
+     */
+    protected void handleDeleteCalls() throws IOException{
+        int id = HttpUtilities.getQueryId(this.requestPath);
+        if( id > 0)
+            this.delete(id);
     }
 }

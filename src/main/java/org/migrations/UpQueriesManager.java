@@ -111,5 +111,43 @@ public class UpQueriesManager extends QueriesManager{
                 "publisher_id INT UNSIGNED" +
                 ");"
         );
+
+        //Activities
+        this.queries.add("CREATE TABLE activities (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "name VARCHAR(255) NOT NULL," +
+                "description VARCHAR(255) NOT NULL," +
+                "type VARCHAR(30) NOT NULL," +
+                "status VARCHAR(30) NOT NULL DEFAULT 'pending'," +
+                "author_id INT NOT NULL,"+
+                "approver_id INT NOT NULL"+
+                ");"
+        );
+
+        /** Poi Activities pivot **/
+        this.queries.add(
+                "CREATE TABLE pois_activities ("+
+                "id INT AUTO_INCREMENT PRIMARY KEY,"+
+                "poi_id INT,"+
+                "activity_id INT"+
+                ");"
+        );
+        /** Contests **/
+        this.queries.add(
+                "CREATE TABLE contests ( " +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "begin_date DATE NOT NULL," +
+                "end_date DATE NOT NULL," +
+                "rules JSON NOT NULL," +
+                "activity_id INT NOT NULL," +
+                ") ENGINE=InnoDB;"
+        );
+
+        /** Itineraries **/
+        this.queries.add(
+                "CREATE TABLE itineraries ( " +
+                        "id INT AUTO_INCREMENT PRIMARY KEY," +
+                        "date DATE NOT NULL)"
+        );
     }
 }

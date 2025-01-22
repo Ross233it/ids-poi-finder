@@ -12,18 +12,9 @@ import java.io.IOException;
  * @param <O>
  */
 public interface IController<O> extends HttpHandler {
-
-/**
- * Questo metodo si occupa di gestire le richieste http in arrivo
- * e di fornire una risposta al chiamante.
- * @param exchange
- * @throws IOException
- */
-   void handle(HttpExchange exchange) throws IOException;
-   void index()        throws IOException;
+   void index()         throws IOException;
    void show(long id)   throws IOException;
-   void create()       throws IOException;
-   void update()       throws IOException;
+   void create()        throws IOException;
+   void update()        throws IOException;
    void delete(long id) throws IOException;
-
 }

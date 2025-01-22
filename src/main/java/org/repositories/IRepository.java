@@ -35,7 +35,7 @@ public interface IRepository<D extends Content> {
      * @return
      * @throws Exception
      */
-    D  create(D entity) throws Exception;
+    D  create(D entity, String query) throws Exception;
 
     /**
      * Aggiorna un elemento esistente
