@@ -18,11 +18,6 @@ public class RegisteredUserService extends Service<RegisteredUser> {
        super(new RegisteredUserRepository("users"));
     }
 
-    @Override
-    public String index() {
-        return "";
-    }
-
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
      * fornisce una password criptata e un salt per i futuri token di autenticazione.
@@ -36,7 +31,7 @@ public class RegisteredUserService extends Service<RegisteredUser> {
         RegisteredUser user = this.buildEntity(objectData);
         user.setSalt(salt);
         try {
-            this.repository.create(user);
+            this.repository.create(user, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -63,6 +58,19 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             }
             else
                 return "";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Effettua il logout di un utente invalidando il token di accesso.
+     * @param user
+     */
+    public void logout(RegisteredUser user) {
+        try {
+            user.setAccessToken(null);
+            ((RegisteredUserRepository) this.repository).saveAccessToken(null, user.getUsername());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,8 +104,10 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             int userId = (int) data.get("id");
             String newRole = (String) data.get("role");
             RegisteredUser user = this.getObjectById(userId);
-                           user.setRole(newRole);
-                           user.setId(userId);
+            if(user == null)
+                return null;
+            user.setRole(newRole);
+            user.setId(userId);
             ((RegisteredUserRepository) this.repository).setRole(user);
             return user;
         } catch (Exception e) {

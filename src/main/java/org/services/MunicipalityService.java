@@ -13,11 +13,6 @@ public class MunicipalityService extends Service<Municipality> {
         super(repository);
     }
 
-    @Override
-    public String index() {
-        return "";
-    }
-
     public Municipality create(Map<String, Object> objectData)throws Exception{
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService(new GeoLocationRepository("geolocations"));

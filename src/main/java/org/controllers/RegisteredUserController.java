@@ -4,6 +4,7 @@ import org.httpServer.HttpResponses;
 import org.httpServer.HttpUtilities;
 import org.models.users.IUser;
 import org.models.users.RegisteredUser;
+
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
@@ -31,6 +32,22 @@ public class RegisteredUserController extends Controller<IUser> {
                 HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
             else
                 HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+    }
+
+    /**
+     * Gestisce la richiesta di logout
+     * @throws Exception
+     */
+    public void logout() throws Exception{
+        try {
+            if(this.currentUser != null){
+                ((RegisteredUserService) this.service).logout(this.currentUser);
+                HttpResponses.success(this.exchange, "Logout effettuato");
+            }else
+                HttpResponses.error(this.exchange, 404, "Nessun utente loggato");
         } catch (Exception e) {
             HttpResponses.error(this.exchange, 500, e.getMessage());
         }
@@ -85,17 +102,18 @@ public class RegisteredUserController extends Controller<IUser> {
      * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
      * @throws IOException
      */
-
     @Override
     protected void handleGetCalls() throws IOException {
         int id = HttpUtilities.getQueryId(this.requestPath);
-        if(id > 0) {
+        if (this.requestPath.equals("/api/user/set-role")
+                && this.currentUser.hasRole("platformAdmin")) {
             try {
-                this.show(id);
+                this.setRole();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
+        } else if (id > 0)
+            this.show(id);
         else
             this.index();
     }
@@ -105,6 +123,13 @@ public class RegisteredUserController extends Controller<IUser> {
         if(this.requestPath.equals("/api/user/login")) {
             try {
                 this.login();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if(this.requestPath.equals("/api/user/logout")) {
+            try {
+                this.logout();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

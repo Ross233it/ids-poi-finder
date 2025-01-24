@@ -20,19 +20,12 @@ public class PoiRepository extends Repository<Poi> {
     }
 
     @Override
-    public Poi create(Poi poi) throws Exception {
-        if (poi == null) {
-            throw new IllegalArgumentException("L'entity non può essere null.");
-        }
-        long geolocationId  = poi.getGeoLocation().getId();
-        long municipalityId = poi.getMunicipality().getId();
-
-        List<String> columns = Arrays.asList("name", "description", "is_logical", "status", "geolocation_id", "municipality_id");
-        Object[] data = poi.getData();
-        Object[] newData = Arrays.copyOf(data, data.length + 2);
-        newData[newData.length - 2] = geolocationId;
-        newData[newData.length - 1] = municipalityId;
-        super.insert(columns, newData);
+    public Poi create(Poi poi , String query) throws Exception {
+        query = "INSERT INTO "
+                + this.tableName +
+                " (name, description, type, status, is_logical, municipality_id, geolocation_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        super.create(poi, query);
         return poi;
     }
 

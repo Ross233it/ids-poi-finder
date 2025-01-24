@@ -3,7 +3,6 @@ package org.httpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.models.users.RegisteredUser;
-import org.services.IService;
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
@@ -14,8 +13,6 @@ import java.io.IOException;
  */
 public abstract class HttpRequestHandler implements HttpHandler {
     protected String requestPath;
-
-    protected IService service;
 
     protected HttpExchange exchange;
 

@@ -12,6 +12,8 @@ public class Poi extends  IPoi {
 
     private String  description;
 
+    private String  type;
+
     private Boolean isLogical = false;
 
     private Municipality municipality = null;
@@ -52,8 +54,11 @@ public class Poi extends  IPoi {
     public Object[] getData(){ return new Object[] {
             this.name,
             this.description,
+            this.type,
+            this.status,
             this.isLogical,
-            this.status
+            this.municipality.getId(),
+            this.geoLocation.getId()
         };
     }
 

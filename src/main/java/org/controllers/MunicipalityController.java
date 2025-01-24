@@ -20,7 +20,6 @@ public class MunicipalityController extends Controller<Municipality> {
      */
     @Override
     public void show(long id) throws IOException {
-        if(this.currentUser.hasRole("platformAdmin")){
         try {
             Municipality item = (Municipality) this.service.getObjectById(id);
             if(item == null)
@@ -35,8 +34,6 @@ public class MunicipalityController extends Controller<Municipality> {
             HttpResponses.error(this.exchange, 500, e.getMessage());
             }
         }
-        else
-            HttpResponses.error(this.exchange, 403, "Non hai i permessi per visualizzare questa risorsa");
-    }
+
 }
 

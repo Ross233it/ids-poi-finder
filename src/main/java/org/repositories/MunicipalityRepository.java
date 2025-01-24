@@ -1,11 +1,6 @@
 package org.repositories;
 
-import org.httpServer.DbUtilities;
 import org.models.Municipality;
-
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 public class MunicipalityRepository extends Repository<Municipality> {
 

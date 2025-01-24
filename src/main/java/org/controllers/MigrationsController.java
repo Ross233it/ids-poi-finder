@@ -18,7 +18,8 @@ import java.util.ArrayList;
 /**
  * Questa classe si occupa di gestire le migrazioni del database. Si attiva tramite
  * una richiesta http
- * E' una classe di servizio per strutturare il database in modo automatico senza l'ausilio di orm o framework.
+ * E' una classe di servizio per strutturare il database in modo automatico
+ * senza l'ausilio di orm o framework.
  */
 public class MigrationsController implements HttpHandler {
 

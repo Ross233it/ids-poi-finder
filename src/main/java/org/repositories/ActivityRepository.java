@@ -12,10 +12,10 @@ public class ActivityRepository extends Repository<Activity> {
     public Activity create(Activity activity, String query) throws Exception {
         query = "INSERT INTO "
                 + this.tableName +
-                "('name'," +
-                "'description'," +
-                "'type', " +
-                "'status', 'author_id', 'approver_id') VALUES (?, ?, ? ,? ,?, ?)";
+                "(name," +
+                "description," +
+                "type, " +
+                "status, author_id, approver_id) VALUES (?, ?, ? ,? ,?, ?)";
         return super.create(activity, query);
     }
 }

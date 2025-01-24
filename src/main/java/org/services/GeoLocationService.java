@@ -13,16 +13,6 @@ public class GeoLocationService  extends Service<GeoLocation> {
     }
 
     @Override
-    public String index() {
-        return "";
-    }
-
-    @Override
-    public GeoLocation delete(long id) throws Exception {
-        return null;
-    }
-
-    @Override
     protected GeoLocation buildEntity(Map<String, Object> geolocationData) {
         return new GeoLocation(
                 (String) geolocationData.get("address"),

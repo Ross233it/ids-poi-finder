@@ -1,6 +1,7 @@
 package org.services;
 
 import org.models.Content;
+import org.models.users.RegisteredUser;
 import org.repositories.Repository;
 
 import java.util.Map;
@@ -33,6 +34,22 @@ public class Service<D extends Content> implements IService<D> {
      */
     public D create(Map<String, Object> objectData) throws Exception {
         D entity = this.buildEntity(objectData);
+        try {
+            this.repository.create(entity, "");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
+
+    /**
+     * Crea un nuovo poi partendo da una serie di dati già validati
+     * @param objectData
+     * @return
+     */
+    public D create(Map<String, Object> objectData, RegisteredUser author) throws Exception {
+        D entity = this.buildEntity(objectData);
+        entity.setAuthor(author);
         try {
             this.repository.create(entity, "");
         } catch (Exception e) {

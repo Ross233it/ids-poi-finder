@@ -1,27 +1,28 @@
 package org.models.activities;
 
 import org.models.Content;
-import org.models.poi.IPoi;
 import org.models.users.RegisteredUser;
 
 /**
  * Questa classe astrae il concetto di attività intesa come contenuto volto a
  * promuovere l'interazione tra utenti o la partecipazione ad eventi.
  */
-public abstract class Activity extends Content {
+public class Activity extends Content {
     private String name;
     private String description;
     private String status;
+    private String type;
 
     private RegisteredUser author;
     private RegisteredUser approver;
 
 
-    public Activity(String name, String description, RegisteredUser author) {
+    public Activity(String name, String description, String type) {
         this.name = name;
         this.description = description;
-        this.author = author;
+        this.type = type;
         this.approver = null;
+        this.author = null;
         this.status = "pending";
     }
 
@@ -48,10 +49,16 @@ public abstract class Activity extends Content {
         return new Object[] {
             this.getName(),
             this.getDescription(),
+            this.getType(),
             this.getStatus(),
-            this.getAuthor(),
+            this.getAuthor().getId(),
             this.getValidator()
         };
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 
     public String getName() { return name;}
@@ -64,7 +71,6 @@ public abstract class Activity extends Content {
 
     public RegisteredUser getValidator() { return approver; }
 
-    public abstract void addPoi(IPoi poi);
+    public String getType() { return type; }
 
-    public abstract void removePoi(IPoi poi);
 }

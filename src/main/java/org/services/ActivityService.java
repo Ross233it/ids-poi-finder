@@ -1,6 +1,7 @@
 package org.services;
 
 import org.models.activities.Activity;
+import org.models.poi.IPoi;
 import org.repositories.Repository;
 
 import java.util.Map;
@@ -11,4 +12,21 @@ public class ActivityService  extends Service<Activity>{
         super(repository);
     }
 
+
+
+    /**
+     * Crea una nuova attività partendo da una serie di dati già validati
+     * @param objectData
+     * @return
+     */
+    @Override
+    protected Activity buildEntity(Map<String, Object> objectData)throws Exception{
+        Activity activity = new Activity(
+                (String) objectData.get("name"),
+                (String) objectData.get("description"),
+                (String) objectData.get("type")
+        );
+
+        return activity;
+    }
 }

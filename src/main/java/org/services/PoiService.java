@@ -1,5 +1,6 @@
 package org.services;
 
+import org.httpServer.HttpResponses;
 import org.models.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -34,8 +35,8 @@ public class PoiService extends Service<Poi> {
             if (poiData == null) {
                 return null;
             }else{
-                poiData = this.buidldMunicipality(poiData);
-                poiData = this.buildGeolocation(poiData);
+                poiData = this.addMunicipality(poiData);
+                poiData = this.addGeolocation(poiData);
                 return this.buildEntity(poiData);
             }
         } catch (Exception e) {
@@ -50,11 +51,13 @@ public class PoiService extends Service<Poi> {
      */
     @Override
     public Poi create(Map<String, Object> objectData) throws Exception {
-        objectData = this.buidldMunicipality(objectData);
-        objectData = this.buildGeolocation(objectData);
+        System.out.println("METODO SERVICE CREATE RAGGIUNTO");
+
+        objectData = this.addMunicipality(objectData);
+        objectData = this.addGeolocation(objectData);
         Poi poi = this.buildEntity(objectData);
         try {
-            this.repository.create(poi);
+            this.repository.create(poi, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -78,6 +81,8 @@ public class PoiService extends Service<Poi> {
                 geoLocation(geoLocation).
                 municipality(municipality).
                 build();
+        //TODO remove log
+        System.out.println("POI CREATO" + poi);
         return poi;
     }
 
@@ -88,15 +93,17 @@ public class PoiService extends Service<Poi> {
      * @return municipality oggetto Municipality
      * @throws Exception
      */
-    private Map<String, Object> buidldMunicipality(Map<String, Object> poiData) throws Exception {
+    private Map<String, Object> addMunicipality(Map<String, Object> poiData) throws Exception {
+
+        Integer municipalityId = (Integer) poiData.get("municipality_id");
 
         MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository("municipalities"));
-        Long municipalityId = (Long) poiData.get("municipality_id");
 
         if(municipalityId>0){
             Municipality municipality = municipalityService.getObjectById(municipalityId);
             poiData.put("municipality", municipality);
         }
+
         return poiData;
     }
 
@@ -107,16 +114,13 @@ public class PoiService extends Service<Poi> {
      * @return  geoLocation oggetto GeoLocation
      * @throws Exception
      */
-    private Map<String, Object> buildGeolocation(Map<String, Object> poiData) throws Exception {
+    private Map<String, Object> addGeolocation(Map<String, Object> poiData) throws Exception {
         GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
-        GeoLocation geoLocation = null;
+
         Map<String, Object> geoLoc = (Map<String, Object>) poiData.get("geoLocation");
-        Long geoLocationId = (Long) poiData.get("geolocation_id");
-        if(geoLocationId != null){
-            geoLocation = geoLocationService.getObjectById(geoLocationId);
-        }else if (geoLoc != null){
-            geoLocation = geoLocationService.create(geoLoc);
-        }
+
+        GeoLocation geoLocation = geoLocationService.create(geoLoc);
+        geoLoc.put("id", geoLocation.getId());
         poiData.put("geoLocation", geoLocation);
         return poiData;
     }

@@ -16,8 +16,8 @@ public class Experience extends Activity {
 
     private String date;
 
-    public Experience(String name, String description, RegisteredUser author) {
-        super(name, description, author);
+    public Experience(String name, String description, String type) {
+        super(name, description, type);
         this.poiSet = new HashSet<>();
     }
 
@@ -71,9 +71,9 @@ public class Experience extends Activity {
         return sb.toString();
     }
 
-    @Override
+
     public void addPoi(IPoi poi) { poiSet.add(poi); }
 
-    @Override
+
     public void removePoi(IPoi poi) { poiSet.remove(poi); }
 }

@@ -14,8 +14,8 @@ public class Itinerary extends Activity {
    
     private List<IPoi> poiList;
 
-    public Itinerary(String name, String description, RegisteredUser author) {
-        super(name, description, author);
+    public Itinerary(String name, String description,String type) {
+        super(name, description, type);
         this.poiList = new ArrayList<>();
     }
 
@@ -41,7 +41,7 @@ public class Itinerary extends Activity {
 
     /** Metodi aggiuntivi **/
 
-    @Override
+
     public void addPoi(IPoi poi) { poiList.add(poi); }
 
     public void removePoi(IPoi poi) { poiList.remove(poi); }

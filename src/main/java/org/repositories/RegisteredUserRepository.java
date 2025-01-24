@@ -3,11 +3,7 @@ package org.repositories;
 import org.httpServer.DbUtilities;
 import org.models.users.RegisteredUser;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +23,7 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
     public  Map<String, Object> getByUsername(String username) throws Exception {
             String query = "SELECT * FROM " + this.tableName + " WHERE username = ? OR email = ?";
             List<Map<String, Object>> data = DbUtilities.executeSelectQuery(query, new Object[]{username, username});
+            System.out.println(data.toString());
             if (!data.isEmpty()) {
                 return data.get(0);
             } else
@@ -65,13 +62,11 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      * @throws Exception
      */
     @Override
-    public RegisteredUser create(RegisteredUser user) throws Exception {
-        if (user == null) {
-            throw new IllegalArgumentException("L'entity non può essere null.");
-        }
-        List<String> columns = Arrays.asList("id", "username", "email", "password", "salt","role");
-        Object[] data = user.getData();
-        super.insert(columns, data);
+    public RegisteredUser create(RegisteredUser user, String query) throws Exception {
+        query = "INSERT INTO "
+                + this.tableName +
+                " (username, email, password, salt, role) VALUES (?, ?, ?, ?, ?)";
+        super.create(user, query);
         return user;
     }
 
@@ -86,7 +81,10 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
         String role = user.getRole();
         Object[] data = new Object[]{role, id};
         String query = "UPDATE " + this.tableName + " SET role = ? WHERE id = ?";
-        DbUtilities.executeQuery(query, data);
+
+        int result = DbUtilities.executeQuery(query, data);
+        if(result == 0)
+            return null;
         return user;
     }
 }

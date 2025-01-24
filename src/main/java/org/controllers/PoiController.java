@@ -62,4 +62,17 @@ public class PoiController extends Controller<Poi> {
         } else
             HttpResponses.error(this.exchange,401, "Non Autorizzato" );
     }
+
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo POST
+     * @throws IOException
+     */
+    @Override
+    protected void handlePostCalls()throws IOException{
+        String[] roles = {"platformAdmin","contributor","authContributor"};
+        if(this.currentUser.hasRole(roles))
+            this.create();
+        else
+            HttpResponses.error(this.exchange, 401, "Non autorizzato");
+    }
 }

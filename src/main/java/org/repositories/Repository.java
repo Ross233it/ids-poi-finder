@@ -70,12 +70,6 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
             return null;
     }
 
-    /**
-     * Salva un nuovo elemento nello strato di persistenza
-     * @param  columns nomi delle colonne nella tabella
-     * @param  data    valori da inserire nelle colonne
-     * @throws Exception
-     */
     protected void insert(List<String> columns, Object ...data) throws Exception {
         String columnNames  = String.join(", ", columns);
         String placeholders = String.join(", ", columns.stream().map(col -> "?").toList());

@@ -15,8 +15,8 @@ public class Contest extends Activity{
 
     private List<IPoi> poiList;
 
-    public Contest(String name, String description, RegisteredUser author) {
-        super(name, description, author);
+    public Contest(String name, String description, String type) {
+        super(name, description, type);
     }
 
     @Override
@@ -53,10 +53,8 @@ public class Contest extends Activity{
     public List<IPoi> getPoiList() { return poiList; }
 
 
-    @Override
     public void addPoi(IPoi poi) { poiList.add(poi); }
 
-    @Override
     public void removePoi(IPoi poi) { poiList.add(poi); }
 
     public void addRule(String rule) { rules.add(rule); }

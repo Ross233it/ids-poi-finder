@@ -49,7 +49,7 @@ public class Municipality extends Content {
                 this.getName(),
                 this.getRegion(),
                 this.getProvince(),
-                this.getGeoLocation().getData(),
+                this.getGeoLocation().getId(),
         };
     }
 

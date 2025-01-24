@@ -10,6 +10,8 @@ import java.util.Map;
 
 public abstract class Controller<T>  extends HttpRequestHandler implements IController<T> {
 
+    protected IService service;
+
     public Controller(IService service) {
         this.service = service;
     }
@@ -39,7 +41,7 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
 
             T newItem = (T) this.service.create(data);
 
-            if(null != newItem) {
+            if(newItem != null) {
                 HttpResponses.success(this.exchange, "Record creato con successo");
             }else
                 HttpResponses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
@@ -125,8 +127,12 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
      * @throws IOException
      */
     protected void handleDeleteCalls() throws IOException{
-        int id = HttpUtilities.getQueryId(this.requestPath);
-        if( id > 0)
-            this.delete(id);
+        if(this.currentUser.hasRole("platformAdmin")) {
+            int id = HttpUtilities.getQueryId(this.requestPath);
+            if (id > 0)
+                this.delete(id);
+        }else{
+            HttpResponses.error(this.exchange, 500, "Non disponi dei permessi necessari per questa operazione");
+        }
     }
 }

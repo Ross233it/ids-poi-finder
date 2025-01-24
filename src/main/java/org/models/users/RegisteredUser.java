@@ -34,10 +34,10 @@ public class RegisteredUser extends Content implements IUser {
     public String getSalt()     { return salt; }
     public String getToken()    { return this.accessToken; }
     public Object[]getData()    { return new Object[] {
-            this.getId(),
             this.getUsername(),
             this.getEmail(),
-            this.getToken(),
+            this.getPassword(),
+            this.getSalt(),
             this.getRole()
         };
     }
@@ -61,6 +61,18 @@ public class RegisteredUser extends Content implements IUser {
      */
     public Boolean hasRole(String role) {
         return this.role.equals(role);
+    }
+
+    /**
+     * Verifica se un utente ha uno dei ruoli passati come parametro
+     * @param roles
+     * @return
+     */
+    public Boolean hasRole(String[] roles) {
+        for(String role : roles)
+            if(this.role.equals(role))
+                return true;
+        return false;
     }
 
 
