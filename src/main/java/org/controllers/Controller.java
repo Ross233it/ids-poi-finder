@@ -52,6 +52,34 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
 
 
     /**
+     * Gestisce la richiesta di aggiornamento di una specifica risorsa.
+     * @throws IOException
+     */
+    @Override
+    public void update() throws IOException {
+        int id = HttpUtilities.getQueryId(this.requestPath);
+        System.out.println("ID: " + id);
+        if (id <= 0) {
+            HttpResponses.error(this.exchange, 404, "Record non trovato");
+            return;
+        }
+        try{
+            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+
+            T newItem = (T) this.service.update(id, data);
+
+            if(newItem != null) {
+                HttpResponses.success(this.exchange, "Record creato con successo");
+            }else
+                HttpResponses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
+        }catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
+
+
+    }
+
+    /**
      * Gestisce una richiesta di ricerca attraverso un parametro inviato nella
      * richiesta http come query string.
      * @throws IOException
@@ -92,12 +120,6 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
     }
 
 
-    /**
-     * Gestisce la richiesta di aggiornamento di una specifica risorsa.
-     * @throws IOException
-     */
-    @Override
-    public void update() throws IOException {    }
 
     /**
      * Gestisce la richiesta di eliminazione di una specifica risorsa.

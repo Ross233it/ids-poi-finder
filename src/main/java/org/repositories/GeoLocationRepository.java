@@ -1,7 +1,5 @@
 package org.repositories;
 
-
-import org.httpServer.DbUtilities;
 import org.models.GeoLocation;
 
 public class GeoLocationRepository extends Repository<GeoLocation> {

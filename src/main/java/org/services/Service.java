@@ -60,6 +60,23 @@ public class Service<D extends Content> implements IService<D> {
         return entity;
     }
 
+    /**
+     * Aggiorna un oggetto partendo da una serie di dati già validati
+     * @param objectData
+     * @return
+     */
+    @Override
+    public D update(long id, Map<String, Object> objectData) throws Exception {
+        D entity = this.buildEntity(objectData);
+        entity.setId(id);
+        try {
+            this.repository.update(entity, "");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
+
 
     /**
      * Crea un oggetto sulla base delle informazioni recuperate dallo strato di persistenza.

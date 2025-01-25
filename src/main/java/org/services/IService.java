@@ -11,6 +11,8 @@ public interface IService<D extends Content>{
 
     D create(Map<String, Object> data, RegisteredUser author) throws Exception;
 
+    D update(long id, Map<String, Object> data) throws Exception;
+
     D getObjectById(long id) throws Exception;
 
     D delete(long id) throws Exception;

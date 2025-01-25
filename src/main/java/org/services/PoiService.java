@@ -1,9 +1,11 @@
 package org.services;
 
+import org.httpServer.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
 import org.models.poi.PoiBuilder;
+import org.models.users.RegisteredUser;
 import org.repositories.GeoLocationRepository;
 import org.repositories.MunicipalityRepository;
 import org.repositories.PoiRepository;
@@ -49,11 +51,12 @@ public class PoiService extends Service<Poi> {
      * @return
      */
     @Override
-    public Poi create(Map<String, Object> objectData) throws Exception {
+    public Poi create(Map<String, Object> objectData, RegisteredUser author) throws Exception {
         System.out.println("METODO SERVICE CREATE RAGGIUNTO");
 
         objectData = this.addMunicipality(objectData);
         objectData = this.addGeolocation(objectData);
+        System.out.println("DATI: " + objectData);
         Poi poi = this.buildEntity(objectData);
         try {
             this.repository.create(poi, "");
@@ -92,15 +95,16 @@ public class PoiService extends Service<Poi> {
      */
     private Map<String, Object> addMunicipality(Map<String, Object> poiData) throws Exception {
 
-        Integer municipalityId = (Integer) poiData.get("municipality_id");
-
+//        Integer municipalityId = (Integer) poiData.get("municipality_id");
+        Integer municipalityId = ((Long) poiData.get("municipality_id")).intValue();
         MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository("municipalities"));
 
         if(municipalityId>0){
             Municipality municipality = municipalityService.getObjectById(municipalityId);
             poiData.put("municipality", municipality);
         }
-
+        else
+            return null;
         return poiData;
     }
 

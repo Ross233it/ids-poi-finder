@@ -55,6 +55,17 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
     }
 
     /**
+     * Aggiorna un elemento della tabella
+     * @param entity l'oggetto da aggiornare
+     * @param query la query da eseguire per l'aggiornamento
+     * @return D entity l'oggetto aggiornato
+     * @throws Exception
+     */
+    public D update(D entity, String query) throws Exception {
+       return this.create(entity, query);
+    }
+
+    /**
      * Ritorna un elemento della tabella in base all'id
      * @param id long l'id dell'elemento da cercare
      * @param query string la query di ricerca

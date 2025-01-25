@@ -1,12 +1,6 @@
 package org.repositories;
 
 import org.models.poi.Poi;
-import org.models.users.RegisteredUser;
-
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Ha la responsabilità di gestire la persistenza dei dati in relazione ai Point of Interest.
@@ -30,7 +24,16 @@ public class PoiRepository extends Repository<Poi> {
     }
 
     @Override
-    public Poi update(Poi entity) throws SQLException {
-        return entity;
+    public Poi update(Poi poi, String query) throws Exception {
+        long poiId = poi.getId();
+        query = "UPDATE " + this.tableName + " " +
+                "SET name = ?, " +
+                "description = ?, " +
+                "type = ?, " +
+                "status = ?, " +
+                "is_logical = ?, " +
+                "WHERE id = ?";
+        super.update(poi, query);
+        return poi;
     }
 }

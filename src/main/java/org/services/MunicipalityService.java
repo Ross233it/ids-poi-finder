@@ -9,12 +9,9 @@ import java.util.Map;
 
 public class MunicipalityService extends Service<Municipality> {
 
-
     public MunicipalityService(MunicipalityRepository repository) {
         super(repository);
     }
-
-
 
     public Municipality create(Map<String, Object> objectData, RegisteredUser currentUser)throws Exception{
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
@@ -35,7 +32,7 @@ public class MunicipalityService extends Service<Municipality> {
         return municipality;
     }
 
-
+//todo refactor with builder
     @Override
     protected Municipality buildEntity(Map<String, Object> objectData)throws Exception{
         Municipality municipality = new Municipality(
