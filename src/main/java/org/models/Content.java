@@ -4,7 +4,7 @@ import org.models.users.RegisteredUser;
 
 /**
  * Astrae il concetto di contenuto, inteso come dato o informazione
- * consultabile all'interno del sistema.
+ * consultabile all'interno del sistema inserito da un autore ed approvato da un responsabile.
  */
 public abstract  class Content implements IModel {
     private long id;

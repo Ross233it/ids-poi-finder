@@ -88,6 +88,7 @@ public class RegisteredUserService extends Service<RegisteredUser> {
                 return null;
             RegisteredUser user = this.buildEntity(userData);
             user.setAccessToken(token);
+            user.setId((int) userData.get("id"));
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);

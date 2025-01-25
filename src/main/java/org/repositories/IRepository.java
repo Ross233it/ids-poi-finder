@@ -52,4 +52,13 @@ public interface IRepository<D extends Content> {
      * @throws Exception
      */
     int  delete(D entity)   throws SQLException;
+
+    /**
+     * Ricerca un elemento in base ad una query ed un parametro di ricerca
+     * @param query
+     * @param searchTerm
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> search(String query, String searchTerm) throws Exception;
 }

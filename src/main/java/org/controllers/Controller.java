@@ -39,7 +39,7 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
         try{
             Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
 
-            T newItem = (T) this.service.create(data);
+            T newItem = (T) this.service.create(data, this.currentUser);
 
             if(newItem != null) {
                 HttpResponses.success(this.exchange, "Record creato con successo");
@@ -48,6 +48,29 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
         }catch (Exception e) {
             HttpResponses.error(this.exchange, 500, e.getMessage());
         }
+    }
+
+
+    /**
+     * Gestisce una richiesta di ricerca attraverso un parametro inviato nella
+     * richiesta http come query string.
+     * @throws IOException
+     */
+    public void search() throws IOException {
+        String fullPath = this.exchange.getRequestURI().toString();
+        String queryStringSearchTerm = HttpUtilities.getQueryString(fullPath);
+        if(queryStringSearchTerm != ""){
+            try {
+                T item = (T) service.search(queryStringSearchTerm);
+                if(item == null)
+                    HttpResponses.error(this.exchange, 404, "Record non trovato");
+                else
+                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(item));
+            } catch (Exception e) {
+                HttpResponses.error(this.exchange, 500, e.getMessage());
+            }
+        }else
+            HttpResponses.error(this.exchange, 404, "Impossibile trovare risultati");
     }
 
     /**
@@ -100,8 +123,11 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
      */
     protected void handleGetCalls() throws IOException {
         int id = HttpUtilities.getQueryId(this.requestPath);
+        String queryStringSearchTerm = HttpUtilities.getQueryString(this.exchange.getRequestURI().toString());
         if( id > 0)
             this.show(id);
+        else if(queryStringSearchTerm != "")
+            this.search();
         else
             this.index();
     }

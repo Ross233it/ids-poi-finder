@@ -48,6 +48,8 @@ public class Service<D extends Content> implements IService<D> {
      * @return
      */
     public D create(Map<String, Object> objectData, RegisteredUser author) throws Exception {
+        if(author == null)
+            throw new IllegalArgumentException("L'autore non può essere null");
         D entity = this.buildEntity(objectData);
         entity.setAuthor(author);
         try {
@@ -58,6 +60,20 @@ public class Service<D extends Content> implements IService<D> {
         return entity;
     }
 
+
+    /**
+     * Crea un oggetto sulla base delle informazioni recuperate dallo strato di persistenza.
+     * @param query il termine di ricerca per la query
+     * @return D l'oggetto creato | null altrimenti.
+     * @throws Exception
+     */
+    public D search(String query) throws Exception {
+        Map<String, Object> entityData = this.repository.search("", query);
+        if(entityData == null)
+            return null;
+        D entity = this.buildEntity(entityData);
+        return entity;
+    }
     /**
      * Ritorna un oggetto in base all'id e ai dati recuperati dallo strato di persistenza.
      * @param id

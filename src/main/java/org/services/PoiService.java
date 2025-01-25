@@ -1,7 +1,6 @@
 package org.services;
 
-import org.httpServer.HttpResponses;
-import org.models.Municipality;
+import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
 import org.models.poi.PoiBuilder;
@@ -81,8 +80,6 @@ public class PoiService extends Service<Poi> {
                 geoLocation(geoLocation).
                 municipality(municipality).
                 build();
-        //TODO remove log
-        System.out.println("POI CREATO" + poi);
         return poi;
     }
 

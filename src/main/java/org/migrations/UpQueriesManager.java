@@ -75,19 +75,21 @@ public class UpQueriesManager extends QueriesManager{
                 "name VARCHAR(255) NOT NULL, " +
                 "province VARCHAR(255) NOT NULL, " +
                 "region VARCHAR(255) NOT NULL, " +
-                "geolocation_id INT UNSIGNED " +
+                "geolocation_id INT UNSIGNED, " +
+                "author_id INT UNSIGNED NOT NULL DEFAULT 0," +
+                "approver_id INT UNSIGNED NOT NULL DEFAULT 0" +
                 ");"
         );
 
         //Municipalities content
-        this.queries.add("INSERT INTO municipalities (name, province, region, geolocation_id)"+
+        this.queries.add("INSERT INTO municipalities (name, province, region, geolocation_id, author_id, approver_id)"+
                 "VALUES"+
-                "('Comune di Senigallia', 'AN', 'Marche', 1)," +
-                "('Comune di Ancona', 'AN', 'Marche', 2)," +
-                "('Comune di Jesi', 'AN', 'Marche',3)," +
-                "('Comune di Mondavio', 'PU', 'Marche',4)," +
-                "('Comune di Falconara Marittima','AN', 'Marche', 5)," +
-                "('Comune di Pesaro','PU', 'Marche', 6)"
+                "('Comune di Senigallia', 'AN', 'Marche', 1, 1,0)," +
+                "('Comune di Ancona', 'AN', 'Marche', 2,1,0)," +
+                "('Comune di Jesi', 'AN', 'Marche',3,1,0)," +
+                "('Comune di Mondavio', 'PU', 'Marche',4,1,0)," +
+                "('Comune di Falconara Marittima','AN', 'Marche', 5,1,0)," +
+                "('Comune di Pesaro','PU', 'Marche', 6,1,0)"
         );
         //Roles
         this.queries.add("CREATE TABLE IF NOT EXISTS roles (" +
@@ -107,8 +109,8 @@ public class UpQueriesManager extends QueriesManager{
                 "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
                 "municipality_id INT UNSIGNED," +
                 "geolocation_id INT UNSIGNED," +
-                "author_id INT UNSIGNED," +
-                "publisher_id INT UNSIGNED" +
+                "author_id INT UNSIGNED NOT NULL DEFAULT 0," +
+                "approver_id INT UNSIGNED NOT NULL DEFAULT 0" +
                 ");"
         );
 
@@ -119,8 +121,8 @@ public class UpQueriesManager extends QueriesManager{
                 "description VARCHAR(255) NOT NULL," +
                 "type VARCHAR(30) NOT NULL," +
                 "status VARCHAR(30) NOT NULL DEFAULT 'pending'," +
-                "author_id INT NOT NULL,"+
-                "approver_id INT NOT NULL"+
+                "author_id INT NOT NULL DEFAULT 0,"+
+                "approver_id INT NOT NULL default 0"+
                 ");"
         );
 
@@ -139,8 +141,8 @@ public class UpQueriesManager extends QueriesManager{
                 "begin_date DATE NOT NULL," +
                 "end_date DATE NOT NULL," +
                 "rules JSON NOT NULL," +
-                "activity_id INT NOT NULL," +
-                ") ENGINE=InnoDB;"
+                "activity_id INT NOT NULL" +
+                ")"
         );
 
         /** Itineraries **/

@@ -1,8 +1,7 @@
 package org.models.poi;
 
 import org.models.Content;
-import org.models.IModel;
-import org.models.Municipality;
+import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 
 /**

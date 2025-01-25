@@ -1,4 +1,4 @@
-package org.example;
+package org.main;
 
 import org.httpServer.DbConnectionManager;
 import org.httpServer.Server;

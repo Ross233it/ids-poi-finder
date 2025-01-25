@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -46,21 +47,22 @@ public class HttpUtilities {
         return 0;
     }
 
-    /**
-     * Estrae il token dalla header della richiesta.
-     * @param exchange
-     * @return Il token se presente, null altrimenti.
-     */
-    public static String getRequestToken(HttpExchange exchange) {
-        Map<String, List<String>> headers = exchange.getRequestHeaders();
-        List<String> authHeader = headers.get("Authorization");
 
-        if (authHeader != null && !authHeader.isEmpty()) {
-            String headerValue = authHeader.get(0);
-            if (headerValue.startsWith("Bearer ")) {
-                return headerValue.substring(7);
-            }
+    /**
+     * Estrae il parametro di ricerca da una url origine di richiesta http
+     * @param requestPath
+     * @return String la stringa di ricerca
+     */
+    public static String getQueryString(String requestPath){
+        String[] segments = requestPath.split("\\?", 2);
+        if (segments.length < 2) {
+            return "";
         }
-        return null;
+        String[] keyValue = segments[1].split("=",2);
+        if(keyValue.length > 1 && "search".equals(keyValue[0])){
+            return keyValue[1];
+        }
+        return "";
     }
+
 }

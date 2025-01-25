@@ -1,7 +1,7 @@
 package org.controllers;
 
 import org.httpServer.HttpResponses;
-import org.models.Municipality;
+import org.models.municipalities.Municipality;
 import org.repositories.MunicipalityRepository;
 import org.services.MunicipalityService;
 
@@ -34,6 +34,19 @@ public class MunicipalityController extends Controller<Municipality> {
             HttpResponses.error(this.exchange, 500, e.getMessage());
             }
         }
+
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo POST
+     * @throws IOException
+     */
+    @Override
+    protected void handlePostCalls()throws IOException{
+        String[] roles = {"platformAdmin","contributor","authContributor"};
+        if(this.currentUser.hasRole(roles))
+            this.create();
+        else
+            HttpResponses.error(this.exchange, 401, "Non autorizzato");
+    }
 
 }
 

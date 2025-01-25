@@ -1,5 +1,7 @@
-package org.models;
+package org.models.municipalities;
 
+import org.models.Content;
+import org.models.GeoLocation;
 import org.models.poi.IPoi;
 
 import java.util.ArrayList;
@@ -25,6 +27,10 @@ public class Municipality extends Content {
         this.name = name;
         this.geoLocation = geoLocation;
         this.pois = new ArrayList<>();
+    }
+
+    public Municipality(MunicipalityBuilder municipalityBuilder) {
+        super();
     }
 
     /**

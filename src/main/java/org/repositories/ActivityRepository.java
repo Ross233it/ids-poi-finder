@@ -15,7 +15,9 @@ public class ActivityRepository extends Repository<Activity> {
                 "(name," +
                 "description," +
                 "type, " +
-                "status, author_id, approver_id) VALUES (?, ?, ? ,? ,?, ?)";
+                "status, " +
+                "author_id, " +
+                "approver_id) VALUES (?, ?, ? ,? ,?, ?)";
         return super.create(activity, query);
     }
 }

@@ -1,6 +1,6 @@
 package org.models.poi;
 
-import org.models.Municipality;
+import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;

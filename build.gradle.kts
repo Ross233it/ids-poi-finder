@@ -21,5 +21,5 @@ tasks.test {
     useJUnitPlatform()
 }
 application {
-    mainClass.set("org.example.Main")
+    mainClass.set("org.main.Main")
 }

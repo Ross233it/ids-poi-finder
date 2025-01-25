@@ -1,13 +1,14 @@
 package org.repositories;
 
-import org.models.Municipality;
+import org.models.municipalities.Municipality;
+
+import java.util.Map;
 
 public class MunicipalityRepository extends Repository<Municipality> {
 
     public MunicipalityRepository(String tableName) {
         super("municipalities");
     }
-
 
     @Override
     public Municipality create(Municipality municipality, String query) throws Exception {
@@ -17,6 +18,25 @@ public class MunicipalityRepository extends Repository<Municipality> {
 
         return super.create(municipality, query);
     }
+
+    @Override
+    public Map<String, Object> search(String query, String queryStringSearchTerm) throws Exception {
+
+        query = "SELECT * FROM " + this.tableName + " AS CT " +
+                "JOIN users AS U on U.id = CT.author_id " +
+                "JOIN geolocations AS G on G.id = CT.geolocation_id "+
+                "WHERE name LIKE ? ;";
+
+        queryStringSearchTerm = queryStringSearchTerm.replace("22", "").trim();
+        System.out.println("queryStringSearchTerm: " + queryStringSearchTerm);
+//        queryStringSearchTerm = queryStringSearchTerm.replace("\'", "").trim();
+//        queryStringSearchTerm = queryStringSearchTerm.replace("22", "").trim();
+//        queryStringSearchTerm = "%"+queryStringSearchTerm+"%";
+        return super.search(query, queryStringSearchTerm);
+    }
+
+
+
 }
 
 

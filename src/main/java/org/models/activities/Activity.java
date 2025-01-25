@@ -51,8 +51,8 @@ public class Activity extends Content {
             this.getDescription(),
             this.getType(),
             this.getStatus(),
-            this.getAuthor().getId(),
-            this.getValidator()
+            this.getAuthorId(),
+            this.getValidatorId()
         };
     }
 
@@ -70,6 +70,26 @@ public class Activity extends Content {
     public RegisteredUser getAuthor() { return author; }
 
     public RegisteredUser getValidator() { return approver; }
+
+    /**
+     * Ritorna l'id dell'autore dell'attività
+     * @return long l'id dell'autore
+     */
+    public long getAuthorId() {
+        if(author == null)
+            return 0;
+        return author.getId();
+    }
+
+    /**
+     * Ritorna l'id dell'utente che ha validato il contenuto
+     * @return long l'id del validatore
+     */
+    public long getValidatorId(){
+        if(approver == null)
+            return 0;
+        return approver.getId();
+    }
 
     public String getType() { return type; }
 
