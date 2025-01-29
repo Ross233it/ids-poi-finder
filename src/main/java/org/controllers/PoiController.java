@@ -8,7 +8,7 @@ import org.services.PoiService;
 import java.io.IOException;
 import java.util.Map;
 
-public class PoiController extends Controller<Poi> {
+public class PoiController extends Controller<Poi, PoiService> {
 
     public  PoiController() {
         super(new PoiService(new PoiRepository("pois")));
@@ -22,18 +22,12 @@ public class PoiController extends Controller<Poi> {
     @Override
     public void show(long id) throws IOException {
         try {
-            Poi item = (Poi) this.service.getObjectById(id);
+            PoiService poiService= (PoiService) this.service;
+            Poi item = poiService.getObjectById(id);
             if(item == null)
                 HttpResponses.error(this.exchange, 404, "Record non trovato");
             else{
-                String poiData = HttpResponses.objectToJson(item);
-                String geolocationData  =  HttpResponses.objectToJson(item.getGeoLocation());
-                String municipalityData  = HttpResponses.objectToJson(item.getMunicipality());
-                String combinedJson = "{"
-                        + poiData
-                        + ", \"geoLocation\": "  + geolocationData
-                        + ", \"municipality\": " + municipalityData
-                        +"}";
+                String combinedJson = poiService.printPoi(item);
                 HttpResponses.success(this.exchange, combinedJson);
             }
         } catch (Exception e) {
@@ -67,6 +61,7 @@ public class PoiController extends Controller<Poi> {
      * Gestisce i differenti endpoint per le request http di tipo POST
      * @throws IOException
      */
+
     @Override
     protected void handlePostCalls()throws IOException{
         String[] roles = {"platformAdmin","contributor","authContributor"};

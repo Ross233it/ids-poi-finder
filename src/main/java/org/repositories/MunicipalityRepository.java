@@ -19,6 +19,7 @@ public class MunicipalityRepository extends Repository<Municipality> {
         return super.create(municipality, query);
     }
 
+
     @Override
     public Map<String, Object> search(String query, String queryStringSearchTerm) throws Exception {
 
@@ -26,16 +27,9 @@ public class MunicipalityRepository extends Repository<Municipality> {
                 "JOIN users AS U on U.id = CT.author_id " +
                 "JOIN geolocations AS G on G.id = CT.geolocation_id "+
                 "WHERE name LIKE ? ;";
-
-        queryStringSearchTerm = queryStringSearchTerm.replace("22", "").trim();
-        System.out.println("queryStringSearchTerm: " + queryStringSearchTerm);
-//        queryStringSearchTerm = queryStringSearchTerm.replace("\'", "").trim();
-//        queryStringSearchTerm = queryStringSearchTerm.replace("22", "").trim();
-//        queryStringSearchTerm = "%"+queryStringSearchTerm+"%";
+        queryStringSearchTerm = "%"+queryStringSearchTerm+"%";
         return super.search(query, queryStringSearchTerm);
     }
-
-
 
 }
 

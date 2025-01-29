@@ -1,7 +1,5 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 
 /**
@@ -10,7 +8,7 @@ import java.io.IOException;
  * e l'interfaccia utente.
  * @param <O>
  */
-public interface IController<O> extends HttpHandler {
+public interface IController<O>{
    void index()         throws IOException;
    void show(long id)   throws IOException;
    void create()        throws IOException;

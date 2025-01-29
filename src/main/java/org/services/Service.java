@@ -91,6 +91,7 @@ public class Service<D extends Content> implements IService<D> {
         D entity = this.buildEntity(entityData);
         return entity;
     }
+
     /**
      * Ritorna un oggetto in base all'id e ai dati recuperati dallo strato di persistenza.
      * @param id
@@ -99,7 +100,7 @@ public class Service<D extends Content> implements IService<D> {
      */
     @Override
     public D getObjectById(long id) throws Exception {
-        Map<String, Object> entityData =  this.repository.getById(id, "");
+        Map<String, Object> entityData =  this.repository.getById(id, null);
         if(entityData == null)
             return null;
         D entity = this.buildEntity(entityData);

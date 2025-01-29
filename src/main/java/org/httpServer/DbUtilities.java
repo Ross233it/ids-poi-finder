@@ -26,13 +26,12 @@ public class DbUtilities {
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject(i + 1, params[i]);
             }
-            //todo remove logs
+
             System.out.println("Eseguendo query: " + query);
             System.out.println("Parametri: " + java.util.Arrays.toString(params));
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-            //todo remove logs
             System.out.println("Righe interessate: " + rowsAffected);
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -49,7 +48,7 @@ public class DbUtilities {
             System.out.println("Chiudo la connessione al database");
             connection.close();
         }
-        return 1;
+        return 0;
     }
 
     /**

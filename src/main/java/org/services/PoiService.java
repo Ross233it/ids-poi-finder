@@ -10,6 +10,8 @@ import org.repositories.GeoLocationRepository;
 import org.repositories.MunicipalityRepository;
 import org.repositories.PoiRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +34,7 @@ public class PoiService extends Service<Poi> {
     @Override
     public Poi getObjectById(long id) throws Exception {
         try {
-            Map<String, Object> poiData = ((PoiRepository) this.repository).getById(id, "");
+            Map<String, Object> poiData = ((PoiRepository) this.repository).getById(id, null);
             if (poiData == null) {
                 return null;
             }else{
@@ -52,8 +54,6 @@ public class PoiService extends Service<Poi> {
      */
     @Override
     public Poi create(Map<String, Object> objectData, RegisteredUser author) throws Exception {
-        System.out.println("METODO SERVICE CREATE RAGGIUNTO");
-
         objectData = this.addMunicipality(objectData);
         objectData = this.addGeolocation(objectData);
         System.out.println("DATI: " + objectData);
@@ -143,5 +143,49 @@ public class PoiService extends Service<Poi> {
             }
         }
         return null;
+    }
+
+
+
+
+    /**
+     * Ritorna tutti i Poi di un determinato comune
+     * @param id l'id del comune di interesse
+     * @return ArrayList<Poi> lista di Poi
+     */
+    public ArrayList<Poi> getByMunicipalityId(Long id) throws Exception {
+        ArrayList<Poi> pois = new ArrayList<>();
+        List<Map<String, Object>> data = ((PoiRepository) this.repository).getByMunicipalityId(id);
+        for (Map<String, Object> poiData : data) {
+            try {
+//                poiData = this.addMunicipality(poiData);
+//                poiData = this.addGeolocation(poiData);
+                Poi poi = this.buildEntity(poiData);
+                poi.setMunicipality(null);
+                poi.setGeoLocation(null);
+                pois.add(poi);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return pois;
+    }
+
+
+    /**
+     * Stampa un oggetto Poi in formato Json
+     * @param poi
+     * @return
+     */
+    public String printPoi(Poi poi) throws IllegalAccessException {
+        String poiData = HttpResponses.objectToJson(poi);
+        String geolocationData  =  HttpResponses.objectToJson(poi.getGeoLocation());
+        String municipalityData  = HttpResponses.objectToJson(poi.getMunicipality());
+        String combinedJson = "{"
+                + poiData
+                + ", \"geoLocation\": "  + geolocationData
+                + ", \"municipality\": " + municipalityData
+                +"}";
+        return combinedJson;
     }
 }

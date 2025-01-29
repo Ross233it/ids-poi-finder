@@ -1,20 +1,39 @@
 package org.controllers;
 
+import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.HttpRequestHandler;
 import org.httpServer.HttpResponses;
 import org.httpServer.HttpUtilities;
+import org.models.users.RegisteredUser;
 import org.services.IService;
 
 import java.io.IOException;
 import java.util.Map;
 
-public abstract class Controller<T>  extends HttpRequestHandler implements IController<T> {
+public abstract class Controller<T, S extends IService>  implements IController<T> {
 
-    protected IService service;
+    protected S service;
 
-    public Controller(IService service) {
+    protected HttpRequestHandler httpRequestHandler;
+
+    protected HttpExchange exchange;
+
+    protected String requestPath;
+
+    protected RegisteredUser currentUser;
+
+
+    public Controller(S service) {
         this.service = service;
+        this.exchange    = this.httpRequestHandler.getExchange();
+        this.currentUser = this.httpRequestHandler.getCurrentUser();
+        this.requestPath = this.httpRequestHandler.getRequestPath();
     }
+
+    public void setHttpRequestHandler(HttpRequestHandler handler) {
+        this.httpRequestHandler = handler;
+    }
+
 
     @Override
     public void index() throws IOException {
@@ -75,8 +94,6 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
         }catch (Exception e) {
             HttpResponses.error(this.exchange, 500, e.getMessage());
         }
-
-
     }
 
     /**
@@ -139,48 +156,5 @@ public abstract class Controller<T>  extends HttpRequestHandler implements ICont
         }
     }
 
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo GET
-     * @throws IOException
-     */
-    protected void handleGetCalls() throws IOException {
-        int id = HttpUtilities.getQueryId(this.requestPath);
-        String queryStringSearchTerm = HttpUtilities.getQueryString(this.exchange.getRequestURI().toString());
-        if( id > 0)
-            this.show(id);
-        else if(queryStringSearchTerm != "")
-            this.search();
-        else
-            this.index();
-    }
 
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo POST
-     * @throws IOException
-     */
-    protected void handlePostCalls()throws IOException{
-            this.create();
-    }
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo PATCH
-     * @throws IOException
-     */
-    protected void handlePatchCalls() throws IOException{
-        this.update();
-    }
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo DELETE
-     * @throws IOException
-     */
-    protected void handleDeleteCalls() throws IOException{
-        if(this.currentUser.hasRole("platformAdmin")) {
-            int id = HttpUtilities.getQueryId(this.requestPath);
-            if (id > 0)
-                this.delete(id);
-        }else{
-            HttpResponses.error(this.exchange, 500, "Non disponi dei permessi necessari per questa operazione");
-        }
-    }
 }

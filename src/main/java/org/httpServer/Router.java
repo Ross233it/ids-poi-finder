@@ -45,13 +45,14 @@ public class Router {
      * @param prefix il prefisso della rotta - "api" in questo contesto
      */
     private void setUpRoutes(String prefix){
-        ControllerFactory factory = new ControllerFactory();
-        this.addRoute("/"+prefix+"/poi" ,            factory.createController("PoiController"));
-        this.addRoute("/"+prefix+"/municipality",    factory.createController("MunicipalityController"));
-        this.addRoute("/"+prefix+"/user",            factory.createController("RegisteredUserController"));
-        this.addRoute("/"+prefix+"/user/set-role",   factory.createController("RegisteredUserController"));
-        this.addRoute("/"+prefix+"/user/login",      factory.createController("RegisteredUserController"));
-        this.addRoute("/"+prefix+"/activity",        factory.createController("ActivityController"));
+        HttpHandlerFactory factory = new HttpHandlerFactory();
+//        "/api/user/set-role"
+        this.addRoute("/"+prefix+"/poi" ,            factory.createHandler("PoiController"));
+        this.addRoute("/"+prefix+"/municipality",    factory.createHandler("MunicipalityController"));
+        this.addRoute("/"+prefix+"/user",            factory.createHandler("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/user/set-role",   factory.createHandler("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/user/login",      factory.createHandler("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/activity",        factory.createHandler("ActivityController"));
         this.addRoute("/"+prefix+"/migrate",         new MigrationsController());
     }
 

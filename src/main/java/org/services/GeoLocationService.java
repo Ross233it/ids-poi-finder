@@ -12,6 +12,7 @@ public class GeoLocationService  extends Service<GeoLocation> {
         super(repository);
     }
 
+
     @Override
     protected GeoLocation buildEntity(Map<String, Object> geolocationData) {
         return new GeoLocation(

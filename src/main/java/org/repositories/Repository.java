@@ -4,6 +4,7 @@ import org.httpServer.DbConnectionManager;
 import org.httpServer.DbUtilities;
 import org.models.Content;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
@@ -68,25 +69,20 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
     /**
      * Ritorna un elemento della tabella in base all'id
      * @param id long l'id dell'elemento da cercare
-     * @param query string la query di ricerca
      * @return Map<String, Object<String,>> le informazioni dell'elemento ricercato
      * @throws Exception
      */
     @Override
-    public Map<String, Object> getById(long id, String query) throws Exception {
-        Connection connection = dbConnectionManager.openConnection();
-        if(query == null || query.isEmpty())
+    public Map<String, Object> getById(long id, String query) throws IOException, SQLException {
+        if(query == null)
             query = "SELECT * FROM " + this.tableName + " WHERE id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-                          preparedStatement.setLong(1, id);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<Map<String, Object>> data = DbUtilities.mapDbDataToList(resultSet);
-        if (!data.isEmpty()) {
-            Map<String, Object> objectData = (Map<String, Object>) data.get(0);
-            connection.close();
+        Object[] data = new Object[]{id};
+        List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
+        if (!resultSet.isEmpty()) {
+            Map<String, Object> objectData = (Map<String, Object>) resultSet.get(0);
             return objectData;
-        } else
-            return null;
+          }
+        return null;
     }
 
     /**
@@ -96,10 +92,10 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      * @return
      * @throws Exception
      */
+    @Override
     public Map<String, Object> search(String query, String searchTerm) throws Exception{
         Object[] data = new Object[]{searchTerm};
         List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
-        System.out.println("RISULTATO DELLA RICERCA: " + resultSet);
         if (!resultSet.isEmpty()) {
             Map<String, Object> objectData = (Map<String, Object>) resultSet.get(0);
             return objectData;

@@ -2,7 +2,9 @@ package org.httpServer;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.controllers.Controller;
 import org.models.users.RegisteredUser;
+import org.services.IService;
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
@@ -11,12 +13,35 @@ import java.io.IOException;
  * Questa classe astratta ha la responsabilità di gestire ed indirizzare le chiamatte http
  * in arrivo, richiamando i metodi corretti in base al tipo di richiesta.
  */
-public abstract class HttpRequestHandler implements HttpHandler {
+public class HttpRequestHandler implements HttpHandler {
+
     protected String requestPath;
 
     protected HttpExchange exchange;
 
     protected RegisteredUser currentUser;
+
+    protected Controller controller;
+
+
+    public HttpRequestHandler(Controller controller){
+        this.controller = controller;
+        this.controller.setHttpRequestHandler(this);
+    }
+
+    /** getters **/
+    public String getRequestPath() {
+        return requestPath;
+    }
+
+    public HttpExchange getExchange() {
+        return exchange;
+    }
+
+    public RegisteredUser getCurrentUser() {
+        return currentUser;
+    }
+
     /**
      * Questo metodo ha la responsabilità di gestire le richieste http in arrivo
      * @param exchange
@@ -54,7 +79,7 @@ public abstract class HttpRequestHandler implements HttpHandler {
                 this.handleDeleteCalls();
                 break;
             default:
-                this.index();
+                this.controller.index();
         }
     }
 
@@ -62,14 +87,48 @@ public abstract class HttpRequestHandler implements HttpHandler {
      * Gestisce i differenti endpoint per le request http di tipo GET
      * @throws IOException
      */
-    protected abstract void handleGetCalls() throws IOException;
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo GET
+     * @throws IOException
+     */
+    protected void handleGetCalls() throws IOException {
+        int id = HttpUtilities.getQueryId(this.requestPath);
+        String queryStringSearchTerm = HttpUtilities.getQueryString(this.exchange.getRequestURI().toString());
+        if( id > 0)
+            this.controller.show(id);
+        else if(queryStringSearchTerm != "")
+            this.controller.search();
+        else
+            this.controller.index();
+    }
 
-    protected abstract void handlePostCalls() throws IOException;
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo POST
+     * @throws IOException
+     */
+    protected void handlePostCalls()throws IOException{
+        this.controller.create();
+    }
 
-    protected abstract void handlePatchCalls() throws IOException;
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo PATCH
+     * @throws IOException
+     */
+    protected void handlePatchCalls() throws IOException{
+        this.controller.update();
+    }
 
-    protected abstract void handleDeleteCalls() throws IOException;
-
-    protected abstract void index() throws IOException;
-
+    /**
+     * Gestisce i differenti endpoint per le request http di tipo DELETE
+     * @throws IOException
+     */
+    protected void handleDeleteCalls() throws IOException{
+        if(this.currentUser.hasRole("platformAdmin")) {
+            int id = HttpUtilities.getQueryId(this.requestPath);
+            if (id > 0)
+                this.controller.delete(id);
+        }else{
+            HttpResponses.error(this.exchange, 500, "Non disponi dei permessi necessari per questa operazione");
+        }
+    }
 }

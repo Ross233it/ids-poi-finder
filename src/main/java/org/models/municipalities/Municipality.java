@@ -2,7 +2,7 @@ package org.models.municipalities;
 
 import org.models.Content;
 import org.models.GeoLocation;
-import org.models.poi.IPoi;
+import org.models.poi.Poi;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class Municipality extends Content {
 
     private GeoLocation geoLocation;
 
-    private ArrayList<IPoi> pois;
+    private ArrayList<Poi> pois;
 
     public Municipality(String name, String region, String province) {
         this.name = name;
@@ -65,7 +65,7 @@ public class Municipality extends Content {
 
     public String getRegion()        { return region;}
 
-    public ArrayList<IPoi> getPois() { return pois; }
+    public ArrayList<Poi> getPois() { return pois; }
 
     public GeoLocation getGeoLocation() { return this.geoLocation;}
 
@@ -78,16 +78,18 @@ public class Municipality extends Content {
         this.geoLocation = geoLocation;
     }
 
+    public void setPois(ArrayList<Poi> pois) { this.pois = pois; }
+
     /**
      * Aggiunge un punto di interesse alla lista
      * @param poi punto di interesse da aggiungere
      */
-    public void addPoi(IPoi poi) { this.pois.add(poi); }
+    public void addPoi(Poi poi) { this.pois.add(poi); }
 
     /**
      * Rimuove un punto di interesse dalla lista
      * @param poi punto di interesse da rimuovere
      */
-    public void removePoi(IPoi poi) { this.pois.remove(poi); }
+    public void removePoi(Poi poi) { this.pois.remove(poi); }
 
 }

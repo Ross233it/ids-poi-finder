@@ -1,13 +1,14 @@
 package org.controllers;
 
 import org.httpServer.HttpResponses;
+import org.models.activities.Activity;
 import org.models.poi.Poi;
 import org.repositories.ActivityRepository;
 import org.services.ActivityService;
 
 import java.io.IOException;
 
-public class ActivityController extends Controller<Poi> {
+public class ActivityController extends Controller<Activity, ActivityService> {
 
     public  ActivityController() {
         super(new ActivityService(new ActivityRepository("activities")));
