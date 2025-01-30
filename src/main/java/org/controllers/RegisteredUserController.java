@@ -26,14 +26,14 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void login() throws Exception {
         try {
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+            Map<String, Object> data = HttpResponses.getStreamData(this.httpRequestHandler.getExchange());
             String accessToken =  this.service.login(data);
             if(accessToken == null || accessToken == "")
-                HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
+                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Autenticazione fallita");
             else
-                HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
+                HttpResponses.success(this.httpRequestHandler.getExchange(), "{ accessToken: " + accessToken + " }" );
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
         }
     }
 
@@ -43,13 +43,13 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void logout() throws Exception{
         try {
-            if(this.currentUser != null){
-                this.service.logout(this.currentUser);
-                HttpResponses.success(this.exchange, "Logout effettuato");
+            if(this.httpRequestHandler.getCurrentUser() != null){
+                this.service.logout(this.httpRequestHandler.getCurrentUser());
+                HttpResponses.success(this.httpRequestHandler.getExchange(), "Logout effettuato");
             }else
-                HttpResponses.error(this.exchange, 404, "Nessun utente loggato");
+                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Nessun utente loggato");
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
         }
     }
 
@@ -58,21 +58,21 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      * @throws Exception
      */
     public void setRole() throws Exception{
-        if(this.currentUser != null && this.currentUser.hasRole("platformAdmin")){
+        if(this.httpRequestHandler.getCurrentUser() != null && this.httpRequestHandler.getCurrentUser().hasRole("platformAdmin")){
             try {
-                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                Map<String, Object> data = HttpResponses.getStreamData(this.httpRequestHandler.getExchange());
                 if(data.get("role") == null || data.get("id") == null)
-                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
+                    HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Dati mancanti");
                 RegisteredUser user = this.service.setRole(data);
                 if(user == null)
-                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
+                    HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Modifica fallita");
                 else
-                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
+                    HttpResponses.success(this.httpRequestHandler.getExchange(), HttpResponses.objectToJson(user));
             } catch (Exception e) {
-                    HttpResponses.error(this.exchange, 500, e.getMessage());
+                    HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
             }
         }else
-            HttpResponses.error(this.exchange, 401, "Operazione non autorizzata");
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 401, "Operazione non autorizzata");
     }
 
     /**
@@ -81,70 +81,18 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void delete() throws IOException {
         try {
-            int id = HttpUtilities.getQueryId(this.requestPath);
+            int id = HttpUtilities.getQueryId(this.httpRequestHandler.getRequestPath());
             if(id > 0) {
                 RegisteredUser deleted = this.service.delete(id);
                 if(deleted != null)
-                    HttpResponses.success(this.exchange, "Utente eliminato");
+                    HttpResponses.success(this.httpRequestHandler.getExchange(), "Utente eliminato");
                 else
-                    HttpResponses.error(this.exchange, 404, "Utente non trovato");
+                    HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Utente non trovato");
             }
             else
-                HttpResponses.error(this.exchange, 404, "Id non valido");
+                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Id non valido");
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
         }
     }
-
-
-    /**
-     * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
-     * @throws IOException
-     */
-//    @Override
-//    protected void handleGetCalls() throws IOException {
-//        int id = HttpUtilities.getQueryId(this.requestPath);
-//        if (this.requestPath.equals("/api/user/set-role")
-//                && this.currentUser.hasRole("platformAdmin")) {
-//            try {
-//                this.setRole();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        } else if (id > 0)
-//            this.show(id);
-//        else
-//            this.index();
-//    }
-
-//    @Override
-//    protected void handlePostCalls()throws IOException{
-//        if(this.requestPath.equals("/api/user/login")) {
-//            try {
-//                this.login();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        else if(this.requestPath.equals("/api/user/logout")) {
-//            try {
-//                this.logout();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }else
-//            this.create();
-//    }
-
-
-//    protected void handlePatchCalls() throws IOException{
-//        if(this.requestPath.equals("/api/user/set-role")) {
-//            try {
-//                this.setRole();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }else
-//            this.update();
-//    }
 }

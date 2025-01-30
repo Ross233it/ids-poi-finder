@@ -1,5 +1,6 @@
 package org.models.poi;
 
+import org.httpServer.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
@@ -34,13 +35,29 @@ public class Poi extends  IPoi {
         this.tags =        builder.getTags();
         this.categories =  builder.getCategories();
         this.status =      builder.getStatus();
+        this.setApprover(builder.getApprover());
+        this.setAuthor(builder.getAuthor());
     }
 
-
-    //todo implments toString
+    /**
+     * Restituisce una rappresentazione testuale dell'oggetto
+     * @return String rappresentazione testuale
+     */
     @Override
     public String toString() {
-        return "";
+        String poiString = "{ }";
+        try {
+            poiString = HttpResponses.objectToJson(this);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return "{" +
+                poiString +
+                "\"municipality\": " + (municipality != null ? municipality.toString() : "{ }") +
+                "\"geoLocation\": " + (geoLocation != null ? geoLocation.toString() : "{ }") +
+                "\"author\": " + (getAuthor() != null ? getAuthor().toString() : "{ }") +
+                "\"author\": " + (getApprover() != null ? getApprover().toString() : "{ }") +
+                "}";
     }
 
     /** getters **/
@@ -57,7 +74,9 @@ public class Poi extends  IPoi {
             this.status,
             this.isLogical,
             this.municipality.getId(),
-            this.geoLocation.getId()
+            this.geoLocation.getId(),
+            this.getAuthor().getId(),
+            this.getApprover().getId()
         };
     }
 
@@ -80,32 +99,4 @@ public class Poi extends  IPoi {
 
     public void setStatus(String status) { this.status = status; }
 
-
-
-    //todo remove and refactor this
-//    /** tags **/
-//    public List<Tag> getTags() {
-//        return this.tags;
-//    }
-//
-//    public void addTag(Tag tag) {
-//        this.tags.add(tag);
-//    }
-//
-//    public void removeTag(Tag tag) {
-//        this.tags.remove(tag);
-//    }
-//
-//    /** categories **/
-//    public List<Category> getCategories() {
-//        return this.categories;
-//    }
-//
-//    public void addCategory(Category category) {
-//        this.categories.add(category);
-//    }
-//
-//    public void removeCategory(Category category) {
-//        this.categories.remove(category);
-//    }
 }

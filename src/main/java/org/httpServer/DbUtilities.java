@@ -48,7 +48,7 @@ public class DbUtilities {
             System.out.println("Chiudo la connessione al database");
             connection.close();
         }
-        return 0;
+        return 1;
     }
 
     /**

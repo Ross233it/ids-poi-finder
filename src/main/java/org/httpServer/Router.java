@@ -46,12 +46,15 @@ public class Router {
      */
     private void setUpRoutes(String prefix){
         HttpHandlerFactory factory = new HttpHandlerFactory();
-//        "/api/user/set-role"
+
         this.addRoute("/"+prefix+"/poi" ,            factory.createHandler("PoiController"));
         this.addRoute("/"+prefix+"/municipality",    factory.createHandler("MunicipalityController"));
+
         this.addRoute("/"+prefix+"/user",            factory.createHandler("RegisteredUserController"));
         this.addRoute("/"+prefix+"/user/set-role",   factory.createHandler("RegisteredUserController"));
         this.addRoute("/"+prefix+"/user/login",      factory.createHandler("RegisteredUserController"));
+        this.addRoute("/"+prefix+"/user/logout",     factory.createHandler("RegisteredUserController"));
+
         this.addRoute("/"+prefix+"/activity",        factory.createHandler("ActivityController"));
         this.addRoute("/"+prefix+"/migrate",         new MigrationsController());
     }

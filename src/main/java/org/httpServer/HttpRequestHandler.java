@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.controllers.Controller;
 import org.models.users.RegisteredUser;
-import org.services.IService;
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.io.IOException;
  * Questa classe astratta ha la responsabilità di gestire ed indirizzare le chiamatte http
  * in arrivo, richiamando i metodi corretti in base al tipo di richiesta.
  */
-public class HttpRequestHandler implements HttpHandler {
+public class HttpRequestHandler<C extends Controller> implements HttpHandler {
 
     protected String requestPath;
 
@@ -21,25 +20,25 @@ public class HttpRequestHandler implements HttpHandler {
 
     protected RegisteredUser currentUser;
 
-    protected Controller controller;
+    protected C controller;
 
 
-    public HttpRequestHandler(Controller controller){
+    public HttpRequestHandler(C controller){
         this.controller = controller;
         this.controller.setHttpRequestHandler(this);
     }
 
     /** getters **/
     public String getRequestPath() {
-        return requestPath;
+        return this.requestPath;
     }
 
     public HttpExchange getExchange() {
-        return exchange;
+        return this.exchange;
     }
 
     public RegisteredUser getCurrentUser() {
-        return currentUser;
+        return this.currentUser;
     }
 
     /**
@@ -83,10 +82,6 @@ public class HttpRequestHandler implements HttpHandler {
         }
     }
 
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo GET
-     * @throws IOException
-     */
     /**
      * Gestisce i differenti endpoint per le request http di tipo GET
      * @throws IOException

@@ -20,10 +20,10 @@ public class ActivityController extends Controller<Activity, ActivityService> {
      */
     protected void handlePostCalls()throws IOException{
         String[] admittedRoles = {"platformAdmin", "contributor","authContributor", "animator"};
-        if(this.currentUser.hasRole(admittedRoles))
+        if(this.httpRequestHandler.getCurrentUser().hasRole(admittedRoles))
             super.create();
         else{
-            HttpResponses.error(this.exchange,401, "Non disponi dei permessi necessari" );
+            HttpResponses.error(this.httpRequestHandler.getExchange(),401, "Non disponi dei permessi necessari" );
         }
     }
 }

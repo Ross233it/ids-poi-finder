@@ -4,6 +4,7 @@ import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;
+import org.models.users.RegisteredUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ public class  PoiBuilder {
     private boolean        isLogical;
     private Municipality   municipality;
     private GeoLocation    geoLocation;
+    private RegisteredUser author;
+    private RegisteredUser approver;
     private List<Tag>      tags = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
     private String         status;
@@ -45,6 +48,16 @@ public class  PoiBuilder {
         return this;
     }
 
+    public PoiBuilder author(RegisteredUser author) {
+        this.author = author;
+        return this;
+    }
+
+    public PoiBuilder approver(RegisteredUser approver) {
+        this.approver = approver;
+        return this;
+    }
+
     public Poi build() {
         return new Poi(this);
     }
@@ -59,5 +72,7 @@ public class  PoiBuilder {
     public GeoLocation   getGeoLocation() { return geoLocation; }
     public List<Tag>     getTags()        { return tags; }
     public List<Category>getCategories()  { return categories; }
+    public RegisteredUser getAuthor()     {return author;}
+    public RegisteredUser getApprover()   {return approver;}
 }
 

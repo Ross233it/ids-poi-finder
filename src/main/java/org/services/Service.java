@@ -120,8 +120,6 @@ public class Service<D extends Content> implements IService<D> {
             return null;
     }
 
-
-
     protected D buildEntity(Map<String, Object> objectData)throws Exception
     {
         return null;

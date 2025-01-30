@@ -1,5 +1,7 @@
 package org.models;
 
+import org.httpServer.HttpResponses;
+
 public class GeoLocation extends Content {
 
     private double latitude;
@@ -42,19 +44,14 @@ public class GeoLocation extends Content {
      * @return Object[] array di oggetti
      */
     @Override
-    public Object[]  getData(){ return new Object[] {
+    public Object[]  getData(){
+        return new Object[] {
             this.getAddress(),
             this.getNumber(),
             this.getCap(),
             this.getLongitude(),
             this.getLatitude()
         };
-    }
-
-    @Override
-    public String toString() {
-        return String.format("GeoLocation{id=%d, address='%s', number='%s', cap='%s', latitude=%.2f, longitude=%.2f}",
-                getId(), address, number, cap, latitude, longitude);
     }
 
     /** getters **/

@@ -2,6 +2,7 @@ package org.services;
 
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
+import org.models.municipalities.MunicipalityBuilder;
 import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 import org.repositories.GeoLocationRepository;
@@ -22,18 +23,14 @@ public class MunicipalityService extends Service<Municipality> {
         Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
         GeoLocationService service = new GeoLocationService(new GeoLocationRepository("geolocations"));
         GeoLocation geoLocation = service.create(geoLoc);
-        Municipality municipality = new Municipality(
-                (String)  objectData.get("name"),
-                (String)  objectData.get("province"),
-                (String)  objectData.get("region")
-                );
+//        if(geoLocation)
+        Municipality municipality = this.buildEntity(objectData);
         municipality.setGeoLocation(geoLocation);
         try {
             this.repository.create(municipality, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        System.out.println(objectData);
         return municipality;
     }
 
@@ -52,18 +49,18 @@ public class MunicipalityService extends Service<Municipality> {
     }
 
 
-//todo refactor with builder
     @Override
     protected Municipality buildEntity(Map<String, Object> objectData)throws Exception{
-        Municipality municipality = new Municipality(
-                (String) objectData.get("name"),
-                (String) objectData.get("region"),
-                (String) objectData.get("province")
-        );
         GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
         Long geoLocationId = ((Long) objectData.get("geolocation_id"));
         GeoLocation geoLocation = geoLocationService.getObjectById(geoLocationId);
-        municipality.setGeoLocation(geoLocation);
+
+        Municipality municipality = new MunicipalityBuilder(
+                (String) objectData.get("name"),
+                (String) objectData.get("region"),
+                (String) objectData.get("province")
+        ).geoLocation(geoLocation)
+         .build();
         return municipality;
     }
 }

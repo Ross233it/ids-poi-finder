@@ -1,8 +1,10 @@
 package org.models.municipalities;
 
+import org.httpServer.HttpResponses;
 import org.models.Content;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
+
 
 import java.util.ArrayList;
 
@@ -11,26 +13,21 @@ public class Municipality extends Content {
     private String name;
     private String region;
     private String province;
+    private String status;
 
     private GeoLocation geoLocation;
 
     private ArrayList<Poi> pois;
 
-    public Municipality(String name, String region, String province) {
-        this.name = name;
-        this.region = region;
-        this.province = province;
-        this.pois = new ArrayList<>();
-    };
-
-    public Municipality(String name, GeoLocation geoLocation) {
-        this.name = name;
-        this.geoLocation = geoLocation;
-        this.pois = new ArrayList<>();
-    }
-
-    public Municipality(MunicipalityBuilder municipalityBuilder) {
-        super();
+    public Municipality(MunicipalityBuilder builder){
+        this.name = builder.getName();
+        this.region = builder.getRegion();
+        this.province = builder.getProvince();
+        this.status = builder.getStatus();
+        this.geoLocation = builder.getGeoLocation();
+        this.setAuthor(builder.getAuthor());
+        this.setApprover(builder.getApprover());
+        this.pois = builder.getPois();
     }
 
     /**
@@ -39,11 +36,17 @@ public class Municipality extends Content {
      */
     @Override
     public String toString() {
+        String municipalityString = "{ }";
+        try {
+            municipalityString = HttpResponses.objectToJson(this);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         return "{" +
-                "\"name\": \"" + name + "\"," +
-                "\"region\": \"" + region + "\"," +
-                "\"province\": \"" + province + "\"," +
-                "\"geoLocation\": " + (geoLocation != null ? geoLocation.toString() : "null") +
+                municipalityString +
+                "\"geoLocation\": " + (geoLocation != null ? geoLocation.toString() : "{ }") +
+                "\"author\": " + (getAuthor() != null ? getAuthor().toString() : "{ }") +
+                "\"author\": " + (getApprover() != null ? getApprover().toString() : "{ }") +
                 "}";
     }
 

@@ -1,5 +1,6 @@
 package org.models;
 
+import org.httpServer.HttpResponses;
 import org.models.users.RegisteredUser;
 
 /**
@@ -46,5 +47,11 @@ public abstract  class Content implements IModel {
      * @return
      */
     @Override
-    public abstract String toString();
+    public String toString(){
+        try {
+            return HttpResponses.objectToJson(this);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    };
 }

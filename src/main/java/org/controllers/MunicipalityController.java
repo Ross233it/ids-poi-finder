@@ -22,18 +22,19 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
      */
     @Override
     public void show(long id) throws IOException {
+        this.setHttpRequestHandler(this.httpRequestHandler);
         try {
             Municipality item =  this.service.getObjectById(id);
             if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
+                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Record non trovato");
             else{
                 String municipalityData = HttpResponses.objectToJson(item);
                 String geolocationData  = HttpResponses.objectToJson(item.getGeoLocation());
                 String combinedJson = "{" + municipalityData + ", \"geoLocation\": " + geolocationData + "}";
-                HttpResponses.success(this.exchange, combinedJson);
+                HttpResponses.success(this.httpRequestHandler.getExchange(), combinedJson);
             }
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
             }
         }
 
@@ -44,7 +45,7 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
             ArrayList<Poi> pois = item.getPois();
 
             if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
+                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Record non trovato");
             else{
                 String municipalityData = HttpResponses.objectToJson(item);
                 String poiJsonData = "";
@@ -56,39 +57,11 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
                 }
                 String combinedJson = "{" + municipalityData + ", \"pois\": [ " + poiJsonData + "]}";
 
-                HttpResponses.success(this.exchange, combinedJson);
+                HttpResponses.success(this.httpRequestHandler.getExchange(), combinedJson);
             }
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
         }
     }
-
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo POST
-     */
-    @Override
-    protected void handleGetCalls() throws IOException {
-        if (this.requestPath.equals("/api/municipality/pois")){
-            //todo rendere l'id dinamico
-            long id = 5;
-            if(id > 0){
-                this.getWithPois(id);
-            }
-        }
-        else
-            super.handleGetCalls();
-    }
-
-
-    @Override
-    protected void handlePostCalls()throws IOException{
-        String[] roles = {"platformAdmin","contributor","authContributor"};
-        if(this.currentUser.hasRole(roles))
-            this.create();
-        else
-            HttpResponses.error(this.exchange, 401, "Non autorizzato");
-    }
-
 }
 

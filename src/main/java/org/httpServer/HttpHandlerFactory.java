@@ -1,8 +1,9 @@
-package org.controllers;
+package org.httpServer;
 
-import org.httpServer.HttpRequestHandler;
-import org.models.users.RegisteredUser;
-import org.services.RegisteredUserService;
+import org.controllers.ActivityController;
+import org.controllers.MunicipalityController;
+import org.controllers.PoiController;
+import org.controllers.RegisteredUserController;
 
 public class HttpHandlerFactory {
 
@@ -24,13 +25,13 @@ public class HttpHandlerFactory {
     private HttpRequestHandler getHandler(String controllerName) {
         switch (controllerName) {
             case "RegisteredUserController":
-                return new HttpRequestHandler(new RegisteredUserController());
+                return new HttpUserRequestHandler(new RegisteredUserController());
             case "PoiController":
-                return new HttpRequestHandler(new PoiController());
+                return new HttpRequestHandler<PoiController>(new PoiController());
             case "MunicipalityController":
-                return new HttpRequestHandler(new MunicipalityController());
+                return new HttpRequestHandler<MunicipalityController>(new MunicipalityController());
             case "ActivityController":
-                return new HttpRequestHandler(new ActivityController());
+                return new HttpRequestHandler<ActivityController>(new ActivityController());
             default:
                 return null;
         }

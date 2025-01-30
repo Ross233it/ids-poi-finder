@@ -34,24 +34,13 @@ public class RegisteredUser extends Content implements IUser {
     public String getSalt()     { return salt; }
     public String getToken()    { return this.accessToken; }
     public Object[]getData()    { return new Object[] {
+            this.getId(),
             this.getUsername(),
             this.getEmail(),
             this.getPassword(),
             this.getSalt(),
             this.getRole()
         };
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "\"username\": \"" + username + "\"," +
-                "\"email\": \"" + email + "\"," +
-                "\"password\": \"" + password + "\"," +
-                "\"salt\": " + (salt != null ? "\"" + salt + "\"" : null) + "," +
-                "\"role\": " + (role != null ? "\"" + role + "\"" : null) + "," +
-                "\"accessToken\": " + (accessToken != null ? "\"" + accessToken + "\"" : null) +
-                "}";
     }
 
     /**
