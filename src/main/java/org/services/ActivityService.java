@@ -1,7 +1,6 @@
 package org.services;
 
 import org.models.activities.Activity;
-import org.models.poi.IPoi;
 import org.repositories.Repository;
 
 import java.util.Map;

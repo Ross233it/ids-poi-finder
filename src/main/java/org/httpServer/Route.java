@@ -16,16 +16,22 @@ public class Route {
     /**
      * Il metodo che gestisce le richieste sulla rotta
      */
-    private HttpHandler handler;
+    private String controllerName;
+
+    /**
+     * Il metodo eseguito quando viene richiamata la rotta
+     */
+    private String method;
 
     /**
      * Crea una nuova rotta
      * @param path il percorso da contattare per la richiesta
-     * @param handler il gestore http per la rotta.
+     * @param
      */
-    public Route(String path, HttpHandler handler) {
-            this.path = path;
-            this.handler = handler;
+    public Route(String path, String controllerName, String method) {
+            this.path       = path;
+            this.controllerName = controllerName;
+            this.method     = method;
     }
 
     /**
@@ -40,8 +46,14 @@ public class Route {
      * Ritorna l'handler correlato alla rotta
      * @return
      */
-    public HttpHandler getHandler() {
-        return handler;
+    public String getControllerName() { return controllerName; }
+
+    /**
+     * Ritorna l'endpoint della rotta
+     * @return String path
+     */
+    public String getMethod() {
+        return path;
     }
 }
 

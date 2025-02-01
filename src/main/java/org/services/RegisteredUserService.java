@@ -14,8 +14,8 @@ import java.util.Map;
 public class RegisteredUserService extends Service<RegisteredUser> {
 
 
-    public RegisteredUserService() {
-       super(new RegisteredUserRepository("users"));
+    public RegisteredUserService(RegisteredUserRepository repository) {
+       super(repository);
     }
 
     /**

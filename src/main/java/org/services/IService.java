@@ -9,7 +9,7 @@ public interface IService<D extends Content>{
 
     String index() ;
 
-    D create(Map<String, Object> data, RegisteredUser author) throws Exception;
+    D create(Map<String, Object> data) throws Exception;
 
     D update(long id, Map<String, Object> data) throws Exception;
 

@@ -1,8 +1,8 @@
 package org.controllers;
 
+import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.HttpResponses;
 import org.models.poi.Poi;
-import org.repositories.PoiRepository;
 import org.services.PoiService;
 
 import java.io.IOException;
@@ -10,9 +10,10 @@ import java.util.Map;
 
 public class PoiController extends Controller<Poi, PoiService> {
 
-    public  PoiController() {
-        super(new PoiService(new PoiRepository("pois")));
+    public  PoiController(PoiService service, HttpExchange exchange) {
+        super(service, exchange);
     }
+
 
     /**
      * Gestisce la richiesta http di visualizzazione di un poi e dei suoi dettagli
@@ -25,13 +26,13 @@ public class PoiController extends Controller<Poi, PoiService> {
             PoiService poiService= (PoiService) this.service;
             Poi item = poiService.getObjectById(id);
             if(item == null)
-                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Record non trovato");
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
             else{
                 String combinedJson = poiService.printPoi(item);
-                HttpResponses.success(this.httpRequestHandler.getExchange(), combinedJson);
+                HttpResponses.success(this.exchange, combinedJson);
             }
         } catch (Exception e) {
-            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
+            HttpResponses.error(this.exchange, 500, e.getMessage());
         }
     }
 
@@ -40,21 +41,18 @@ public class PoiController extends Controller<Poi, PoiService> {
      * @throws Exception
      */
     public void setStatus() throws Exception{
-        if(this.httpRequestHandler.getCurrentUser().hasRole("platformAdmin")){
             try {
-                Map<String, Object> data = HttpResponses.getStreamData(this.httpRequestHandler.getExchange());
+                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
                 if(data.get("status") == null || data.get("id") == null)
-                    HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Dati mancanti");
+                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
                 Poi poi = ((PoiService) this.service).setStatus(data);
                 if(poi == null)
-                    HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Modifica fallita");
+                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
                 else
-                    HttpResponses.success(this.httpRequestHandler.getExchange(), HttpResponses.objectToJson(poi));
+                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(poi));
             } catch (Exception e) {
-                HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
+                HttpResponses.error(this.exchange, 500, e.getMessage());
             }
-        } else
-            HttpResponses.error(this.httpRequestHandler.getExchange(),401, "Non Autorizzato" );
     }
 
     /**
@@ -68,6 +66,6 @@ public class PoiController extends Controller<Poi, PoiService> {
 //        if(this.currentUser.hasRole(roles))
 //            this.create();
 //        else
-//            HttpResponses.error(this.httpRequestHandler.getExchange(), 401, "Non autorizzato");
+//            HttpResponses.error(this.exchange, 401, "Non autorizzato");
 //    }
 }

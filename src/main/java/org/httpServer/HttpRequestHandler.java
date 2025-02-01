@@ -20,13 +20,11 @@ public class HttpRequestHandler<C extends Controller> implements HttpHandler {
 
     protected RegisteredUser currentUser;
 
-    protected C controller;
-
-
-    public HttpRequestHandler(C controller){
-        this.controller = controller;
-        this.controller.setHttpRequestHandler(this);
-    }
+//    protected C controller;
+//
+//    public HttpRequestHandler(C controller){
+//        this.controller = controller;
+//    }
 
     /** getters **/
     public String getRequestPath() {
@@ -41,6 +39,9 @@ public class HttpRequestHandler<C extends Controller> implements HttpHandler {
         return this.currentUser;
     }
 
+//    public C getController(){ return this.controller; }
+
+    private Router router;
     /**
      * Questo metodo ha la responsabilità di gestire le richieste http in arrivo
      * @param exchange
@@ -50,80 +51,83 @@ public class HttpRequestHandler<C extends Controller> implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         this.requestPath = exchange.getRequestURI().getPath();
         this.exchange = exchange;
-        String method = exchange.getRequestMethod();
-        String accessToken = AuthUtilities.getAccessToken(exchange);
-        if(accessToken != null && accessToken != ""){
-            RegisteredUserService userService = new RegisteredUserService();
-            this.currentUser = userService.getByAccessToken(accessToken);
-        }
-        this.handleRoutes(method);
+
+        String response = router.dispatch(this.requestPath, this.exchange);
+
+//        String method = exchange.getRequestMethod();
+//        String accessToken = AuthUtilities.getAccessToken(exchange);
+//        if(accessToken != null && accessToken != ""){
+//            RegisteredUserService userService = new RegisteredUserService();
+//            this.currentUser = userService.getByAccessToken(accessToken);
+//        }
+//        this.handleRoutes(method);
     }
 
     /**
      * Gestisce i comportamenti attivati dalle chiamate su specifiche rotte http
      * @throws IOException
      */
-    protected void handleRoutes(String method) throws IOException {
-        switch (method.toUpperCase()) {
-            case "GET":
-                this.handleGetCalls();
-                break;
-            case "POST":
-                this.handlePostCalls();
-                break;
-            case "PATCH":
-                this.handlePatchCalls();
-                break;
-            case "DELETE":
-                this.handleDeleteCalls();
-                break;
-            default:
-                this.controller.index();
-        }
-    }
+//    protected void handleRoutes(String method) throws IOException {
+//        switch (method.toUpperCase()) {
+//            case "GET":
+//                this.handleGetCalls();
+//                break;
+//            case "POST":
+//                this.handlePostCalls();
+//                break;
+//            case "PATCH":
+//                this.handlePatchCalls();
+//                break;
+//            case "DELETE":
+//                this.handleDeleteCalls();
+//                break;
+//            default:
+//                this.controller.index();
+//        }
+//    }
 
     /**
      * Gestisce i differenti endpoint per le request http di tipo GET
      * @throws IOException
      */
-    protected void handleGetCalls() throws IOException {
-        int id = HttpUtilities.getQueryId(this.requestPath);
-        String queryStringSearchTerm = HttpUtilities.getQueryString(this.exchange.getRequestURI().toString());
-        if( id > 0)
-            this.controller.show(id);
-        else if(queryStringSearchTerm != "")
-            this.controller.search();
-        else
-            this.controller.index();
-    }
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo POST
-     * @throws IOException
-     */
-    protected void handlePostCalls()throws IOException{
-        this.controller.create();
-    }
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo PATCH
-     * @throws IOException
-     */
-    protected void handlePatchCalls() throws IOException{
-        this.controller.update();
-    }
-
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo DELETE
-     * @throws IOException
-     */
-    protected void handleDeleteCalls() throws IOException{
-        if(this.currentUser.hasRole("platformAdmin")) {
-            int id = HttpUtilities.getQueryId(this.requestPath);
-            if (id > 0)
-                this.controller.delete(id);
-        }else{
-            HttpResponses.error(this.exchange, 500, "Non disponi dei permessi necessari per questa operazione");
-        }
-    }
+//    protected void handleGetCalls() throws IOException {
+//        int id = HttpUtilities.getQueryId(this.requestPath);
+//        String queryStringSearchTerm = HttpUtilities.getQueryString(this.exchange.getRequestURI().toString());
+//        if( id > 0)
+//            this.controller.show(id);
+//        else if(queryStringSearchTerm != "")
+//            this.controller.search();
+//        else
+//            this.controller.index();
+//    }
+//
+//    /**
+//     * Gestisce i differenti endpoint per le request http di tipo POST
+//     * @throws IOException
+//     */
+//    protected void handlePostCalls()throws IOException{
+//        this.controller.create();
+//    }
+//
+//    /**
+//     * Gestisce i differenti endpoint per le request http di tipo PATCH
+//     * @throws IOException
+//     */
+//    protected void handlePatchCalls() throws IOException{
+//        this.controller.update();
+//    }
+//
+//    /**
+//     * Gestisce i differenti endpoint per le request http di tipo DELETE
+//     * @throws IOException
+//     */
+//    protected void handleDeleteCalls() throws IOException{
+//        if(this.currentUser.hasRole("platformAdmin")) {
+//            int id = HttpUtilities.getQueryId(this.requestPath);
+//            if (id > 0)
+//                this.controller.delete(id);
+//        }else{
+//            HttpResponses.error(this.exchange, 500, "Non disponi dei permessi necessari per questa operazione");
+//        }
+//    }
 }

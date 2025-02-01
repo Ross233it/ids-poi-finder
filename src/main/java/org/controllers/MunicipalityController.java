@@ -1,9 +1,9 @@
 package org.controllers;
 
+import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.poi.Poi;
-import org.repositories.MunicipalityRepository;
 import org.services.MunicipalityService;
 
 import java.io.IOException;
@@ -11,8 +11,9 @@ import java.util.ArrayList;
 
 public class MunicipalityController extends Controller<Municipality, MunicipalityService> {
 
-    public  MunicipalityController() {
-        super(new MunicipalityService(new MunicipalityRepository("municipalities")));
+
+    public  MunicipalityController(MunicipalityService service, HttpExchange exchange) {
+        super(service, exchange);
     }
 
     /**
@@ -22,19 +23,19 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
      */
     @Override
     public void show(long id) throws IOException {
-        this.setHttpRequestHandler(this.httpRequestHandler);
+       
         try {
             Municipality item =  this.service.getObjectById(id);
             if(item == null)
-                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Record non trovato");
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
             else{
                 String municipalityData = HttpResponses.objectToJson(item);
                 String geolocationData  = HttpResponses.objectToJson(item.getGeoLocation());
                 String combinedJson = "{" + municipalityData + ", \"geoLocation\": " + geolocationData + "}";
-                HttpResponses.success(this.httpRequestHandler.getExchange(), combinedJson);
+                HttpResponses.success(this.exchange, combinedJson);
             }
         } catch (Exception e) {
-            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
+            HttpResponses.error(this.exchange, 500, e.getMessage());
             }
         }
 
@@ -45,7 +46,7 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
             ArrayList<Poi> pois = item.getPois();
 
             if(item == null)
-                HttpResponses.error(this.httpRequestHandler.getExchange(), 404, "Record non trovato");
+                HttpResponses.error(this.exchange, 404, "Record non trovato");
             else{
                 String municipalityData = HttpResponses.objectToJson(item);
                 String poiJsonData = "";
@@ -57,10 +58,10 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
                 }
                 String combinedJson = "{" + municipalityData + ", \"pois\": [ " + poiJsonData + "]}";
 
-                HttpResponses.success(this.httpRequestHandler.getExchange(), combinedJson);
+                HttpResponses.success(this.exchange, combinedJson);
             }
         } catch (Exception e) {
-            HttpResponses.error(this.httpRequestHandler.getExchange(), 500, e.getMessage());
+            HttpResponses.error(this.exchange, 500, e.getMessage());
         }
     }
 }
