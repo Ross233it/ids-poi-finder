@@ -1,6 +1,6 @@
-package org.httpServer;
+package org.httpServer.router;
 
-import com.sun.net.httpserver.HttpHandler;
+import java.util.HashMap;
 
 /**
  * Questa classe ha la responsabilità di rappresentare le rotte raggiungibili
@@ -21,7 +21,19 @@ public class Route {
     /**
      * Il metodo eseguito quando viene richiamata la rotta
      */
-    private String method;
+    private String methodName;
+
+
+    /**
+     * La lista di eventuali parametri passati come query string
+     */
+    private HashMap<String, String>params;
+
+    /**
+     * L'id dell'oggetto trasmesso dal frontend nell'url della
+     * chiamata.
+     */
+    private Integer idParam;
 
     /**
      * Crea una nuova rotta
@@ -31,7 +43,7 @@ public class Route {
     public Route(String path, String controllerName, String method) {
             this.path       = path;
             this.controllerName = controllerName;
-            this.method     = method;
+            this.methodName     = method;
     }
 
     /**
@@ -52,9 +64,11 @@ public class Route {
      * Ritorna l'endpoint della rotta
      * @return String path
      */
-    public String getMethod() {
-        return path;
+    public String getMethodName() {
+        return methodName;
     }
+
+
 }
 
 

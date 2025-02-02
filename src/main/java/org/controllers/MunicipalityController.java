@@ -11,11 +11,9 @@ import java.util.ArrayList;
 
 public class MunicipalityController extends Controller<Municipality, MunicipalityService> {
 
-
     public  MunicipalityController(MunicipalityService service, HttpExchange exchange) {
         super(service, exchange);
     }
-
     /**
      * Gestisce la richiesta http di visualizzazione di un municipio e dei suoi dettagli
      * @param id identificativo univoco della risorsa.
@@ -38,7 +36,6 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
             HttpResponses.error(this.exchange, 500, e.getMessage());
             }
         }
-
 
     public void getWithPois(long id) throws IOException {
         try {

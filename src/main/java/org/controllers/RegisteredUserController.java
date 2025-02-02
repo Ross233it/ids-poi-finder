@@ -1,14 +1,11 @@
 package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.HttpResponses;
-import org.httpServer.HttpUtilities;
 import org.models.users.RegisteredUser;
 
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte

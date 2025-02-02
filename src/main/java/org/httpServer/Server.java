@@ -13,11 +13,8 @@ public class Server {
 
     private HttpServer server;
 
-    private Router router;
-
     public Server(int serverPort) {
         this.serverPort = serverPort;
-        this.router = new Router();
     }
 
     /**
@@ -28,7 +25,6 @@ public class Server {
         try {
             com.sun.net.httpserver.HttpServer server = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(this.serverPort), 0);
 
-//            router.registerRoutes(server);
             server.createContext("/", new HttpRequestHandler<>());
 
             server.setExecutor(null);

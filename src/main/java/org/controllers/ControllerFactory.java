@@ -30,7 +30,6 @@ public class ControllerFactory {
     private Controller getController(String controllerName, HttpExchange exchange) {
         switch (controllerName) {
             case "RegisteredUserController":
-
                 RegisteredUserRepository userRepository = new RegisteredUserRepository("users");
                 RegisteredUserService userService = new RegisteredUserService(userRepository);
                 return new RegisteredUserController(userService, exchange);

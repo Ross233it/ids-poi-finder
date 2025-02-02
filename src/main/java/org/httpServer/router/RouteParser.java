@@ -1,4 +1,4 @@
-package org.httpServer;
+package org.httpServer.router;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -6,11 +6,13 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-public class HttpUtilities {
+/**
+ * Questa classe ha la responsabilità di interpretare e restituire le possibili informazioni
+ * provenienti dalla richiesta http ricevuta su un endpoint/rotta.
+ */
+public class RouteParser {
 
     /**
      * Recupera le informazioni dal body di una chiamata http
@@ -64,5 +66,4 @@ public class HttpUtilities {
         }
         return "";
     }
-
 }

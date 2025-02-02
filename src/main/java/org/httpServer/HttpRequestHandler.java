@@ -3,8 +3,8 @@ package org.httpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.controllers.Controller;
+import org.httpServer.router.Router;
 import org.models.users.RegisteredUser;
-import org.services.RegisteredUserService;
 
 import java.io.IOException;
 
@@ -51,8 +51,9 @@ public class HttpRequestHandler<C extends Controller> implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         this.requestPath = exchange.getRequestURI().getPath();
         this.exchange = exchange;
-
-        String response = router.dispatch(this.requestPath, this.exchange);
+        this.router = new Router(this.exchange);
+        System.out.println("HANDLER RAGGIUNTO");
+        String response = router.dispatch(this.requestPath);
 
 //        String method = exchange.getRequestMethod();
 //        String accessToken = AuthUtilities.getAccessToken(exchange);

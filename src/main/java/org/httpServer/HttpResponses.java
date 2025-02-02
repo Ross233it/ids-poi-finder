@@ -1,12 +1,13 @@
 package org.httpServer;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.httpServer.router.RouteParser;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 
-public class HttpResponses  extends HttpUtilities{
+public class HttpResponses  extends RouteParser {
 
     /**
      * Genera una risposta di successo e la invia

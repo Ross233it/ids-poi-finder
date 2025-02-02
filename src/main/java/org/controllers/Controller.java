@@ -2,7 +2,7 @@ package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.HttpResponses;
-import org.httpServer.HttpUtilities;
+import org.httpServer.router.RouteParser;
 import org.services.IService;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     @Override
     public void update() throws IOException {
-        int id = HttpUtilities.getQueryId(this.requestPath);
+        int id = RouteParser.getQueryId(this.requestPath);
         System.out.println("ID: " + id);
         if (id <= 0) {
             HttpResponses.error(exchange, 404, "Record non trovato");
@@ -90,7 +90,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     public void search() throws IOException {
         String fullPath = this.exchange.getRequestURI().toString();
-        String queryStringSearchTerm = HttpUtilities.getQueryString(fullPath);
+        String queryStringSearchTerm = RouteParser.getQueryString(fullPath);
         if(queryStringSearchTerm != ""){
             try {
                 T item = (T) service.search(queryStringSearchTerm);
