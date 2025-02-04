@@ -2,12 +2,15 @@ package org.httpServer.router;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.controllers.Controller;
 import org.controllers.ControllerFactory;
+import org.httpServer.AuthMiddleware;
+import org.httpServer.HttpResponses;
 
 /**
  * Questa classe definisce tutti gli end point raggiungibili nella piattaforma.
@@ -18,9 +21,12 @@ public class Router {
 
     private HttpExchange exchange;
 
+    private AuthMiddleware authMiddleware;
+
     public Router(HttpExchange exchange) {
         this.exchange = exchange;
         this.routes = new HashMap<String, Route>();
+        this.authMiddleware = new AuthMiddleware();
         this.routesInit();
     }
 
@@ -49,28 +55,39 @@ public class Router {
     }
 
     /**
+     * Verifica se l'utente dispone dei privilegi necessari
+     * @param route
+     * @return
+     */
+    private boolean checkAuth(Route route) {
+        Integer requiredAuthLevel = route.getAuthLevel();
+        return authMiddleware.hasPermissions(this.exchange, requiredAuthLevel);
+    }
+
+    /**
      * Riceve una rotta chiamante dall'handler e si occupa di richiamare
      * controller e metodo appropriati
      * @param path String la rotta chiamata
      */
-    public String dispatch(String path) {
+    public void dispatch(String path) throws IOException{
         if (routes.containsKey(path)) {
             Route route = routes.get(path);
-
             String methodName = route.getMethodName();
             String controllerName = route.getControllerName();
+
+            if(!this.checkAuth(route))
+                HttpResponses.error(this.exchange, 401, "Non sei autorizzato ad accedere alla risorsa");
 
             try {
                 ControllerFactory factory = new ControllerFactory();
                 Controller controllerInstance = factory.createController(controllerName, this.exchange);
                 Method method = controllerInstance.getClass().getMethod(methodName);
-                return (String) method.invoke(controllerInstance);
+                method.invoke(controllerInstance);
             } catch (Exception e) {
                 e.printStackTrace();
-                return "Errore nel router: " + e.getMessage();
             }
         }
-        return "404 Not Found";
+        HttpResponses.error(this.exchange, 404, "Risorsa non trovata");
     }
 }
 

@@ -1,4 +1,4 @@
-package org.httpServer.router;
+package org.httpServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -12,7 +12,22 @@ import java.util.Map;
  * Questa classe ha la responsabilità di interpretare e restituire le possibili informazioni
  * provenienti dalla richiesta http ricevuta su un endpoint/rotta.
  */
-public class RouteParser {
+public class HttpRequest {
+
+    private HttpExchange exchange;
+
+    private Map<String, String> queryParams;
+
+    private String requestPath;
+
+    private String body;
+
+    public HttpRequest(HttpExchange exchange) throws IOException {
+        this.exchange = exchange;
+        this.requestPath = this.exchange.getRequestURI();
+        this.queryParams = this.getQueryStringParams();
+        this.body = new String(exchange.getRequestBody().readAllBytes());
+    }
 
     /**
      * Recupera le informazioni dal body di una chiamata http
@@ -34,11 +49,10 @@ public class RouteParser {
 
     /**
      * Estrae l'id da una stringa in base ad una espressione regolare
-     * @param requestPath
-     * @return
+     * @return l'id della request, zero altrimenti
      */
-    public static int getQueryId(String requestPath){
-        String[] segments = requestPath.split("/");
+    public int getQueryId(){
+        String[] segments = this.requestPath.split("/");
         if (segments.length > 3) {
             try {
                 return Integer.parseInt(segments[3]);
@@ -52,11 +66,10 @@ public class RouteParser {
 
     /**
      * Estrae il parametro di ricerca da una url origine di richiesta http
-     * @param requestPath
      * @return String la stringa di ricerca
      */
-    public static String getQueryString(String requestPath){
-        String[] segments = requestPath.split("\\?", 2);
+    public String getQueryStringParams(){
+        String[] segments = this.requestPath.split("\\?", 2);
         if (segments.length < 2) {
             return "";
         }

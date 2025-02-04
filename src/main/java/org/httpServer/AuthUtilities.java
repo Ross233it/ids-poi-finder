@@ -2,7 +2,6 @@ package org.httpServer;
 
 import com.sun.net.httpserver.HttpExchange;
 
-//import java.awt.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
@@ -15,7 +14,6 @@ import java.util.Map;
  */
 
 public class AuthUtilities {
-
 
     /**
      * Genera un salt casuale.

@@ -1,18 +1,20 @@
 package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.httpServer.AuthUtilities;
+import org.httpServer.HttpResponses;
 import org.models.users.RegisteredUser;
 
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte
  * da e verso una interfaccia utente tramite Api e protocollo http.
  */
 public class RegisteredUserController extends Controller<RegisteredUser, RegisteredUserService> {
-
 
     public RegisteredUserController(RegisteredUserService userService, HttpExchange exchange) {
         super(userService, exchange);
@@ -23,16 +25,16 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      * @throws IOException
      */
     public void login() throws Exception {
-//        try {
-//            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
-//            String accessToken =  this.service.login(data);
-//            if(accessToken == null || accessToken == "")
-//                HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
-//            else
-//                HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
-//        } catch (Exception e) {
-//            HttpResponses.error(this.exchange, 500, e.getMessage());
-//        }
+        try {
+            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+            String accessToken =  this.service.login(data);
+            if(accessToken == null || accessToken == "")
+                HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
+            else
+                HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
     /**
@@ -40,15 +42,17 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      * @throws Exception
      */
     public void logout() throws Exception{
-//        try {
-//            if(this.httpRequestHandler.getCurrentUser() != null){
-//                this.service.logout(this.httpRequestHandler.getCurrentUser());
-//                HttpResponses.success(this.exchange, "Logout effettuato");
-//            }else
-//                HttpResponses.error(this.exchange, 404, "Nessun utente loggato");
-//        } catch (Exception e) {
-//            HttpResponses.error(this.exchange, 500, e.getMessage());
-//        }
+        try {
+            String accessToken = AuthUtilities.getAccessToken(exchange);
+            RegisteredUser currentUser = this.service.getByAccessToken(accessToken);
+            if(currentUser != null){
+                this.service.logout(currentUser);
+                HttpResponses.success(this.exchange, "Logout effettuato");
+            }else
+                HttpResponses.error(this.exchange, 404, "Nessun utente loggato");
+        } catch (Exception e) {
+            HttpResponses.error(this.exchange, 500, e.getMessage());
+        }
     }
 
     /**
@@ -56,21 +60,18 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      * @throws Exception
      */
     public void setRole() throws Exception{
-//        if(this.httpRequestHandler.getCurrentUser() != null && this.httpRequestHandler.getCurrentUser().hasRole("platformAdmin")){
-//            try {
-//                Map<String, Object> data = HttpResponses.getStreamData(this.httpRequestHandler.getExchange());
-//                if(data.get("role") == null || data.get("id") == null)
-//                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
-//                RegisteredUser user = this.service.setRole(data);
-//                if(user == null)
-//                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
-//                else
-//                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
-//            } catch (Exception e) {
-//                    HttpResponses.error(this.exchange, 500, e.getMessage());
-//            }
-//        }else
-//            HttpResponses.error(this.exchange, 401, "Operazione non autorizzata");
+            try {
+                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                if(data.get("role") == null || data.get("id") == null)
+                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
+                RegisteredUser user = this.service.setRole(data);
+                if(user == null)
+                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
+                else
+                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
+            } catch (Exception e) {
+                    HttpResponses.error(this.exchange, 500, e.getMessage());
+            }
     }
 
     /**

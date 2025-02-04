@@ -25,6 +25,11 @@ public class Route {
 
 
     /**
+     * Il livello di privilegi richiesti per accedere alla rotta.
+     */
+    private int authLevel;
+
+    /**
      * La lista di eventuali parametri passati come query string
      */
     private HashMap<String, String>params;
@@ -40,10 +45,11 @@ public class Route {
      * @param path il percorso da contattare per la richiesta
      * @param
      */
-    public Route(String path, String controllerName, String method) {
+    public Route(String path, String controllerName, String method, int authLevel) {
             this.path       = path;
             this.controllerName = controllerName;
-            this.methodName     = method;
+            this.methodName = method;
+            this.authLevel = authLevel;
     }
 
     /**
@@ -67,6 +73,11 @@ public class Route {
     public String getMethodName() {
         return methodName;
     }
+
+    /**
+     * Ritorna il livello di autorizzazione necessario per la rotta
+     */
+    public int getAuthLevel(){ return authLevel; }
 
 
 }
