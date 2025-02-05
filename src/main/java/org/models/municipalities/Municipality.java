@@ -1,6 +1,6 @@
 package org.models.municipalities;
 
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpResponses;
 import org.models.Content;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -42,12 +42,7 @@ public class Municipality extends Content {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        return "{" +
-                municipalityString +
-                "\"geoLocation\": " + (geoLocation != null ? geoLocation.toString() : "{ }") +
-                "\"author\": " + (getAuthor() != null ? getAuthor().toString() : "{ }") +
-                "\"author\": " + (getApprover() != null ? getApprover().toString() : "{ }") +
-                "}";
+        return municipalityString;
     }
 
     /** getters **/
@@ -59,6 +54,7 @@ public class Municipality extends Content {
                 this.getRegion(),
                 this.getProvince(),
                 this.getGeoLocation().getId(),
+                this.getAuthor().getId()
         };
     }
 

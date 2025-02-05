@@ -10,7 +10,8 @@ import java.util.Map;
 import org.controllers.Controller;
 import org.controllers.ControllerFactory;
 import org.httpServer.AuthMiddleware;
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpRequest;
+import org.httpServer.http.HttpResponses;
 
 /**
  * Questa classe definisce tutti gli end point raggiungibili nella piattaforma.
@@ -70,8 +71,10 @@ public class Router {
      * @param path String la rotta chiamata
      */
     public void dispatch(String path) throws IOException{
-        if (routes.containsKey(path)) {
-            Route route = routes.get(path);
+        String matchedRoute = matchRoute(path);
+
+        if (matchedRoute != null) {
+            Route route = routes.get(matchedRoute);
             String methodName = route.getMethodName();
             String controllerName = route.getControllerName();
 
@@ -79,8 +82,12 @@ public class Router {
                 HttpResponses.error(this.exchange, 401, "Non sei autorizzato ad accedere alla risorsa");
 
             try {
+                HttpRequest httpRequest = new HttpRequest(this.exchange);
+                httpRequest.setPathParams(matchedRoute);
+
                 ControllerFactory factory = new ControllerFactory();
-                Controller controllerInstance = factory.createController(controllerName, this.exchange);
+                Controller controllerInstance = factory.createController(controllerName, httpRequest);
+
                 Method method = controllerInstance.getClass().getMethod(methodName);
                 method.invoke(controllerInstance);
             } catch (Exception e) {
@@ -88,6 +95,22 @@ public class Router {
             }
         }
         HttpResponses.error(this.exchange, 404, "Risorsa non trovata");
+    }
+
+    /**
+     * Confronta la rotta impostata nell'oggetto route con parametri dinamici {param}
+     * e quelli effettivi. Ritorna la stringa corrispondente o null altrimenti.
+     * @param path String la url reale
+     * @return registeredRoute la rotta registrata nel server
+     */
+    private String matchRoute(String path) {
+        for (String registeredRoute : routes.keySet()) {
+            String regex = registeredRoute.replaceAll("\\{\\w+\\}", "(\\\\w+)");
+            if (path.matches(regex)) {
+                return registeredRoute;
+            }
+        }
+        return null;
     }
 }
 

@@ -10,8 +10,8 @@ import java.io.IOException;
  */
 public interface IController<O>{
    void index()         throws IOException;
-   void show(long id)   throws IOException;
+   void show()   throws IOException;
    void create()        throws IOException;
    void update()        throws IOException;
-   void delete(long id) throws IOException;
+   void delete()        throws IOException;
 }

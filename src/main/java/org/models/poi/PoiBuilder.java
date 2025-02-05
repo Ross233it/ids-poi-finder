@@ -64,14 +64,14 @@ public class  PoiBuilder {
 
     /*** getters ***/
 
-    public String        getName()        { return name;}
-    public String        getStatus()      { return status;}
-    public String        getDescription() { return description; }
-    public boolean       getIsLogical()   { return isLogical; }
-    public Municipality  getMunicipality(){ return municipality; }
-    public GeoLocation   getGeoLocation() { return geoLocation; }
-    public List<Tag>     getTags()        { return tags; }
-    public List<Category>getCategories()  { return categories; }
+    public String         getName()        { return name;}
+    public String         getStatus()      { return status;}
+    public String         getDescription() { return description; }
+    public boolean        getIsLogical()   { return isLogical; }
+    public Municipality   getMunicipality(){ return municipality; }
+    public GeoLocation    getGeoLocation() { return geoLocation; }
+    public List<Tag>      getTags()        { return tags; }
+    public List<Category> getCategories()  { return categories; }
     public RegisteredUser getAuthor()     {return author;}
     public RegisteredUser getApprover()   {return approver;}
 }

@@ -46,9 +46,11 @@ public class RoutesApi {
      */
     public Map<String, Route> setUpGetRoutes(){
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 5);
+        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "show", 5);
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 5);
+        this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "show", 5);
         this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "index", 5);
-        this.addRoute("/"+prefix+"/user/set-role","RegisteredUserController", "index", 5);
+        this.addRoute("/"+prefix+"/user/{id}",         "RegisteredUserController", "show", 1);
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "index", 5);
         this.addRoute("/"+prefix+"/migrate",      "migrationController", "index", 5);
         return this.getRoutes();
@@ -57,12 +59,9 @@ public class RoutesApi {
     public Map<String, Route> setUpPostRoutes(){
         this.addRoute("/"+prefix+"/user/login",        "RegisteredUserController", "login", 5);
         this.addRoute("/"+prefix+"/user/logout",       "RegisteredUserController", "logout", 4);
-
-        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "index", 5);
-        this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "index", 5);
-        this.addRoute("/"+prefix+"/user/{id}",         "RegisteredUserController", "index", 4);
-
-
+        this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "create", 1);
+        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "create", 5);
+        this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "create", 4);
         this.addRoute("/"+prefix+"/activity/{id}",     "ActivityController", "index",  2);
         this.addRoute("/"+prefix+"/migrate/{id}",      "migrationController", "index",  1);
         return this.getRoutes();
@@ -70,13 +69,9 @@ public class RoutesApi {
 
     public Map<String, Route> setUpPatchRoutes(){
         this.addRoute("/"+prefix+"/user/set-role",     "RegisteredUserController", "setRole", 1);
-
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 1);
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 1);
         this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "index", 1);
-
-
-
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "index", 1);
         this.addRoute("/"+prefix+"/migrate",      "migrationController", "index", 1);
         return this.getRoutes();

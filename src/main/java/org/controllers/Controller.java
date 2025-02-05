@@ -1,8 +1,14 @@
 package org.controllers;
 
+
 import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.HttpResponses;
+import org.httpServer.AuthUtilities;
+import org.httpServer.http.HttpRequest;
+import org.httpServer.http.HttpResponses;
+import org.models.users.RegisteredUser;
+import org.repositories.RegisteredUserRepository;
 import org.services.IService;
+import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,27 +17,43 @@ public abstract class Controller<T, S extends IService>  implements IController<
 
     protected S service;
 
-    protected HttpExchange exchange;
+    protected static HttpExchange exchange;
 
-    protected String requestPath;
+    protected HttpRequest request;
 
-    public Controller(S service, HttpExchange exchange) {
+    public Controller(S service, HttpRequest request) {
         this.service = service;
-        this.exchange = exchange;
-        this.requestPath = exchange.getRequestURI().getPath();
+        this.request  = request;
+        this.exchange = request.getExchange();
+    }
+
+    /**
+     * Gestisce e centralizza l'esecuzione dei singoli metodi del controller.
+     * @param action la funzione da esseguire
+     * @param successMessage il messaggio da ritornare in caso di successo.
+     * @throws IOException
+     */
+    private void handleRequest(ControllerRequestHandler<Object> action, String successMessage) throws IOException {
+        try {
+            Object result = action.handle();
+            if (result == null) {
+                HttpResponses.error(exchange, 404, "Record non trovato");
+            } else {
+                HttpResponses.success(exchange, successMessage != null ? successMessage : result.toString());
+            }
+        } catch (Exception e) {
+            HttpResponses.error(exchange, 500, e.getMessage());
+        }
     }
 
     @Override
     public void index() throws IOException {
-        try{
-            String parsedData = this.service.index();
-            if(parsedData == null)
-                HttpResponses.error(this.exchange, 404, "Nessun record trovato");
-            else
-                HttpResponses.success(this.exchange, parsedData);
-        }catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+        Map<String, String>queryParams = request.getQueryParams();
+        if(!queryParams.isEmpty() && queryParams.get("search")!=null) {
+            String queryStringSearchTerm = (String) queryParams.get("search");
+            search(queryStringSearchTerm);
         }
+        handleRequest(()-> service.index(), null);
     }
 
     /**
@@ -41,18 +63,8 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     @Override
     public void create() throws IOException {
-        try{
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
-
-            T newItem = (T) this.service.create(data);
-
-            if(newItem != null) {
-                HttpResponses.success(this.exchange, "Record creato con successo");
-            }else
-                HttpResponses.error(this.exchange, 500, "Si è verificato un problema nella creazione del record");
-        }catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
+        Map<String, Object> data = request.getBodyStreamData();
+        handleRequest(()->service.create(data), null);
     }
 
 
@@ -62,26 +74,9 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     @Override
     public void update() throws IOException {
-        //todo refactor this
-        int id = 5;
-//        int id = Request.getQueryId(this.requestPath);
-        System.out.println("ID: " + id);
-        if (id <= 0) {
-            HttpResponses.error(exchange, 404, "Record non trovato");
-            return;
-        }
-        try{
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
-
-            T newItem = (T) this.service.update(id, data);
-
-            if(newItem != null) {
-                HttpResponses.success(exchange, "Record creato con successo");
-            }else
-                HttpResponses.error(exchange, 500, "Si è verificato un problema nella creazione del record");
-        }catch (Exception e) {
-            HttpResponses.error(exchange, 500, e.getMessage());
-        }
+        long id = request.getRequestId();
+        Map<String, Object> data = this.request.getBodyStreamData();
+        handleRequest(()->service.update(id, data), null);
     }
 
     /**
@@ -89,59 +84,40 @@ public abstract class Controller<T, S extends IService>  implements IController<
      * richiesta http come query string.
      * @throws IOException
      */
-    public void search() throws IOException {
-        String fullPath = this.exchange.getRequestURI().toString();
-        //todo refactor this
-        String queryStringSearchTerm = "";
-//        String queryStringSearchTerm = Request.getQueryString(fullPath);
-        if(queryStringSearchTerm != ""){
-            try {
-                T item = (T) service.search(queryStringSearchTerm);
-                if(item == null)
-                    HttpResponses.error(this.exchange, 404, "Record non trovato");
-                else
-                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(item));
-            } catch (Exception e) {
-                HttpResponses.error(this.exchange, 500, e.getMessage());
-            }
-        }else
-            HttpResponses.error(this.exchange, 404, "Impossibile trovare risultati");
+    public void search(String queryStringSearchTerm) throws IOException {
+        handleRequest(() -> { return service.search(queryStringSearchTerm);}, null);
     }
 
     /**
      * Gestisce la richiesta di visualizzazione di una specifica risorsa.
-     * @param id identificativo univoco della risorsa.
      * @throws IOException
      */
     @Override
-    public void show(long id) throws IOException {
-        try {
-            T item = (T) this.service.getObjectById(id);
-            if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-            else
-                HttpResponses.success(this.exchange, item.toString());
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+    public void show() throws IOException {
+        if(this.request.getRequestId() > 0){
+            handleRequest(()-> {return service.getObjectById(request.getRequestId());}, null);
         }
     }
 
     /**
      * Gestisce la richiesta di eliminazione di una specifica risorsa.
-     * @param id
      * @throws IOException
      */
     @Override
-    public void delete(long id) throws IOException {
-        HttpExchange exchange = this.exchange;
-        try {
-            T deleted = (T) this.service.delete(id);
-            if(deleted != null)
-                HttpResponses.success(this.exchange, "Record eliminato con successo");
-            else
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+    public void delete() throws IOException {
+        if(this.request.getRequestId() > 0) {
+            long id = this.request.getRequestId();
+            handleRequest(() -> service.delete(id), "Record eliminato con successo");
         }
+    }
+
+    /**
+     * Ritorna l'utente autenticato per la chiamata | null altrimenti.
+     * @return
+     */
+    public static RegisteredUser getAuthor(){
+        String accessToken = AuthUtilities.getAccessToken(exchange);
+        RegisteredUserService service = new RegisteredUserService(new RegisteredUserRepository());
+        return service.getByAccessToken(accessToken);
     }
 }

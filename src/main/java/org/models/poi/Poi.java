@@ -1,6 +1,6 @@
 package org.models.poi;
 
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;

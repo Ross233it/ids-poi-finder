@@ -1,6 +1,6 @@
 package org.models;
 
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpResponses;
 import org.models.users.RegisteredUser;
 
 /**

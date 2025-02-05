@@ -1,15 +1,14 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
-
+import org.httpServer.http.HttpRequest;
 import org.models.activities.Activity;
 import org.services.ActivityService;
 
 public class ActivityController extends Controller<Activity, ActivityService> {
 
 
-    public  ActivityController(ActivityService service, HttpExchange exchange) {
-        super(service, exchange);
+    public  ActivityController(ActivityService service, HttpRequest request) {
+        super(service, request);
     }
 
 //    /**

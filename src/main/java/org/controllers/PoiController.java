@@ -1,7 +1,7 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpRequest;
+import org.httpServer.http.HttpResponses;
 import org.models.poi.Poi;
 import org.services.PoiService;
 
@@ -10,31 +10,33 @@ import java.util.Map;
 
 public class PoiController extends Controller<Poi, PoiService> {
 
-    public  PoiController(PoiService service, HttpExchange exchange) {
-        super(service, exchange);
+    public  PoiController(PoiService service, HttpRequest request) {
+        super(service, request);
     }
-
 
     /**
      * Gestisce la richiesta http di visualizzazione di un poi e dei suoi dettagli
-     * @param id identificativo univoco della risorsa.
      * @throws IOException
      */
-    @Override
-    public void show(long id) throws IOException {
-        try {
-            PoiService poiService= (PoiService) this.service;
-            Poi item = poiService.getObjectById(id);
-            if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-            else{
-                String combinedJson = poiService.printPoi(item);
-                HttpResponses.success(this.exchange, combinedJson);
-            }
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-        }
-    }
+//    @Override
+//    public void show() throws IOException {
+//        if(this.request.getRequestId() > 0){
+//            long id = this.request.getRequestId();
+//            try {
+//                PoiService poiService= (PoiService) this.service;
+//                Poi item = poiService.getObjectById(id);
+//                if(item == null)
+//                    HttpResponses.error(this.exchange, 404, "Record non trovato");
+//                else{
+//                    String combinedJson = poiService.printPoi(item);
+//                    HttpResponses.success(this.exchange, combinedJson);
+//                }
+//            } catch (Exception e) {
+//                HttpResponses.error(this.exchange, 500, e.getMessage());
+//            }
+//        }
+//        HttpResponses.error(this.exchange, 500, "Parametro id mancante");
+//    }
 
     /**
      * Gestisce la richiesta di validazione di un contenuto
@@ -42,7 +44,7 @@ public class PoiController extends Controller<Poi, PoiService> {
      */
     public void setStatus() throws Exception{
             try {
-                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                Map<String, Object> data = request.getBodyStreamData();
                 if(data.get("status") == null || data.get("id") == null)
                     HttpResponses.error(this.exchange, 404, "Dati mancanti");
                 Poi poi = ((PoiService) this.service).setStatus(data);
@@ -55,17 +57,4 @@ public class PoiController extends Controller<Poi, PoiService> {
             }
     }
 
-    /**
-     * Gestisce i differenti endpoint per le request http di tipo POST
-     * @throws IOException
-     */
-
-//    @Override
-//    protected void handlePostCalls()throws IOException{
-//        String[] roles = {"platformAdmin","contributor","authContributor"};
-//        if(this.currentUser.hasRole(roles))
-//            this.create();
-//        else
-//            HttpResponses.error(this.exchange, 401, "Non autorizzato");
-//    }
 }

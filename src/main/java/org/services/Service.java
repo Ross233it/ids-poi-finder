@@ -4,6 +4,7 @@ import org.models.Content;
 import org.models.users.RegisteredUser;
 import org.repositories.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +20,11 @@ public class Service<D extends Content> implements IService<D> {
         this.repository = repository;
     }
 
+    //todo add a mapper
     public String index() {
         try {
-            return this.repository.index();
+            List<Map<String, Object>>results = this.repository.index("");
+            return "";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +106,7 @@ public class Service<D extends Content> implements IService<D> {
         Map<String, Object> entityData =  this.repository.getById(id, null);
         if(entityData == null)
             return null;
-        D entity = this.buildEntity(entityData);
+        D entity = this.buildEntityFromDb(entityData);
         entity.setId(id);
         return entity;
     }
@@ -121,6 +124,11 @@ public class Service<D extends Content> implements IService<D> {
     }
 
     protected D buildEntity(Map<String, Object> objectData)throws Exception
+    {
+        return null;
+    }
+
+    protected D buildEntityFromDb(Map<String, Object> objectData)throws Exception
     {
         return null;
     }

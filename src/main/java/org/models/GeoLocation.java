@@ -1,7 +1,5 @@
 package org.models;
 
-import org.httpServer.HttpResponses;
-
 public class GeoLocation extends Content {
 
     private double latitude;

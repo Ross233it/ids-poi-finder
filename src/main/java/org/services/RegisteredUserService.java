@@ -1,10 +1,13 @@
 package org.services;
 
+import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.AuthUtilities;
 import org.models.users.RegisteredUser;
 import org.repositories.RegisteredUserRepository;
 
 import java.util.Map;
+
+import static org.httpServer.AuthUtilities.getAccessToken;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -134,13 +137,30 @@ public class RegisteredUserService extends Service<RegisteredUser> {
         }
     }
 
+//    /**
+//     * Ritorna l'utente se attualmente autenticato | null altrimenti
+//     * @param accessToken String
+//     * @return currentUser RegisteredUser l'utente autenticato.
+//     */
+//    public static RegisteredUser getCurrentAuthUser(String accessToken){
+//       RegisteredUserService service = new RegisteredUserService(new RegisteredUserRepository());
+//
+//        RegisteredUser currentUser = service.getByAccessToken(accessToken);
+//        if(currentUser == null)
+//            return null;
+//        return currentUser;
+//    }
+
+
     @Override
     protected RegisteredUser buildEntity(Map<String, Object> data) {
-        return new RegisteredUser(
+        RegisteredUser user = new RegisteredUser(
                 (String) data.get("username"),
                 (String) data.get("email"),
                 (String) data.get("password"),
                 (String) data.get("role")
         );
+        user.setId((Long)data.get("id"));
+        return user;
     }
 }

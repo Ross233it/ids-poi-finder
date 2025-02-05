@@ -1,5 +1,7 @@
 package org.services;
 
+import org.controllers.Controller;
+import org.dataMappers.MunicipalityMapper;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.municipalities.MunicipalityBuilder;
@@ -8,6 +10,7 @@ import org.models.users.RegisteredUser;
 import org.repositories.GeoLocationRepository;
 import org.repositories.MunicipalityRepository;
 import org.repositories.PoiRepository;
+import org.repositories.RegisteredUserRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,24 +18,19 @@ import java.util.Map;
 
 public class MunicipalityService extends Service<Municipality> {
 
+    private GeoLocationService  geoLocationService;
+
+    private RegisteredUserService  registeredUserService;
+
+    private MunicipalityMapper municipalityMapper;
+
     public MunicipalityService(MunicipalityRepository repository) {
         super(repository);
+        this.geoLocationService    = new GeoLocationService(new GeoLocationRepository());
+        this.registeredUserService = new RegisteredUserService(new RegisteredUserRepository());
+        this.municipalityMapper    = new MunicipalityMapper();
     }
 
-    public Municipality create(Map<String, Object> objectData, RegisteredUser currentUser)throws Exception{
-        Map<String, Object> geoLoc = (Map<String, Object>) objectData.get("geoLocation");
-        GeoLocationService service = new GeoLocationService(new GeoLocationRepository("geolocations"));
-        GeoLocation geoLocation = service.create(geoLoc);
-//        if(geoLocation)
-        Municipality municipality = this.buildEntity(objectData);
-        municipality.setGeoLocation(geoLocation);
-        try {
-            this.repository.create(municipality, "");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return municipality;
-    }
 
 
     /**
@@ -51,16 +49,57 @@ public class MunicipalityService extends Service<Municipality> {
 
     @Override
     protected Municipality buildEntity(Map<String, Object> objectData)throws Exception{
-        GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
-        Long geoLocationId = ((Long) objectData.get("geolocation_id"));
-        GeoLocation geoLocation = geoLocationService.getObjectById(geoLocationId);
+        GeoLocation geoLocation = this.geoLocationService.getOrCreate(objectData);
+
+        RegisteredUser author = getAuthor(objectData);
 
         Municipality municipality = new MunicipalityBuilder(
                 (String) objectData.get("name"),
                 (String) objectData.get("region"),
                 (String) objectData.get("province")
         ).geoLocation(geoLocation)
+         .author(author)
          .build();
+
+        municipality.setId((Long)objectData.get("id"));
+
         return municipality;
+    }
+
+
+    @Override
+    protected Municipality buildEntityFromDb(Map<String, Object> objectData)throws Exception{
+        GeoLocation geoLocation = this.geoLocationService.getOrCreate(objectData);
+
+        RegisteredUser author = getAuthor(objectData);
+
+        Municipality municipality = new MunicipalityBuilder(
+                (String) objectData.get("name"),
+                (String) objectData.get("region"),
+                (String) objectData.get("province")
+        ).geoLocation(geoLocation)
+                .author(author)
+                .build();
+
+        municipality.setId((Long)objectData.get("id"));
+
+        return municipality;
+    }
+
+    private RegisteredUser getAuthor(Map<String, Object> objectData) throws Exception {
+        long authorId = 0;
+        Object authorIdObj = objectData.get("author_id");
+
+        if (authorIdObj instanceof Long) {
+            authorId = (Long) authorIdObj;
+        } else if (authorIdObj instanceof Integer) {
+            authorId = ((Integer) authorIdObj).longValue();
+        } else if (authorIdObj instanceof String) {
+            authorId = Long.parseLong((String) authorIdObj);
+        }
+
+        if(authorId == 0)
+             return  Controller.getAuthor();
+         return registeredUserService.getObjectById(authorId);
     }
 }

@@ -5,7 +5,7 @@ import org.models.GeoLocation;
 public class GeoLocationRepository extends Repository<GeoLocation> {
 
 
-    public GeoLocationRepository(String tableName) {
+    public GeoLocationRepository() {
         super( "geolocations" );
     }
 

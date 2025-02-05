@@ -1,6 +1,6 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
+import org.httpServer.http.HttpRequest;
 import org.repositories.ActivityRepository;
 import org.repositories.MunicipalityRepository;
 import org.repositories.PoiRepository;
@@ -17,37 +17,36 @@ public class ControllerFactory {
      * @param controllerName
      * @return
      */
-    public Controller createController(String controllerName, HttpExchange exchange) {
-        return getController(controllerName, exchange);
+    public Controller createController(String controllerName, HttpRequest request) {
+        return getController(controllerName, request);
     }
-
 
     /**
      * Factory che crea un controller in base al nome passato come argomento
      * @param controllerName
      * @return
      */
-    private Controller getController(String controllerName, HttpExchange exchange) {
+    private Controller getController(String controllerName, HttpRequest request) {
         switch (controllerName) {
             case "RegisteredUserController":
-                RegisteredUserRepository userRepository = new RegisteredUserRepository("users");
+                RegisteredUserRepository userRepository = new RegisteredUserRepository();
                 RegisteredUserService userService = new RegisteredUserService(userRepository);
-                return new RegisteredUserController(userService, exchange);
+                return new RegisteredUserController(userService, request);
 
             case "PoiController":
                 PoiRepository poiRepository = new PoiRepository("municipalities");
                 PoiService poiService = new PoiService(poiRepository);
-                return new PoiController(poiService, exchange);
+                return new PoiController(poiService, request);
 
             case "MunicipalityController":
-                MunicipalityRepository munRepository = new MunicipalityRepository("municipalities");
+                MunicipalityRepository munRepository = new MunicipalityRepository();
                 MunicipalityService munService = new MunicipalityService(munRepository);
-                return new MunicipalityController(munService, exchange);
+                return new MunicipalityController(munService, request);
 
             case "ActivityController":
                 ActivityRepository actRepository = new ActivityRepository("activities");
                 ActivityService actService = new ActivityService(actRepository);
-                return new ActivityController(actService, exchange);
+                return new ActivityController(actService, request);
             default:
                 return null;
         }

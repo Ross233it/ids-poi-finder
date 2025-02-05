@@ -3,6 +3,7 @@ package org.httpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpServer;
+import org.httpServer.http.HttpRequestHandler;
 
 /**
  * Questa classe rappresenta ed inizializza un server Http

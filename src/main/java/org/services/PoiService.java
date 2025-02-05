@@ -1,6 +1,6 @@
 package org.services;
 
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -20,9 +20,13 @@ import java.util.Map;
  */
 
 public class PoiService extends Service<Poi> {
+    private MunicipalityService municipalityService;
+    private GeoLocationService  geoLocationService;
 
     public PoiService(PoiRepository repository) {
         super(repository);
+        this.municipalityService = new MunicipalityService(new MunicipalityRepository());
+        this.geoLocationService = new GeoLocationService(new GeoLocationRepository());
     }
 
     /**
@@ -34,7 +38,7 @@ public class PoiService extends Service<Poi> {
     @Override
     public Poi getObjectById(long id) throws Exception {
         try {
-            Map<String, Object> poiData = ((PoiRepository) this.repository).getById(id, null);
+            Map<String, Object> poiData = this.repository.getById(id, null);
             if (poiData == null) {
                 return null;
             }else{
@@ -97,7 +101,7 @@ public class PoiService extends Service<Poi> {
 
 //        Integer municipalityId = (Integer) poiData.get("municipality_id");
         Integer municipalityId = ((Long) poiData.get("municipality_id")).intValue();
-        MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository("municipalities"));
+        MunicipalityService municipalityService = new MunicipalityService(new MunicipalityRepository());
 
         if(municipalityId>0){
             Municipality municipality = municipalityService.getObjectById(municipalityId);
@@ -116,7 +120,7 @@ public class PoiService extends Service<Poi> {
      * @throws Exception
      */
     private Map<String, Object> addGeolocation(Map<String, Object> poiData) throws Exception {
-        GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository("geolocations"));
+        GeoLocationService geoLocationService = new GeoLocationService(new GeoLocationRepository());
 
         Map<String, Object> geoLoc = (Map<String, Object>) poiData.get("geoLocation");
 

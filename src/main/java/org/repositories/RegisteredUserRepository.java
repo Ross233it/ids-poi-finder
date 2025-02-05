@@ -10,8 +10,8 @@ import java.util.Map;
 public class RegisteredUserRepository extends Repository<RegisteredUser> {
 
 
-    public RegisteredUserRepository(String tableName) {
-        super(tableName);
+    public RegisteredUserRepository() {
+        super("users");
     }
 
     /**

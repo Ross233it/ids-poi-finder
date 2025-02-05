@@ -1,6 +1,9 @@
 package org.httpServer;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.models.users.RegisteredUser;
+import org.repositories.RegisteredUserRepository;
+import org.services.RegisteredUserService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -91,4 +94,6 @@ public class AuthUtilities {
         }
         return "";
     }
+
+
 }

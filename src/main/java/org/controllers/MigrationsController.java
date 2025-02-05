@@ -3,7 +3,7 @@ package org.controllers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.httpServer.DbConnectionManager;
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpResponses;
 import org.migrations.DownQueriesManager;
 import org.migrations.QueriesManager;
 import org.migrations.UpQueriesManager;

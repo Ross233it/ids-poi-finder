@@ -1,8 +1,7 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.AuthUtilities;
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpRequest;
+import org.httpServer.http.HttpResponses;
 import org.models.users.RegisteredUser;
 
 import org.services.RegisteredUserService;
@@ -10,14 +9,16 @@ import org.services.RegisteredUserService;
 import java.io.IOException;
 import java.util.Map;
 
+import static org.httpServer.AuthUtilities.getAccessToken;
+
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte
  * da e verso una interfaccia utente tramite Api e protocollo http.
  */
 public class RegisteredUserController extends Controller<RegisteredUser, RegisteredUserService> {
 
-    public RegisteredUserController(RegisteredUserService userService, HttpExchange exchange) {
-        super(userService, exchange);
+    public RegisteredUserController(RegisteredUserService userService, HttpRequest request) {
+        super(userService, request);
     }
 
     /**
@@ -26,14 +27,14 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void login() throws Exception {
         try {
-            Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+            Map<String, Object> data = request.getBodyStreamData();
             String accessToken =  this.service.login(data);
             if(accessToken == null || accessToken == "")
-                HttpResponses.error(this.exchange, 404, "Autenticazione fallita");
+                HttpResponses.error(exchange, 404, "Autenticazione fallita");
             else
-                HttpResponses.success(this.exchange, "{ accessToken: " + accessToken + " }" );
+                HttpResponses.success(exchange, "{ accessToken: " + accessToken + " }" );
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(exchange, 500, e.getMessage());
         }
     }
 
@@ -43,15 +44,15 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void logout() throws Exception{
         try {
-            String accessToken = AuthUtilities.getAccessToken(exchange);
+            String accessToken = getAccessToken(exchange);
             RegisteredUser currentUser = this.service.getByAccessToken(accessToken);
             if(currentUser != null){
                 this.service.logout(currentUser);
-                HttpResponses.success(this.exchange, "Logout effettuato");
+                HttpResponses.success(exchange, "Logout effettuato");
             }else
-                HttpResponses.error(this.exchange, 404, "Nessun utente loggato");
+                HttpResponses.error(exchange, 404, "Nessun utente loggato");
         } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
+            HttpResponses.error(exchange, 500, e.getMessage());
         }
     }
 
@@ -61,37 +62,17 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
      */
     public void setRole() throws Exception{
             try {
-                Map<String, Object> data = HttpResponses.getStreamData(this.exchange);
+                Map<String, Object> data = request.getBodyStreamData();
                 if(data.get("role") == null || data.get("id") == null)
-                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
+                    HttpResponses.error(exchange, 404, "Dati mancanti");
                 RegisteredUser user = this.service.setRole(data);
                 if(user == null)
-                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
+                    HttpResponses.error(exchange, 404, "Modifica fallita");
                 else
-                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(user));
+                    HttpResponses.success(exchange, HttpResponses.objectToJson(user));
             } catch (Exception e) {
-                    HttpResponses.error(this.exchange, 500, e.getMessage());
+                    HttpResponses.error(exchange, 500, e.getMessage());
             }
     }
 
-    /**
-     * Gestisce la richiesta di eliminazione di un utente
-     * @throws IOException
-     */
-    public void delete() throws IOException {
-//        try {
-//            int id = HttpUtilities.getQueryId(this.httpRequestHandler.getRequestPath());
-//            if(id > 0) {
-//                RegisteredUser deleted = this.service.delete(id);
-//                if(deleted != null)
-//                    HttpResponses.success(this.exchange, "Utente eliminato");
-//                else
-//                    HttpResponses.error(this.exchange, 404, "Utente non trovato");
-//            }
-//            else
-//                HttpResponses.error(this.exchange, 404, "Id non valido");
-//        } catch (Exception e) {
-//            HttpResponses.error(this.exchange, 500, e.getMessage());
-//        }
-    }
 }

@@ -1,7 +1,7 @@
 package org.controllers;
 
-import com.sun.net.httpserver.HttpExchange;
-import org.httpServer.HttpResponses;
+import org.httpServer.http.HttpRequest;
+import org.httpServer.http.HttpResponses;
 import org.models.municipalities.Municipality;
 import org.models.poi.Poi;
 import org.services.MunicipalityService;
@@ -11,31 +11,10 @@ import java.util.ArrayList;
 
 public class MunicipalityController extends Controller<Municipality, MunicipalityService> {
 
-    public  MunicipalityController(MunicipalityService service, HttpExchange exchange) {
-        super(service, exchange);
+    public  MunicipalityController(MunicipalityService service, HttpRequest request) {
+        super(service, request);
     }
-    /**
-     * Gestisce la richiesta http di visualizzazione di un municipio e dei suoi dettagli
-     * @param id identificativo univoco della risorsa.
-     * @throws IOException
-     */
-    @Override
-    public void show(long id) throws IOException {
-       
-        try {
-            Municipality item =  this.service.getObjectById(id);
-            if(item == null)
-                HttpResponses.error(this.exchange, 404, "Record non trovato");
-            else{
-                String municipalityData = HttpResponses.objectToJson(item);
-                String geolocationData  = HttpResponses.objectToJson(item.getGeoLocation());
-                String combinedJson = "{" + municipalityData + ", \"geoLocation\": " + geolocationData + "}";
-                HttpResponses.success(this.exchange, combinedJson);
-            }
-        } catch (Exception e) {
-            HttpResponses.error(this.exchange, 500, e.getMessage());
-            }
-        }
+
 
     public void getWithPois(long id) throws IOException {
         try {

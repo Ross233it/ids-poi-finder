@@ -25,14 +25,10 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      * @throws Exception
      */
     @Override
-    public String index() throws Exception {
-        Connection connection = dbConnectionManager.openConnection();
-        Statement statement = connection.createStatement();
-        String query = "SELECT * FROM " + this.tableName;
-        ResultSet resultSet = statement.executeQuery(query);
-        String data = DbUtilities.mapDbDataToJson(resultSet);
-        connection.close();
-        return data;
+    public List<Map<String, Object>> index(String query) throws Exception {
+        if(query == null)
+            query = "SELECT * FROM " + this.tableName;
+        return DbUtilities.executeSelectQuery(query);
     }
 
     /**

@@ -3,6 +3,7 @@ package org.repositories;
 import org.models.Content;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,7 +20,7 @@ public interface IRepository<D extends Content> {
      * @return
      * @throws Exception
      */
-    String  index() throws Exception;
+    List<Map<String, Object>> index(String query) throws Exception;
 
     /**
      * Restituisce un elemento di una tabella ed eventuali relazioni
