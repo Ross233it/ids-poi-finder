@@ -1,5 +1,6 @@
 package org.controllers;
 
+import org.dataMappers.DataMapper;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.models.users.RegisteredUser;
@@ -69,7 +70,7 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
                 if(user == null)
                     HttpResponses.error(exchange, 404, "Modifica fallita");
                 else
-                    HttpResponses.success(exchange, HttpResponses.objectToJson(user));
+                    HttpResponses.success(exchange, DataMapper.mapObjectToJson(user));
             } catch (Exception e) {
                     HttpResponses.error(exchange, 500, e.getMessage());
             }

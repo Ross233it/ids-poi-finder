@@ -1,6 +1,6 @@
 package org.models;
 
-import org.httpServer.http.HttpResponses;
+import org.dataMappers.DataMapper;
 import org.models.users.RegisteredUser;
 
 /**
@@ -49,7 +49,7 @@ public abstract  class Content implements IModel {
     @Override
     public String toString(){
         try {
-            return HttpResponses.objectToJson(this);
+            return DataMapper.mapObjectToJson(this);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

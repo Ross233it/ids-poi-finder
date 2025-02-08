@@ -1,13 +1,11 @@
 package org.services;
 
-import com.sun.net.httpserver.HttpExchange;
+import org.dataMappers.RegisteredUserMapper;
 import org.httpServer.AuthUtilities;
 import org.models.users.RegisteredUser;
 import org.repositories.RegisteredUserRepository;
 
 import java.util.Map;
-
-import static org.httpServer.AuthUtilities.getAccessToken;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -17,8 +15,8 @@ import static org.httpServer.AuthUtilities.getAccessToken;
 public class RegisteredUserService extends Service<RegisteredUser> {
 
 
-    public RegisteredUserService(RegisteredUserRepository repository) {
-       super(repository);
+    public RegisteredUserService() {
+       super(new RegisteredUserRepository(), new RegisteredUserMapper());
     }
 
     /**
@@ -29,10 +27,11 @@ public class RegisteredUserService extends Service<RegisteredUser> {
      */
     public RegisteredUser create(Map<String, Object> objectData){
         String salt = AuthUtilities.generateSalt();
+        objectData.put("method", "insert");
+        objectData.put("salt", salt);
         objectData.put("password", AuthUtilities.hashPassword((String) objectData.get("password"), salt));
         objectData.put("role", "contributor");
-        RegisteredUser user = this.buildEntity(objectData);
-        user.setSalt(salt);
+        RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(objectData);
         try {
             this.repository.create(user, "");
         } catch (Exception e) {
@@ -89,7 +88,7 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             Map<String, Object> userData =  ((RegisteredUserRepository)this.repository).getByAccessToken(token);
             if(userData == null)
                 return null;
-            RegisteredUser user = this.buildEntity(userData);
+            RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(userData);
             user.setAccessToken(token);
             user.setId((int) userData.get("id"));
             return user;
@@ -130,37 +129,10 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             if(user == null)
                 return null;
             user.setId(id);
-            this.repository.delete(user);
+            this.repository.delete(user, null);
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-//    /**
-//     * Ritorna l'utente se attualmente autenticato | null altrimenti
-//     * @param accessToken String
-//     * @return currentUser RegisteredUser l'utente autenticato.
-//     */
-//    public static RegisteredUser getCurrentAuthUser(String accessToken){
-//       RegisteredUserService service = new RegisteredUserService(new RegisteredUserRepository());
-//
-//        RegisteredUser currentUser = service.getByAccessToken(accessToken);
-//        if(currentUser == null)
-//            return null;
-//        return currentUser;
-//    }
-
-
-    @Override
-    protected RegisteredUser buildEntity(Map<String, Object> data) {
-        RegisteredUser user = new RegisteredUser(
-                (String) data.get("username"),
-                (String) data.get("email"),
-                (String) data.get("password"),
-                (String) data.get("role")
-        );
-        user.setId((Long)data.get("id"));
-        return user;
     }
 }

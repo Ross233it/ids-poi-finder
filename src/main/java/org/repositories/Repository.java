@@ -26,8 +26,9 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      */
     @Override
     public List<Map<String, Object>> index(String query) throws Exception {
-        if(query == null)
-            query = "SELECT * FROM " + this.tableName;
+        if(query == null || query == ""){
+            query = "SELECT * FROM "+this.tableName+";" ;
+        }
         return DbUtilities.executeSelectQuery(query);
     }
 
@@ -59,7 +60,7 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      * @throws Exception
      */
     public D update(D entity, String query) throws Exception {
-       return this.create(entity, query);
+       return create(entity, query);
     }
 
     /**
@@ -89,12 +90,11 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      * @throws Exception
      */
     @Override
-    public Map<String, Object> search(String query, String searchTerm) throws Exception{
+    public List<Map<String, Object>> search(String query, String searchTerm) throws Exception{
         Object[] data = new Object[]{searchTerm};
-        List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
-        if (!resultSet.isEmpty()) {
-            Map<String, Object> objectData = (Map<String, Object>) resultSet.get(0);
-            return objectData;
+        List<Map<String, Object>> resultList = DbUtilities.executeSelectQuery(query, data);
+        if (!resultList.isEmpty()) {
+            return resultList;
         }
         return null;
     }
@@ -106,16 +106,12 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
      * @throws SQLException
      */
     @Override
-    public int delete(D entity) throws SQLException {
+    public int delete(D entity, String query) throws SQLException {
         long id = entity.getId();
         Object[] data = new Object[]{id};
-        String query = "DELETE FROM " + this.tableName + " WHERE id = ?";
+        if(query == null)
+            query = "DELETE FROM " + this.tableName + " WHERE id = ?";
         return DbUtilities.executeQuery(query, data);
-    }
-
-    @Override
-    public D update(D entity) throws SQLException {
-        return entity;
     }
 }
 

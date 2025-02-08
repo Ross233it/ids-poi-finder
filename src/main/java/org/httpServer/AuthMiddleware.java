@@ -70,7 +70,7 @@ public class AuthMiddleware {
         String accessToken = AuthUtilities.getAccessToken(exchange);
         if(accessToken != null && accessToken != ""){
             RegisteredUserRepository repository = new RegisteredUserRepository();
-            RegisteredUserService userService = new RegisteredUserService(repository);
+            RegisteredUserService userService = new RegisteredUserService();
             RegisteredUser currentUser = userService.getByAccessToken(accessToken);
             if(currentUser != null)
                 return currentUser.getRole();

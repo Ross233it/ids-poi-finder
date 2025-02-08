@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class  PoiBuilder {
-    private String         name;
+    private String         poiname;
     private String         description;
     private boolean        isLogical;
     private Municipality   municipality;
@@ -22,10 +22,12 @@ public class  PoiBuilder {
     private String         status;
 
     public PoiBuilder(String name, String description, boolean isLogical) {
-        this.name = name;
+        this.poiname = name;
         this.description = description;
         this.isLogical = isLogical;
         this.status = "pending";
+        this.author = null;
+        this.approver = null;
     }
 
     public PoiBuilder municipality(Municipality municipality) {
@@ -64,7 +66,7 @@ public class  PoiBuilder {
 
     /*** getters ***/
 
-    public String         getName()        { return name;}
+    public String         getPoiName()        { return poiname;}
     public String         getStatus()      { return status;}
     public String         getDescription() { return description; }
     public boolean        getIsLogical()   { return isLogical; }

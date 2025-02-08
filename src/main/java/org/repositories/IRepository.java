@@ -44,7 +44,7 @@ public interface IRepository<D extends Content> {
      * @return
      * @throws Exception
      */
-    D  update(D entity) throws Exception;
+    D  update(D entity, String query) throws Exception;
 
     /**
      * Cancella un elemento esistente
@@ -52,7 +52,7 @@ public interface IRepository<D extends Content> {
      * @return int numero di righe cancellate
      * @throws Exception
      */
-    int  delete(D entity)   throws SQLException;
+    int  delete(D entity, String query)   throws SQLException;
 
     /**
      * Ricerca un elemento in base ad una query ed un parametro di ricerca
@@ -61,5 +61,5 @@ public interface IRepository<D extends Content> {
      * @return
      * @throws Exception
      */
-    Map<String, Object> search(String query, String searchTerm) throws Exception;
+    List<Map<String, Object>> search(String query, String searchTerm) throws Exception;
 }

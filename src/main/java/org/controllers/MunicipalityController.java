@@ -1,5 +1,6 @@
 package org.controllers;
 
+import org.dataMappers.DataMapper;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.models.municipalities.Municipality;
@@ -24,11 +25,11 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
             if(item == null)
                 HttpResponses.error(this.exchange, 404, "Record non trovato");
             else{
-                String municipalityData = HttpResponses.objectToJson(item);
+                String municipalityData = DataMapper.mapObjectToJson(item);
                 String poiJsonData = "";
                 int i = 0;
                 for(Poi poi : pois){
-                    String poiData = HttpResponses.objectToJson(poi);
+                    String poiData = DataMapper.mapObjectToJson(poi);
                     poiJsonData += " \""+ i +"\": " + poiData + ",\n";
                     i++;
                 }

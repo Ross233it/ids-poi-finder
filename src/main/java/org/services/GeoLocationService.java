@@ -1,5 +1,6 @@
 package org.services;
 
+import org.dataMappers.GeoLocationMapper;
 import org.models.GeoLocation;
 import org.repositories.GeoLocationRepository;
 
@@ -8,8 +9,12 @@ import java.util.Map;
 
 public class GeoLocationService  extends Service<GeoLocation> {
 
-    public GeoLocationService(GeoLocationRepository repository) {
-        super(repository);
+    public GeoLocationService() {
+        super(new GeoLocationRepository(),  new GeoLocationMapper());
+    }
+
+    public GeoLocation get(Map<String, Object> result){
+        return (GeoLocation) this.mapper.mapDataToObject(result);
     }
 
     /**
@@ -32,16 +37,5 @@ public class GeoLocationService  extends Service<GeoLocation> {
             geoLocation = this.getObjectById(geoLocId);
         }
         return geoLocation;
-    }
-
-
-    @Override
-    protected GeoLocation buildEntity(Map<String, Object> geolocationData) {
-        return new GeoLocation(
-                (String) geolocationData.get("address"),
-                (String) geolocationData.get("number"),
-                (String) geolocationData.get("cap"),
-                (double) geolocationData.get("latitude"),
-                (double) geolocationData.get("longitude"));
     }
 }

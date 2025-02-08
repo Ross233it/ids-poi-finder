@@ -4,14 +4,17 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 
+/**
+ * Questa classe ha la responsabilità di implementare le risposte http
+ * e di eseguirle
+ */
 public class HttpResponses{
 
     /**
      * Genera una risposta di successo e la invia
      * @param exchange
-     * @param message
+     * @param message messaggio testuale di conferma.
      * @throws IOException
      */
     public static void success(HttpExchange exchange, String message) throws IOException {
@@ -20,9 +23,8 @@ public class HttpResponses{
 
     /**
      * Genera una risposta di errore e la invia
-     *
      * @param exchange
-     * @param errorMessage
+     * @param errorMessage messaggio testuale di errore.
      * @throws IOException
      */
    public static void error(HttpExchange exchange, int statusCode, String errorMessage) throws IOException {
@@ -32,8 +34,8 @@ public class HttpResponses{
     /**
      * Invia una risposta in risposta ad una chiamata http
      * @param exchange
-     * @param statusCode
-     * @param message
+     * @param statusCode lo stato http della chiamata
+     * @param message messaggio testuale di risposta.
      * @throws IOException
      */
     private static void sendResponse(HttpExchange exchange, int statusCode, String message) throws IOException {
@@ -42,43 +44,5 @@ public class HttpResponses{
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(message.getBytes());
         }
-    }
-
-    /**
-     * Recupera i parametri di un oggetto qualsiasi e li trasforma in una stringa json
-     * @param obj
-     * @return
-     * @throws IllegalAccessException
-     */
-    public static String objectToJson(Object obj) throws IllegalAccessException {
-        if (obj == null) {
-            return "{}";
-        }
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-
-        Field[] fields = obj.getClass().getDeclaredFields();
-
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            field.setAccessible(true);
-
-            String fieldName = field.getName();
-            Object fieldValue = field.get(obj);
-
-            jsonBuilder.append("\"").append(fieldName).append("\": ");
-
-            if (fieldValue instanceof String) {
-                jsonBuilder.append("\"").append(fieldValue).append("\"");
-            } else {
-                jsonBuilder.append(fieldValue);
-            }
-
-            if (i < fields.length - 1) {
-                jsonBuilder.append(", ");
-            }
-        }
-        jsonBuilder.append("}");
-        return jsonBuilder.toString();
     }
 }

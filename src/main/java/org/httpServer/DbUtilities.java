@@ -83,7 +83,6 @@ public class DbUtilities {
                     }
                     results.add(row);
                 }
-
                 System.out.println("Risultati ottenuti: " + results.size());
                 return results;
             }

@@ -1,36 +1,41 @@
 package org.services;
 
-import org.controllers.Controller;
 import org.dataMappers.MunicipalityMapper;
-import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
-import org.models.municipalities.MunicipalityBuilder;
-import org.models.poi.Poi;
-import org.models.users.RegisteredUser;
-import org.repositories.GeoLocationRepository;
+import org.models.municipalities.Municipality;
 import org.repositories.MunicipalityRepository;
-import org.repositories.PoiRepository;
-import org.repositories.RegisteredUserRepository;
+
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
+
 
 public class MunicipalityService extends Service<Municipality> {
 
-    private GeoLocationService  geoLocationService;
+    private GeoLocationService geoLocationService;
 
-    private RegisteredUserService  registeredUserService;
-
-    private MunicipalityMapper municipalityMapper;
-
-    public MunicipalityService(MunicipalityRepository repository) {
-        super(repository);
-        this.geoLocationService    = new GeoLocationService(new GeoLocationRepository());
-        this.registeredUserService = new RegisteredUserService(new RegisteredUserRepository());
-        this.municipalityMapper    = new MunicipalityMapper();
+    public MunicipalityService() {
+        super(new MunicipalityRepository(), new MunicipalityMapper());
+        this.geoLocationService = new GeoLocationService();
     }
 
+    public Municipality get(Map<String, Object> result){
+        return (Municipality) this.mapper.mapDataToObject(result);
+    }
+
+    /**
+     * Gestisce il servizio di creazione di una nuova entità a database
+     * @param objectData struttura dati con informazioni dell'oggetto da creare
+     * @return object Municipality l'oggetto creato e salvato nello strato di persistenza.
+     * @throws Exception
+     */
+    @Override
+    public Municipality create(Map<String, Object> objectData) throws Exception{
+        GeoLocation geoLocation = geoLocationService.create(objectData);
+        Municipality municipality = (Municipality) this.mapper.mapDataToObject(objectData);
+        municipality.setGeoLocation(geoLocation);
+        return (Municipality) repository.create(municipality, null);
+    }
 
 
     /**
@@ -40,66 +45,12 @@ public class MunicipalityService extends Service<Municipality> {
      * @throws Exception
      */
     public Municipality getWithPois(Long id) throws IOException,Exception {
-        Municipality municipality = super.getObjectById(id);
-        ArrayList<Poi> pois = new ArrayList<>();
-        municipality.setPois(new PoiService(new PoiRepository("pois")).getByMunicipalityId(id));
-        return municipality;
-    }
-
-
-    @Override
-    protected Municipality buildEntity(Map<String, Object> objectData)throws Exception{
-        GeoLocation geoLocation = this.geoLocationService.getOrCreate(objectData);
-
-        RegisteredUser author = getAuthor(objectData);
-
-        Municipality municipality = new MunicipalityBuilder(
-                (String) objectData.get("name"),
-                (String) objectData.get("region"),
-                (String) objectData.get("province")
-        ).geoLocation(geoLocation)
-         .author(author)
-         .build();
-
-        municipality.setId((Long)objectData.get("id"));
-
-        return municipality;
-    }
-
-
-    @Override
-    protected Municipality buildEntityFromDb(Map<String, Object> objectData)throws Exception{
-        GeoLocation geoLocation = this.geoLocationService.getOrCreate(objectData);
-
-        RegisteredUser author = getAuthor(objectData);
-
-        Municipality municipality = new MunicipalityBuilder(
-                (String) objectData.get("name"),
-                (String) objectData.get("region"),
-                (String) objectData.get("province")
-        ).geoLocation(geoLocation)
-                .author(author)
-                .build();
-
-        municipality.setId((Long)objectData.get("id"));
-
-        return municipality;
-    }
-
-    private RegisteredUser getAuthor(Map<String, Object> objectData) throws Exception {
-        long authorId = 0;
-        Object authorIdObj = objectData.get("author_id");
-
-        if (authorIdObj instanceof Long) {
-            authorId = (Long) authorIdObj;
-        } else if (authorIdObj instanceof Integer) {
-            authorId = ((Integer) authorIdObj).longValue();
-        } else if (authorIdObj instanceof String) {
-            authorId = Long.parseLong((String) authorIdObj);
-        }
-
-        if(authorId == 0)
-             return  Controller.getAuthor();
-         return registeredUserService.getObjectById(authorId);
+//        Municipality municipality = super.getObjectById(id);
+//        ArrayList<Poi> pois = new ArrayList<>();
+//        municipality.setPois(new PoiService(new PoiRepository()).getByMunicipalityId(id));
+//        return municipality;
+        return null;
     }
 }
+
+

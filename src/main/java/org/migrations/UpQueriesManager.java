@@ -109,8 +109,8 @@ public class UpQueriesManager extends QueriesManager{
                 "is_logical BOOLEAN NOT NULL DEFAULT 0,"+
                 "municipality_id INT UNSIGNED," +
                 "geolocation_id INT UNSIGNED," +
-                "author_id INT UNSIGNED NOT NULL DEFAULT 0," +
-                "approver_id INT UNSIGNED NOT NULL DEFAULT 0" +
+                "author_id INT UNSIGNED  DEFAULT NULL," +
+                "approver_id INT UNSIGNED  DEFAULT NULL" +
                 ");"
         );
 

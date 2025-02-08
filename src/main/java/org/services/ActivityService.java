@@ -1,14 +1,16 @@
 package org.services;
 
+import org.dataMappers.ActivityMapper;
 import org.models.activities.Activity;
+import org.repositories.ActivityRepository;
 import org.repositories.Repository;
 
 import java.util.Map;
 
 public class ActivityService  extends Service<Activity>{
 
-    public ActivityService(Repository repository) {
-        super(repository);
+    public ActivityService() {
+        super(new ActivityRepository(), new ActivityMapper());
     }
 
 
@@ -18,14 +20,14 @@ public class ActivityService  extends Service<Activity>{
      * @param objectData
      * @return
      */
-    @Override
-    protected Activity buildEntity(Map<String, Object> objectData)throws Exception{
-        Activity activity = new Activity(
-                (String) objectData.get("name"),
-                (String) objectData.get("description"),
-                (String) objectData.get("type")
-        );
-
-        return activity;
-    }
+//    @Override
+//    protected Activity buildEntity(Map<String, Object> objectData)throws Exception{
+//        Activity activity = new Activity(
+//                (String) objectData.get("name"),
+//                (String) objectData.get("description"),
+//                (String) objectData.get("type")
+//        );
+//
+//        return activity;
+//    }
 }

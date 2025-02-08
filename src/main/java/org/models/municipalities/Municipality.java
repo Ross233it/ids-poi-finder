@@ -1,6 +1,6 @@
 package org.models.municipalities;
 
-import org.httpServer.http.HttpResponses;
+import org.dataMappers.DataMapper;
 import org.models.Content;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -38,7 +38,7 @@ public class Municipality extends Content {
     public String toString() {
         String municipalityString = "{ }";
         try {
-            municipalityString = HttpResponses.objectToJson(this);
+            municipalityString = DataMapper.mapObjectToJson(this);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package org.controllers;
 
+import org.dataMappers.ActivityMapper;
 import org.httpServer.http.HttpRequest;
 import org.repositories.ActivityRepository;
 import org.repositories.MunicipalityRepository;
@@ -29,23 +30,19 @@ public class ControllerFactory {
     private Controller getController(String controllerName, HttpRequest request) {
         switch (controllerName) {
             case "RegisteredUserController":
-                RegisteredUserRepository userRepository = new RegisteredUserRepository();
-                RegisteredUserService userService = new RegisteredUserService(userRepository);
+                RegisteredUserService userService = new RegisteredUserService();
                 return new RegisteredUserController(userService, request);
 
             case "PoiController":
-                PoiRepository poiRepository = new PoiRepository("municipalities");
-                PoiService poiService = new PoiService(poiRepository);
+                PoiService poiService = new PoiService();
                 return new PoiController(poiService, request);
 
             case "MunicipalityController":
-                MunicipalityRepository munRepository = new MunicipalityRepository();
-                MunicipalityService munService = new MunicipalityService(munRepository);
+                MunicipalityService munService = new MunicipalityService();
                 return new MunicipalityController(munService, request);
 
             case "ActivityController":
-                ActivityRepository actRepository = new ActivityRepository("activities");
-                ActivityService actService = new ActivityService(actRepository);
+                ActivityService actService = new ActivityService();
                 return new ActivityController(actService, request);
             default:
                 return null;

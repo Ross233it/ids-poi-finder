@@ -48,6 +48,9 @@ public class Router {
             case "PATCH":
                 this.routes = routesApi.setUpPatchRoutes();
                 break;
+            case "PUT":
+                this.routes = routesApi.setUpPutRoutes();
+                break;
             case "DELETE":
                 this.routes = routesApi.setUpDeleteRoutes();
                 break;

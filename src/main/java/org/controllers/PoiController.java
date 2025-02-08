@@ -43,18 +43,12 @@ public class PoiController extends Controller<Poi, PoiService> {
      * @throws Exception
      */
     public void setStatus() throws Exception{
-            try {
-                Map<String, Object> data = request.getBodyStreamData();
-                if(data.get("status") == null || data.get("id") == null)
-                    HttpResponses.error(this.exchange, 404, "Dati mancanti");
-                Poi poi = ((PoiService) this.service).setStatus(data);
-                if(poi == null)
-                    HttpResponses.error(this.exchange, 404, "Modifica fallita");
-                else
-                    HttpResponses.success(this.exchange, HttpResponses.objectToJson(poi));
-            } catch (Exception e) {
-                HttpResponses.error(this.exchange, 500, e.getMessage());
-            }
+        Map<String, Object> data = request.getBodyStreamData();
+        long poiId = request.getRequestId();
+        if(data.get("status") == null || poiId == 0)
+            HttpResponses.error(this.exchange, 404, "Dati mancanti");
+        data.put("id", poiId);
+        handleRequest(()-> service.setStatus(data), null);
     }
 
 }

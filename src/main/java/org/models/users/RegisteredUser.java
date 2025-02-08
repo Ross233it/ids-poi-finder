@@ -19,11 +19,21 @@ public class RegisteredUser extends Content implements IUser {
 
     public  String accessToken = null;
 
-    public RegisteredUser(String username, String email, String password, String role) {
+
+    public RegisteredUser(String username, String email,  String role) {
         this.username = username;
         this.email    = email;
-        this.password = password;
         this.role     = role;
+    }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "\"id\":\"" + getId() + "\","
+                + "\"username\":\"" + username + "\","
+                + "\"email\":\"" + email + "\","
+                + "\"role\":\"" + role + "\","
+                + "}";
     }
 
     /** getters **/
@@ -50,18 +60,6 @@ public class RegisteredUser extends Content implements IUser {
      */
     public Boolean hasRole(String role) {
         return this.role.equals(role);
-    }
-
-    /**
-     * Verifica se un utente ha uno dei ruoli passati come parametro
-     * @param roles
-     * @return
-     */
-    public Boolean hasRole(String[] roles) {
-        for(String role : roles)
-            if(this.role.equals(role))
-                return true;
-        return false;
     }
 
 

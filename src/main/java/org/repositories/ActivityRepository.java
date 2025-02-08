@@ -4,8 +4,8 @@ import org.models.activities.Activity;
 
 public class ActivityRepository extends Repository<Activity> {
 
-    public ActivityRepository(String tableName) {
-        super(tableName);
+    public ActivityRepository() {
+        super("activities");
     }
 
     @Override

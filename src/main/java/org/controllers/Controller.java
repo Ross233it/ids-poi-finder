@@ -1,12 +1,10 @@
 package org.controllers;
 
-
 import com.sun.net.httpserver.HttpExchange;
 import org.httpServer.AuthUtilities;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.models.users.RegisteredUser;
-import org.repositories.RegisteredUserRepository;
 import org.services.IService;
 import org.services.RegisteredUserService;
 
@@ -33,7 +31,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      * @param successMessage il messaggio da ritornare in caso di successo.
      * @throws IOException
      */
-    private void handleRequest(ControllerRequestHandler<Object> action, String successMessage) throws IOException {
+    protected void handleRequest(ControllerRequestHandler<Object> action, String successMessage) throws IOException {
         try {
             Object result = action.handle();
             if (result == null) {
@@ -64,6 +62,8 @@ public abstract class Controller<T, S extends IService>  implements IController<
     @Override
     public void create() throws IOException {
         Map<String, Object> data = request.getBodyStreamData();
+        RegisteredUser author = this.getAuthor();
+        data.put("author", author);
         handleRequest(()->service.create(data), null);
     }
 
@@ -117,7 +117,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     public static RegisteredUser getAuthor(){
         String accessToken = AuthUtilities.getAccessToken(exchange);
-        RegisteredUserService service = new RegisteredUserService(new RegisteredUserRepository());
+        RegisteredUserService service = new RegisteredUserService();
         return service.getByAccessToken(accessToken);
     }
 }
