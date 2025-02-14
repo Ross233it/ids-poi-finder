@@ -1,6 +1,6 @@
 package org.migrations;
 
-import org.httpServer.AuthUtilities;
+import org.httpServer.auth.AuthUtilities;
 
 public class UpQueriesManager extends QueriesManager{
 

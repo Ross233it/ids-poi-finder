@@ -1,12 +1,18 @@
 package org.models.users;
 
-import org.httpServer.AuthUtilities;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import org.httpServer.auth.AuthUtilities;
 import org.models.Content;
+
 
 /**
  * Questa classe rappresenta un utente registrato all'interno del sistema
  */
+@Entity
+@Table(name="users")
 public class RegisteredUser extends Content implements IUser {
+
     private String username;
 
     private String email;
@@ -24,6 +30,10 @@ public class RegisteredUser extends Content implements IUser {
         this.username = username;
         this.email    = email;
         this.role     = role;
+    }
+
+    public RegisteredUser() {
+
     }
 
     @Override

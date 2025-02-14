@@ -1,11 +1,6 @@
 package org.controllers;
 
-import org.dataMappers.ActivityMapper;
 import org.httpServer.http.HttpRequest;
-import org.repositories.ActivityRepository;
-import org.repositories.MunicipalityRepository;
-import org.repositories.PoiRepository;
-import org.repositories.RegisteredUserRepository;
 import org.services.ActivityService;
 import org.services.MunicipalityService;
 import org.services.PoiService;

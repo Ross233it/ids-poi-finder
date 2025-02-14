@@ -1,10 +1,11 @@
 package org.models.activities;
 
 import org.models.poi.IPoi;
+import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Classe Itinerary che estende Activity
@@ -12,58 +13,31 @@ import java.util.ArrayList;
  */
 public class Itinerary extends Activity {
    
-    private List<IPoi> poiList;
+    private List<Poi> poiList;
 
-    public Itinerary(String name, String description,String type) {
+    public Itinerary(String name, String description,String type, List<Long> orderedIds) {
         super(name, description, type);
         this.poiList = new ArrayList<>();
+        this.orderPoi(orderedIds);
     }
 
-    /** Getters **/
+    /**
+     * Ordina i poi secondo una lista di id che identificano l'ordine
+     * delle tappe.
+     * @param orderedIds
+     */
+    private void orderPoi(List<Long> orderedIds) {
+        Map<Long, Poi> poiMap = new HashMap<>();
+        for (Poi poi : poiList) {
+            poiMap.put(poi.getId(), poi);
+        }
 
-    @Override
-    public Object[] getData() {
-        return new Object[] {
-                getName(),
-                getDescription(),
-                getStatus(),
-                getAuthor(),
-                getValidator(),
-                getPoiList()
-        };
-    }
-    
-    public List<IPoi> getPoiList() { return poiList; }
-
-    /** Setters **/
-
-    public void setPoiList(List<IPoi> poiList) { this.poiList = poiList; }
-
-    /** Metodi aggiuntivi **/
-
-
-    public void addPoi(IPoi poi) { poiList.add(poi); }
-
-    public void removePoi(IPoi poi) { poiList.remove(poi); }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{")
-                .append("\"name\": \"").append(getName()).append("\", ")
-                .append("\"description\": \"").append(getDescription()).append("\", ")
-                .append("\"status\": \"").append(getStatus()).append("\", ")
-                .append("\"author\": \"").append(getAuthor().getUsername()).append("\", ")
-                .append("\"validator\": \"").append(getValidator() != null ? getValidator().getUsername() : "null").append("\", ")
-                .append("\"poiList\": [");
-
-        for (int i = 0; i < poiList.size(); i++) {
-            sb.append(poiList.get(i).toString());
-            if (i < poiList.size() - 1) {
-                sb.append(", ");
+        List<Poi> orderedPoiList = new ArrayList<>();
+        for (Long id : orderedIds) {
+            if (poiMap.containsKey(id)) {
+                orderedPoiList.add(poiMap.get(id));
             }
         }
-        sb.append("]}");
-        return sb.toString();
+        this.poiList = orderedPoiList;
     }
 }

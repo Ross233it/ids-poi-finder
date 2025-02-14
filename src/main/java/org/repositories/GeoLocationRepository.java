@@ -6,8 +6,9 @@ public class GeoLocationRepository extends Repository<GeoLocation> {
 
 
     public GeoLocationRepository() {
-        super( "geolocations" );
+        super( "geolocations");
     }
+
 
     @Override
     public GeoLocation create(GeoLocation geoLoc, String query) throws Exception {

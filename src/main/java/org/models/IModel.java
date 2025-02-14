@@ -24,4 +24,6 @@ public interface IModel {
      */
     void setId(long id);
 
+
+
 }

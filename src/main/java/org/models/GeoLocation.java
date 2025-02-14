@@ -1,5 +1,9 @@
 package org.models;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="geolocations")
 public class GeoLocation extends Content {
 
     private double latitude;
@@ -11,6 +15,8 @@ public class GeoLocation extends Content {
     private String number;
 
     private String cap;
+
+    public GeoLocation() {  }
 
     public GeoLocation(
                        String address,
@@ -35,7 +41,6 @@ public class GeoLocation extends Content {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
 
     /**
      * Restituisce i dati dell'oggetto

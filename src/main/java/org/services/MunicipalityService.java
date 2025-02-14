@@ -3,10 +3,12 @@ package org.services;
 import org.dataMappers.MunicipalityMapper;
 import org.models.GeoLocation;
 import org.models.municipalities.Municipality;
+import org.models.users.RegisteredUser;
 import org.repositories.MunicipalityRepository;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -23,6 +25,17 @@ public class MunicipalityService extends Service<Municipality> {
         return (Municipality) this.mapper.mapDataToObject(result);
     }
 
+    @Override
+    public Municipality getObjectById(long id) throws Exception {
+        Map<String, Object> entityData =  this.repository.getById(id, null);
+        if(entityData == null)
+            return null;
+        Municipality municipality= (Municipality) this.mapper.mapDataToObject(entityData);
+        GeoLocation geoLocation = geoLocationService.get(entityData);
+        municipality.setGeoLocation(geoLocation);
+        return municipality;
+    }
+
     /**
      * Gestisce il servizio di creazione di una nuova entità a database
      * @param objectData struttura dati con informazioni dell'oggetto da creare
@@ -34,6 +47,7 @@ public class MunicipalityService extends Service<Municipality> {
         GeoLocation geoLocation = geoLocationService.create(objectData);
         Municipality municipality = (Municipality) this.mapper.mapDataToObject(objectData);
         municipality.setGeoLocation(geoLocation);
+        municipality.setAuthor((RegisteredUser) objectData.get("author"));
         return (Municipality) repository.create(municipality, null);
     }
 
@@ -45,11 +59,11 @@ public class MunicipalityService extends Service<Municipality> {
      * @throws Exception
      */
     public Municipality getWithPois(Long id) throws IOException,Exception {
-//        Municipality municipality = super.getObjectById(id);
-//        ArrayList<Poi> pois = new ArrayList<>();
-//        municipality.setPois(new PoiService(new PoiRepository()).getByMunicipalityId(id));
-//        return municipality;
-        return null;
+        Municipality municipality = super.getObjectById(id);
+        PoiService poiService = new PoiService();
+        ArrayList pois = (ArrayList) poiService.getByMunicipalityId(id);
+        municipality.setPois(pois);
+        return municipality;
     }
 }
 

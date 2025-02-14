@@ -25,7 +25,11 @@ public class GeoLocationMapper extends DataMapper<GeoLocation> {
                 latitude,
                 longitude
         );
-//        geoLocation.setId((long) result.getOrDefault("geolocation_id",0));
+
+        if(result.containsKey("G_id")){
+            long id = castIdvalue(result.get("G_id"));
+            geoLocation.setId(id);
+        }
 
         return geoLocation;
     }

@@ -14,9 +14,27 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
 
     protected String tableName;
 
+    StringBuilder queryBuilder;
+
+
     public Repository(String tableName) {
         this.dbConnectionManager = DbConnectionManager.getInstance();
         this.tableName = tableName;
+        this.queryBuilder = buildMainQuery();
+    }
+
+    /**
+     * Genera un tool per la costruzione delle query select sulla base
+     * di una istruzione SQL principale comune a tutte le query della classe.
+     * @return queryBuilder il tool di costruzione delle query
+     */
+    protected StringBuilder buildMainQuery() {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT T.*, T.id AS ");
+        queryBuilder.append(tableName + "_id FROM ");
+        queryBuilder.append(this.tableName);
+        queryBuilder.append(" AS T");
+        return queryBuilder;
     }
 
     /**
@@ -65,14 +83,20 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
 
     /**
      * Ritorna un elemento della tabella in base all'id
-     * @param id long l'id dell'elemento da cercare
-     * @return Map<String, Object<String,>> le informazioni dell'elemento ricercato
+     * @param id       long l'id dell'elemento da cercare
+     * @return Map<String, Object < String, >> le informazioni dell'elemento ricercato
      * @throws Exception
      */
     @Override
     public Map<String, Object> getById(long id, String query) throws IOException, SQLException {
-        if(query == null)
-            query = "SELECT * FROM " + this.tableName + " WHERE id = ?";
+
+        if(query == null){
+            queryBuilder.append(" WHERE id = ? ;");
+            query = queryBuilder.toString();
+        }
+//        if(!isPublic)
+//            query += (" WHERE status <> 'pending' ");
+
         Object[] data = new Object[]{id};
         List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
         if (!resultSet.isEmpty()) {
@@ -85,13 +109,18 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
     /**
      * Ricerca un elemento in base ad una query ed un parametro di ricerca
      * @param query
-     * @param searchTerm
      * @return
      * @throws Exception
      */
     @Override
-    public List<Map<String, Object>> search(String query, String searchTerm) throws Exception{
-        Object[] data = new Object[]{searchTerm};
+    public List<Map<String, Object>> search(Map<String, String> queryStringParams, String query) throws Exception{
+        queryBuilder.append(" WHERE ");
+        for(Map.Entry<String, String> entry : queryStringParams.entrySet()){
+            queryBuilder.append(entry.getKey()).append(" LIKE \'%").append(entry.getValue()).append("%\' AND ");
+        }
+        queryBuilder.append(" 1 = 1;");
+        query = queryBuilder.toString();
+        Object[] data = new Object[]{};
         List<Map<String, Object>> resultList = DbUtilities.executeSelectQuery(query, data);
         if (!resultList.isEmpty()) {
             return resultList;
@@ -113,5 +142,30 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
             query = "DELETE FROM " + this.tableName + " WHERE id = ?";
         return DbUtilities.executeQuery(query, data);
     }
+
+
+    /**
+     * Modifica lo stato di un punto di interesse
+     * @param entity D l'oggetto  di cui modificare lo stato
+     * @return poi il poi modificato
+     * @throws Exception
+     */
+    public D setStatus(D entity) throws Exception {
+        if (entity == null) {
+            throw new IllegalArgumentException("L'entity non può essere null.");
+        }
+        long entityId = entity.getId();
+        long approverId = entity.getApprover().getId();
+        String status = entity.getStatus();
+
+        Object[] data = { status, approverId, entityId };
+
+        String query = "UPDATE " + this.tableName + " " +
+                "SET status = ?, " +
+                "approver_id = ? " +
+                "WHERE id = ?;";
+        long modifiedEntityId = DbUtilities.executeQuery(query, data);
+        return entity;
+    };
 }
 

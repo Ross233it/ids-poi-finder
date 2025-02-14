@@ -1,12 +1,10 @@
 package org.models.poi;
 
-import org.dataMappers.DataMapper;
 import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Poi extends  IPoi {
     private String  poiname;
@@ -27,6 +25,7 @@ public class Poi extends  IPoi {
 
     private String status;
 
+
     public Poi(PoiBuilder builder) {
         this.poiname =     builder.getPoiName();
         this.description = builder.getDescription();
@@ -35,7 +34,8 @@ public class Poi extends  IPoi {
         this.geoLocation = builder.getGeoLocation();
         this.tags =        builder.getTags();
         this.categories =  builder.getCategories();
-        this.status =      builder.getStatus();
+        this.type =        builder.getType();
+        this.setStatus(builder.getStatus());
         this.setApprover(builder.getApprover());
         this.setAuthor(builder.getAuthor());
     }
@@ -49,7 +49,7 @@ public class Poi extends  IPoi {
                 + "\"description\":\"" + description + "\","
                 + "\"type\":\"" + type + "\","
                 + "\"isLogical\":\"" + isLogical + "\","
-                + "\"status\":\"" + status + "\""
+                + "\"status\":\"" + getStatus() + "\""
                 ;
         if(municipality != null)
             resultString += ",\"municipality\": "+ municipality.toString();
@@ -73,7 +73,7 @@ public class Poi extends  IPoi {
             this.poiname,
             this.description,
             this.type,
-            this.status,
+            this.getStatus() != null ? this.getStatus() : null,
             this.isLogical,
             this.municipality.getId(),
             this.geoLocation.getId(),
@@ -90,7 +90,7 @@ public class Poi extends  IPoi {
 
     public String  getName()       { return poiname; }
 
-    public String  getStatus()       { return status; }
+    public Boolean isLogical(){ return this.isLogical;}
 
     /** setters **/
     @Override
@@ -100,7 +100,5 @@ public class Poi extends  IPoi {
 
     @Override
     public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
-
-    public void setStatus(String status) { this.status = status; }
 
 }

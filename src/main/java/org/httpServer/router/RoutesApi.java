@@ -45,10 +45,14 @@ public class RoutesApi {
      * Costruisce la struttura dati che contiene le informazioni di associazione fra rotte, controller e metodi
      */
     public Map<String, Route> setUpGetRoutes(){
-        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 5);
-        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "show", 5);
+        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 4);
+        this.addRoute("/"+prefix+"/public/poi" ,         "PoiController", "index", 5);
+        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "show", 4);
+        this.addRoute("/"+prefix+"/public/poi/{id}" ,         "PoiController", "show", 5);
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 5);
         this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "show", 5);
+        this.addRoute("/"+prefix+"/municipality/{id}/pois", "MunicipalityController", "getWithPois", 5);
+
         this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "index", 5);
         this.addRoute("/"+prefix+"/user/{id}",         "RegisteredUserController", "show", 1);
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "index", 5);
@@ -59,10 +63,10 @@ public class RoutesApi {
     public Map<String, Route> setUpPostRoutes(){
         this.addRoute("/"+prefix+"/user/login",        "RegisteredUserController", "login", 5);
         this.addRoute("/"+prefix+"/user/logout",       "RegisteredUserController", "logout", 4);
+        this.addRoute("/"+prefix+"/user/register",       "RegisteredUserController", "register", 5);
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "create", 1);
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "create", 4);
-        this.addRoute("/"+prefix+"/register",         "RegisteredUserController", "create", 5);
-        this.addRoute("/"+prefix+"/activity/{id}",     "ActivityController", "index",  2);
+        this.addRoute("/"+prefix+"/activity",     "ActivityController", "create",  2);
         this.addRoute("/"+prefix+"/migrate/{id}",      "migrationController", "index",  1);
         return this.getRoutes();
     }

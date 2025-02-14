@@ -1,7 +1,8 @@
 package org.services;
 
 import org.dataMappers.RegisteredUserMapper;
-import org.httpServer.AuthUtilities;
+import org.httpServer.auth.AuthUtilities;
+import org.httpServer.auth.UserContext;
 import org.models.users.RegisteredUser;
 import org.repositories.RegisteredUserRepository;
 
@@ -19,13 +20,15 @@ public class RegisteredUserService extends Service<RegisteredUser> {
        super(new RegisteredUserRepository(), new RegisteredUserMapper());
     }
 
+
+
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
      * fornisce una password criptata e un salt per i futuri token di autenticazione.
      * @param objectData
      * @return
      */
-    public RegisteredUser create(Map<String, Object> objectData){
+    public RegisteredUser register(Map<String, Object> objectData){
         String salt = AuthUtilities.generateSalt();
         objectData.put("method", "insert");
         objectData.put("salt", salt);
@@ -56,6 +59,8 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             if(AuthUtilities.verifyPassword(password, (String) userData.get("salt"), (String) userData.get("password"))){
                 String accessToken =  AuthUtilities.generateAccessToken(username);
                 ((RegisteredUserRepository) this.repository).saveAccessToken(accessToken, username);
+                RegisteredUser currentUser = this.getObjectById((Integer) userData.get("id"));
+                UserContext.setCurrentUser(currentUser);
                 return accessToken;
             }
             else

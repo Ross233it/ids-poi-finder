@@ -25,6 +25,7 @@ public class MunicipalityBuilder {
         this.name = name;
         this.region = region;
         this.province = province;
+        this.pois = new ArrayList<Poi>();
     }
 
     public MunicipalityBuilder geoLocation(GeoLocation geoLocation) {

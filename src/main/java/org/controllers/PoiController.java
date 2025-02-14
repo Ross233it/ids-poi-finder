@@ -1,8 +1,8 @@
 package org.controllers;
 
 import org.httpServer.http.HttpRequest;
-import org.httpServer.http.HttpResponses;
 import org.models.poi.Poi;
+import org.models.users.RegisteredUser;
 import org.services.PoiService;
 
 import java.io.IOException;
@@ -14,41 +14,28 @@ public class PoiController extends Controller<Poi, PoiService> {
         super(service, request);
     }
 
-    /**
-     * Gestisce la richiesta http di visualizzazione di un poi e dei suoi dettagli
-     * @throws IOException
-     */
-//    @Override
-//    public void show() throws IOException {
-//        if(this.request.getRequestId() > 0){
-//            long id = this.request.getRequestId();
-//            try {
-//                PoiService poiService= (PoiService) this.service;
-//                Poi item = poiService.getObjectById(id);
-//                if(item == null)
-//                    HttpResponses.error(this.exchange, 404, "Record non trovato");
-//                else{
-//                    String combinedJson = poiService.printPoi(item);
-//                    HttpResponses.success(this.exchange, combinedJson);
-//                }
-//            } catch (Exception e) {
-//                HttpResponses.error(this.exchange, 500, e.getMessage());
-//            }
-//        }
-//        HttpResponses.error(this.exchange, 500, "Parametro id mancante");
-//    }
+    @Override
+    public void create() throws IOException {
+        Map<String, Object> data = request.getBodyStreamData();
+        RegisteredUser author = this.request.getCurrentUser();
+        data.put("author", author);
+        if(
+            author.hasRole("platformAdmin") ||
+            author.hasRole("animator") ||
+            author.hasRole("authContributor")
+        ){
+            data.put("status", "published");
+        }
+        handleRequest(()->service.create(data), null);
+    }
 
     /**
-     * Gestisce la richiesta di validazione di un contenuto
-     * @throws Exception
+     * Gestisce la richiesta di tutti i poi di un municipio
+     * @throws IOException
      */
-    public void setStatus() throws Exception{
-        Map<String, Object> data = request.getBodyStreamData();
-        long poiId = request.getRequestId();
-        if(data.get("status") == null || poiId == 0)
-            HttpResponses.error(this.exchange, 404, "Dati mancanti");
-        data.put("id", poiId);
-        handleRequest(()-> service.setStatus(data), null);
+    public void getByMunicipalityId() throws IOException {
+        long municipalityId = request.getRequestId();
+        handleRequest(()-> service.getByMunicipalityId(municipalityId), null);
     }
 
 }

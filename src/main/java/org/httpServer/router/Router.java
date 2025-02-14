@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.controllers.Controller;
 import org.controllers.ControllerFactory;
-import org.httpServer.AuthMiddleware;
+import org.httpServer.auth.AuthMiddleware;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 

@@ -1,7 +1,10 @@
 package org.dataMappers;
 
+import org.models.GeoLocation;
+import org.models.municipalities.Municipality;
 import org.models.poi.Poi;
 import org.models.poi.PoiBuilder;
+import org.models.users.RegisteredUser;
 
 import java.util.Map;
 
@@ -14,35 +17,24 @@ public class PoiMapper extends DataMapper<Poi>{
      * @return istanza dell'oggetto
      */
     public Poi mapDataToObject(Map<String, Object> result){
-        PoiBuilder builder;
 
-        builder =  new PoiBuilder(
+        PoiBuilder poiBuilder =  new PoiBuilder(
                 (String) result.getOrDefault("poiname", null),
                 (String) result.getOrDefault("description", null),
                 (Boolean) result.getOrDefault("is_logical", null));
-        Poi poi =  builder.build();
-        if(result.containsKey("id") && result.get("id") != null){
-           long id = castIdvalue(result.get("id"));
+
+                poiBuilder.type((String) result.getOrDefault("type", null))
+                    .geoLocation((GeoLocation) result.getOrDefault("geolocation", null))
+                    .municipality((Municipality) result.getOrDefault("municipality", null))
+                    .author((RegisteredUser) result.getOrDefault("author", null))
+                    .status((String) result.getOrDefault("status", null));
+
+        Poi poi = (Poi) poiBuilder.build();
+
+        if(result.containsKey("P_id") && result.get("P_id") != null){
+           long id = castIdvalue(result.get("P_id"));
            poi.setId(id);
         }
         return poi;
     }
-
-//    protected  long castIdvalue(Object idValue){
-//        long id = 0L;
-//
-//        if (idValue instanceof Integer) {
-//            id = ((Integer) idValue).longValue();
-//        } else if (idValue instanceof Long) {
-//            id = (Long) idValue;
-//        } else if (idValue instanceof String) {
-//            try {
-//                id = Long.parseLong((String) idValue);
-//            } catch (NumberFormatException e) {
-//                System.err.println("Errore di conversione String -> Long: " + idValue);
-//            }
-//        }
-//        return id;
-//    }
-
 }

@@ -1,10 +1,6 @@
 package org.models.activities;
 
-import org.models.poi.IPoi;
-import org.models.users.RegisteredUser;
-
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Arrays;
 
 /**
  * Classe Experience che estende Activity
@@ -12,68 +8,34 @@ import java.util.HashSet;
  */
 public class Experience extends Activity {
 
-    private Set<IPoi> poiSet;
-
     private String date;
 
-    public Experience(String name, String description, String type) {
+    public Experience(String name, String description, String type, String eventDate) {
         super(name, description, type);
-        this.poiSet = new HashSet<>();
+        this.getDate();
     }
 
     /** Getters  **/
     @Override
     public Object[] getData() {
-        return new Object[]{
-                getName(),
-                getDescription(),
-                getStatus(),
-                getAuthor(),
-                getValidator(),
-                poiSet
-        };
+        Object[] data = super.getData();
+        Object[] newData = Arrays.copyOf(data, data.length + 1);
+        newData[data.length] = getDate();
+        return newData;
     }
 
     /** Getters **/
 
-    public Set<IPoi> getPoiSet() { return poiSet; }
-
     public String getDate() { return date; }
-
-
 
     /** Setters **/
 
-    public void setPoiSet(Set<IPoi> poiSet) { this.poiSet = poiSet; }
-
     public void setDate(String date) { this.date = date; }
-
-
-
-    /** Metodi aggiuntivi **/
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{")
-                .append("\"name\": \"").append(getName()).append("\", ")
-                .append("\"description\": \"").append(getDescription()).append("\", ")
-                .append("\"status\": \"").append(getStatus()).append("\", ")
-                .append("\"author\": \"").append(getAuthor().getUsername()).append("\", ")
-                .append("\"validator\": \"").append(getValidator() != null ? getValidator().getUsername() : "null").append("\", ")
-                .append("\"poiSet\": [");
-
-        for (IPoi poi : poiSet) {
-            sb.append(poi.toString()).append(", ");
-        }   
-        if (!poiSet.isEmpty()) sb.delete(sb.length() - 2, sb.length());
-        sb.append("]}");
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("{\"date\": \"").append(getDate()).append("\"} ");
         return sb.toString();
     }
-
-
-    public void addPoi(IPoi poi) { poiSet.add(poi); }
-
-
-    public void removePoi(IPoi poi) { poiSet.remove(poi); }
 }

@@ -3,7 +3,9 @@ package org.httpServer.http;
 import com.sun.net.httpserver.HttpExchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.httpServer.auth.AuthUtilities;
 import org.models.users.RegisteredUser;
+import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,30 +36,13 @@ public class HttpRequest {
         this.requestPath = exchange.getRequestURI().getPath();
         this.queryParams = new HashMap<String, String>();
         this.pathParams  = new HashMap<String, String>();
-        this.bodyStreamData = this.setBodyStreamData();
-        this.setQueryStringParams();
+        this.bodyStreamData = this.bodyStreamDataInit();
+        this.currentUserInit();
+        this.queryStringParamsInit();
     }
 
     /*** GETTERS ***/
 
-    /**
-     * Recupera le informazioni dal body di una chiamata http
-     * @return
-     * @throws IOException
-     */
-    public Map<String, Object> setBodyStreamData() throws IOException {
-        InputStream inputStream = this.exchange.getRequestBody();
-        String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-
-        System.out.println("Dati ricevuti nel corpo della richiesta: " + requestBody);
-
-        if (requestBody.isBlank()) {
-            return new HashMap<String, Object>();
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.readValue(requestBody, Map.class);
-    }
     /**
      * Ritorna l'attuale oggetto exchange - rappresentativo della comunicazione in corso
      */
@@ -73,6 +58,12 @@ public class HttpRequest {
      * @return l'id della request, zero altrimenti
      */
     public Map<String, Object> getBodyStreamData(){ return this.bodyStreamData; }
+
+    /**
+     * Ritorna l'utente chiamante se autenticato
+     * @return
+     */
+    public RegisteredUser getCurrentUser() { return currentUser; }
 
     /**
      * Ritorna il parametro id se presente nella url della richiesta
@@ -104,22 +95,6 @@ public class HttpRequest {
     /*** SETTERS ***/
 
     /**
-     * Estrae i parametri di ricerca da una url origine di richiesta http
-     * @return queryParams parametri della query string
-     */
-    private void setQueryStringParams(){
-        String query = this.exchange.getRequestURI().getQuery();
-        if (query != null) {
-            for (String param : query.split("&")) {
-                String[] keyValue = param.split("=");
-                if (keyValue.length == 2) {
-                    this.queryParams.put(keyValue[0], keyValue[1]);
-                }
-            }
-        }
-    }
-
-    /**
      * Recupera i parametri dinamici della rotta confrontandola con il pattern
      * ricevuto come parametro - recuperato dalla route
      * @param routePattern il pattern di costruzione dei parametri dinamici
@@ -135,6 +110,66 @@ public class HttpRequest {
                 if (routeParts[i].matches("\\{\\w+\\}")) {
                     String paramName = routeParts[i].replaceAll("[{}]", "");
                     this.pathParams.put(paramName, pathParts[i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Setta l'utente chiamante se autenticato - null altrimenti
+     * @param currentUser
+     */
+    public void setCurrentUser(RegisteredUser currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    /*** SETTERS ***/
+
+
+    /**
+     * Recupera l'utente autenticato e setta il valore dell'utente
+     * chiamante della classe.
+     */
+    private void currentUserInit(){
+        String accessToken = AuthUtilities.getAccessToken(exchange);
+        RegisteredUserService service = new RegisteredUserService();
+        RegisteredUser currentUser = service.getByAccessToken(accessToken);
+        if(currentUser == null) {
+            this.currentUser = null;
+        }
+        this.currentUser = currentUser;
+    }
+
+    /**
+     * Recupera le informazioni dal body di una chiamata http
+     * @return
+     * @throws IOException
+     */
+    private Map<String, Object> bodyStreamDataInit() throws IOException {
+        InputStream inputStream = this.exchange.getRequestBody();
+        String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+        System.out.println("Dati ricevuti nel corpo della richiesta: " + requestBody);
+
+        if (requestBody.isBlank()) {
+            return new HashMap<String, Object>();
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper.readValue(requestBody, Map.class);
+    }
+
+    /**
+     * Estrae i parametri di ricerca da una url origine di richiesta http
+     * @return queryParams parametri della query string
+     */
+    private void queryStringParamsInit(){
+        String query = this.exchange.getRequestURI().getQuery();
+        if (query != null) {
+            for (String param : query.split("&")) {
+                String[] keyValue = param.split("=");
+                if (keyValue.length == 2) {
+                    this.queryParams.put(keyValue[0], keyValue[1]);
                 }
             }
         }

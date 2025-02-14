@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+
 public class RegisteredUserRepository extends Repository<RegisteredUser> {
 
 
@@ -21,7 +22,7 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      * @throws Exception
      */
     public  Map<String, Object> getByUsername(String username) throws Exception {
-            String query = "SELECT * FROM " + this.tableName + " WHERE username = ? OR email = ?";
+            String query = "SELECT U.*, U.id AS A_id FROM " + this.tableName + " AS U WHERE username = ? OR email = ?";
             List<Map<String, Object>> data = DbUtilities.executeSelectQuery(query, new Object[]{username, username});
             System.out.println(data.toString());
             if (!data.isEmpty()) {
@@ -37,7 +38,8 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
      * @throws Exception
      */
     public  Map<String, Object> getByAccessToken(String token) throws Exception {
-        String query = "SELECT * FROM " + this.tableName + " WHERE access_token = ?";
+        String query = "SELECT U.*, U.id AS A_id FROM "
+                + this.tableName + " AS U WHERE access_token = ?";
         List<Map<String, Object>> data =  DbUtilities.executeSelectQuery(query, new Object[]{token});
         if (!data.isEmpty()) {
             return data.get(0);
@@ -80,8 +82,7 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
         long id = user.getId();
         String role = user.getRole();
         Object[] data = new Object[]{role, id};
-        String query = "UPDATE " + this.tableName + " SET role = ? WHERE id = ?";
-
+        String query = "UPDATE " + this.tableName + " AS P SET role = ? WHERE id = ?";
         int result = DbUtilities.executeQuery(query, data);
         if(result == 0)
             return null;

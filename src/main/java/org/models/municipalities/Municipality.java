@@ -1,6 +1,5 @@
 package org.models.municipalities;
 
-import org.dataMappers.DataMapper;
 import org.models.Content;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -23,7 +22,6 @@ public class Municipality extends Content {
         this.name = builder.getName();
         this.region = builder.getRegion();
         this.province = builder.getProvince();
-        this.status = builder.getStatus();
         this.geoLocation = builder.getGeoLocation();
         this.setAuthor(builder.getAuthor());
         this.setApprover(builder.getApprover());
@@ -36,13 +34,24 @@ public class Municipality extends Content {
      */
     @Override
     public String toString() {
-        String municipalityString = "{ }";
-        try {
-            municipalityString = DataMapper.mapObjectToJson(this);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        String resultString = "{"
+                + "\"name\":\"" + name + "\","
+                + "\"region\":\"" + region + "\","
+                + "\"province\":\"" + province + "\","
+                ;
+        if(getId() != 0)
+            resultString += "\"id:\""+getId();
+        if(!pois.isEmpty()){
+            resultString += ",\"pois\": {";
+            for(Poi poi : pois)
+                resultString += poi.toString()+",";
+            resultString +="}";
         }
-        return municipalityString;
+        if(geoLocation != null)
+            resultString += ",\"geoLocation\": "+ geoLocation.toString();
+        if(getAuthor() != null)
+            resultString += ",\"author\": " + getAuthor().toString();
+        return resultString +     "}";
     }
 
     /** getters **/

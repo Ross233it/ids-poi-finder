@@ -1,30 +1,42 @@
 package org.models.activities;
 
 import org.models.Content;
-import org.models.users.RegisteredUser;
+import org.models.poi.Poi;
+import org.models.poi.PoiBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Questa classe astrae il concetto di attività intesa come contenuto volto a
  * promuovere l'interazione tra utenti o la partecipazione ad eventi.
  */
+
+
 public class Activity extends Content {
+
     private String name;
+
     private String description;
-    private String status;
+
     private String type;
 
-    private RegisteredUser author;
-    private RegisteredUser approver;
+    private List<Poi> poiList;
 
-
-    public Activity(String name, String description, String type) {
+     public Activity(String name, String description, String type) {
         this.name = name;
         this.description = description;
         this.type = type;
-        this.approver = null;
-        this.author = null;
-        this.status = "pending";
+        this.setStatus("pending");
+        this.poiList = new ArrayList<Poi>();
     }
+
+
+    public Activity(ActivityBuilder builder){
+    }
+
+
+
 
     /** setters **/
 
@@ -32,12 +44,11 @@ public class Activity extends Content {
 
     public void setDescription(String description) {this.description = description; }
 
-    public void setStatus(String status) { this.status = status; }
+    public void setPoiList(List<Poi> poiList) { this.poiList = poiList; }
 
-    public void setAuthor(RegisteredUser author) { this.author = author;}
+    public void addPoi(Poi poi){ this.poiList.add(poi); }
 
-    public void setValidator(RegisteredUser approver) { this.approver = approver; }
-
+    public void removePoi(Poi poi){ this.poiList.remove(poi); }
     /** getters **/
 
     /**
@@ -50,9 +61,10 @@ public class Activity extends Content {
             this.getName(),
             this.getDescription(),
             this.getType(),
-            this.getStatus(),
-            this.getAuthorId(),
-            this.getValidatorId()
+            this.getPoiList(),
+            this.getStatus() != null ? this.getStatus() : null,
+            this.getAuthor() != null ? this.getAuthor().getId() : null,
+            this.getApprover() != null ? this.getApprover().getId() : null
         };
     }
 
@@ -65,32 +77,7 @@ public class Activity extends Content {
 
     public String getDescription() { return description; }
 
-    public String getStatus() { return status; }
-
-    public RegisteredUser getAuthor() { return author; }
-
-    public RegisteredUser getValidator() { return approver; }
-
-    /**
-     * Ritorna l'id dell'autore dell'attività
-     * @return long l'id dell'autore
-     */
-    public long getAuthorId() {
-        if(author == null)
-            return 0;
-        return author.getId();
-    }
-
-    /**
-     * Ritorna l'id dell'utente che ha validato il contenuto
-     * @return long l'id del validatore
-     */
-    public long getValidatorId(){
-        if(approver == null)
-            return 0;
-        return approver.getId();
-    }
-
     public String getType() { return type; }
 
+    public List<Poi> getPoiList() { return this.poiList; }
 }

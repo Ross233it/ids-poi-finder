@@ -8,9 +8,10 @@ import org.models.users.RegisteredUser;
 import org.services.RegisteredUserService;
 
 import java.io.IOException;
+
 import java.util.Map;
 
-import static org.httpServer.AuthUtilities.getAccessToken;
+import static org.httpServer.auth.AuthUtilities.getAccessToken;
 
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte
@@ -20,6 +21,12 @@ public class RegisteredUserController extends Controller<RegisteredUser, Registe
 
     public RegisteredUserController(RegisteredUserService userService, HttpRequest request) {
         super(userService, request);
+    }
+
+
+    public void register() throws IOException {
+        Map<String, Object> data = request.getBodyStreamData();
+        handleRequest(()->service.register(data), null);
     }
 
     /**

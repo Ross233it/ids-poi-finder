@@ -15,10 +15,10 @@ public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
         }
         RegisteredUser user = buildBaseUser(result);
 
-//        if(result.containsKey("id") ){
-//            Integer id = (Integer) result.getOrDefault("id", 0);
-//            user.setId(id.longValue());
-//        }
+        if(result.containsKey("A_id") ){
+            Integer id = (Integer) result.getOrDefault("A_id", 0);
+            user.setId(id.longValue());
+        }
         return user;
     }
 

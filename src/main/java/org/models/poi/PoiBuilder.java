@@ -1,33 +1,28 @@
 package org.models.poi;
 
+import org.models.Builder;
 import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;
-import org.models.users.RegisteredUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class  PoiBuilder {
+public class  PoiBuilder extends Builder<Poi> {
     private String         poiname;
     private String         description;
     private boolean        isLogical;
+    private String         type;
     private Municipality   municipality;
     private GeoLocation    geoLocation;
-    private RegisteredUser author;
-    private RegisteredUser approver;
     private List<Tag>      tags = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
-    private String         status;
 
     public PoiBuilder(String name, String description, boolean isLogical) {
         this.poiname = name;
         this.description = description;
         this.isLogical = isLogical;
-        this.status = "pending";
-        this.author = null;
-        this.approver = null;
     }
 
     public PoiBuilder municipality(Municipality municipality) {
@@ -37,6 +32,11 @@ public class  PoiBuilder {
 
     public PoiBuilder geoLocation(GeoLocation geoLocation) {
         this.geoLocation = geoLocation;
+        return this;
+    }
+
+    public PoiBuilder type(String type) {
+        this.type = type;
         return this;
     }
 
@@ -50,31 +50,20 @@ public class  PoiBuilder {
         return this;
     }
 
-    public PoiBuilder author(RegisteredUser author) {
-        this.author = author;
-        return this;
-    }
-
-    public PoiBuilder approver(RegisteredUser approver) {
-        this.approver = approver;
-        return this;
-    }
-
-    public Poi build() {
+    @Override
+    public Poi build(){
         return new Poi(this);
     }
 
-    /*** getters ***/
 
-    public String         getPoiName()        { return poiname;}
-    public String         getStatus()      { return status;}
+    /*** getters ***/
+    public String         getPoiName()     { return poiname;}
     public String         getDescription() { return description; }
+    public String         getType()        { return type; }
     public boolean        getIsLogical()   { return isLogical; }
     public Municipality   getMunicipality(){ return municipality; }
     public GeoLocation    getGeoLocation() { return geoLocation; }
     public List<Tag>      getTags()        { return tags; }
     public List<Category> getCategories()  { return categories; }
-    public RegisteredUser getAuthor()     {return author;}
-    public RegisteredUser getApprover()   {return approver;}
 }
 

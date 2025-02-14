@@ -1,5 +1,8 @@
 package org.dataMappers;
 
+import org.models.activities.Activity;
+import org.models.users.RegisteredUser;
+
 import java.util.Map;
 
 public class ActivityMapper extends DataMapper{
@@ -7,6 +10,15 @@ public class ActivityMapper extends DataMapper{
 
     @Override
     public Object mapDataToObject(Map result) {
-        return null;
+
+        Activity activity = new Activity(
+            (String) result.getOrDefault("name", null),
+            (String) result.getOrDefault("description", null),
+            (String) result.getOrDefault("type", null));
+
+        if(result.containsKey("author") && result.get("author") != null){
+            activity.setAuthor((RegisteredUser) result.get("author"));
+        }
+        return activity;
     }
 }

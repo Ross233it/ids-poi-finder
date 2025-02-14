@@ -1,8 +1,5 @@
 package org.httpServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +76,7 @@ public class DbUtilities {
                 while (resultSet.next()) {
                     Map<String, Object> row = new HashMap<>();
                     for (int i = 1; i <= columnCount; i++) {
-                        row.put(metaData.getColumnName(i), resultSet.getObject(i));
+                        row.put(metaData.getColumnLabel(i), resultSet.getObject(i));
                     }
                     results.add(row);
                 }
@@ -94,41 +91,4 @@ public class DbUtilities {
             connection.close();
         }
     }
-
-
-    /**
-     * Mappa i dati di una query in una lista di mappe chiave-valore
-     * @param resultSet i risultati della query
-     * @return List<Map<String, Object>> lista di mappe chiave-valore
-     */
-    public static List<Map<String, Object>> mapDbDataToList(ResultSet resultSet) throws SQLException {
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnCount = metaData.getColumnCount();
-        while (resultSet.next()) {
-            Map<String, Object> row = new HashMap<>();
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName  = metaData.getColumnName(i);
-                Object columnValue = resultSet.getObject(i);
-                row.put(columnName, columnValue);
-            }
-            resultList.add(row);
-        }
-        return resultList;
-    }
-
-
-    /**
-     * Mappa i dati di una query in formato JSON
-     * @param resultSet
-     * @return String JSON
-     * @throws SQLException
-     * @throws JsonProcessingException
-     */
-    public static String mapDbDataToJson(ResultSet resultSet) throws SQLException, JsonProcessingException {
-        List<Map<String, Object>> resultList = mapDbDataToList(resultSet);
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(resultList);
-    }
-
 }

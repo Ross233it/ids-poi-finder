@@ -22,8 +22,8 @@ public class MunicipalityMapper extends DataMapper<Municipality> {
 
         Municipality municipality =  builder.build();
 
-        if(result.containsKey("id") && result.get("id") != null){
-            long id = castIdvalue(result.get("id"));
+        if(result.containsKey("M_id") && result.get("M_id") != null){
+            long id = castIdvalue(result.get("M_id"));
             municipality.setId(id);
         }
         return municipality;

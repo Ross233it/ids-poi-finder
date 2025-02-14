@@ -5,10 +5,10 @@ import org.eventManager.EmailNotifier;
 import org.eventManager.EventManager;
 import org.eventManager.LogNotifier;
 import org.models.Content;
+
 import org.models.users.RegisteredUser;
 import org.repositories.Repository;
 
-import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +25,7 @@ public class Service<D extends Content> implements IService<D> {
 
     protected EventManager eventManager;
 
+
     public Service(Repository repository, DataMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
@@ -33,11 +34,16 @@ public class Service<D extends Content> implements IService<D> {
         eventManager.subscribe(new LogNotifier());
     }
 
+    /**
+     * Gestisce il servizio di recupero di tutti gli oggetti di un certo
+     * tipo.
+     * @return List<D> una lista di tutti gli oggetti recuperati.
+     */
+    @Override
     public List<D> index() {
         try {
             List<Map<String, Object>>results = this.repository.index(null);
             List<D> objectList = this.mapper.mapDbDataToObjects(results);
-            eventManager.notify("INDEX CALL");
             return objectList;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -45,13 +51,14 @@ public class Service<D extends Content> implements IService<D> {
     }
 
     /**
-     * Crea un oggetto sulla base delle informazioni recuperate dallo strato di persistenza.
-     * @param query il termine di ricerca per la query
+     * Crea un oggetto sulla base delle informazioni recuperate dallo strato di persistenza
+     * @param queryParams parametri ricevuti tramite una query string
      * @return D l'oggetto creato | null altrimenti.
      * @throws Exception
      */
-    public List<D> search(String query) throws Exception {
-        List<Map<String, Object>> entityData = this.repository.search("", query);
+    @Override
+    public List<D> filter(Map<String, String> queryParams) throws Exception {
+        List<Map<String, Object>> entityData = this.repository.search(queryParams, null);
         if(entityData == null)
             return null;
         List<D> entities = (List<D>) mapper.mapDbDataToObjects(entityData);
@@ -59,14 +66,16 @@ public class Service<D extends Content> implements IService<D> {
     }
 
     /**
-     * Ritorna un oggetto in base all'id e ai dati recuperati dallo strato di persistenza.
-     * @param id
-     * @return
+     * Gestisce il servizio di ricerca di un oggetto in base al
+     * suo identificativo unico
+     *
+     * @param id l'identificativo unico dell'oggetto da ricercare
+     * @return entity D l'oggetto trovato | null altrimenti
      * @throws Exception
      */
     @Override
     public D getObjectById(long id) throws Exception {
-        Map<String, Object> entityData =  this.repository.getById(id, null);
+         Map<String, Object> entityData =  this.repository.getById(id, null);
         if(entityData == null)
             return null;
         D entity = (D) this.mapper.mapDataToObject(entityData);
@@ -75,30 +84,17 @@ public class Service<D extends Content> implements IService<D> {
     }
 
     /**
-     * Crea un nuovo poi partendo da una serie di dati già validati
-     * @param objectData
-     * @return
+     * Gestisce il servizio di creazione di un nuovo poi
+     * partendo da una serie di dati
+     * @param objectData i dati relativi al nuovo oggetto
+     * @return entity D l'oggetto creato
      */
+    @Override
     public D create(Map<String, Object> objectData) throws Exception {
-        try {
-            D entity = (D) this.mapper.mapDataToObject(objectData);
-              entity = (D) this.repository.create(entity, null);
-            return entity;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Crea un nuovo poi partendo da una serie di dati già validati
-     * @param objectData
-     * @return
-     */
-    public D create(Map<String, Object> objectData, RegisteredUser author) throws Exception {
-        if(author == null)
+        if((RegisteredUser) objectData.get("author") == null)
             throw new IllegalArgumentException("L'autore non può essere null");
         D entity = (D) this.mapper.mapDataToObject(objectData);
-        entity.setAuthor(author);
+        entity.setAuthor((RegisteredUser) objectData.get("author"));
         try {
             this.repository.create(entity, "");
         } catch (Exception e) {
@@ -108,9 +104,10 @@ public class Service<D extends Content> implements IService<D> {
     }
 
     /**
-     * Aggiorna un oggetto partendo da una serie di dati già validati
-     * @param objectData
-     * @return
+     * Gestisce il servizio di aggiornamento di un oggetto partendo da una
+     * serie di dati
+     * @param objectData le informazioni circa l'oggetto e le modifiche
+     * @return entity D l'oggetto modificato
      */
     @Override
     public D update(long id, Map<String, Object> objectData) throws Exception {
@@ -124,6 +121,13 @@ public class Service<D extends Content> implements IService<D> {
         return entity;
     }
 
+    /**
+     * Gestisce il servizio di rimozione di oggetti dal sistema.
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
     public D delete(long id) throws Exception {
         D entity = this.getObjectById(id);
@@ -134,5 +138,29 @@ public class Service<D extends Content> implements IService<D> {
             return entity;
         else
             return null;
+    }
+
+    /**
+     * Gestisce il servizio di aggiornamento dello stato di un
+     * contenuto
+     * @param data i dati del contenuto di cui modificare lo stato
+     * @return l'oggetto aggiornato con il nuovo stato
+     * @throws Exception
+     */
+    @Override
+    public D setStatus(Map<String, Object> data) throws Exception {
+
+        String status = (String) data.get("status");
+
+        D entity = this.getObjectById( (Long) data.get("id"));
+        entity.setStatus( (String) data.get("status") );
+        entity.setApprover( (RegisteredUser) data.get("author"));
+        if(entity != null){
+            entity.setStatus((String) data.get("status"));
+            repository.setStatus(entity);
+            eventManager.notify("Nuovo Punto di interesse pubblicato");
+            return entity;
+        }
+        return null;
     }
 }

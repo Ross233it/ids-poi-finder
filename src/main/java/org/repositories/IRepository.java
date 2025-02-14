@@ -24,6 +24,7 @@ public interface IRepository<D extends Content> {
 
     /**
      * Restituisce un elemento di una tabella ed eventuali relazioni
+     *
      * @param id
      * @return
      * @throws Exception
@@ -61,5 +62,5 @@ public interface IRepository<D extends Content> {
      * @return
      * @throws Exception
      */
-    List<Map<String, Object>> search(String query, String searchTerm) throws Exception;
+    List<Map<String, Object>> search(Map<String, String> searchTerm, String query) throws Exception;
 }
