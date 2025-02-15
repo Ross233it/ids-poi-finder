@@ -2,7 +2,6 @@ package org.services;
 
 import org.dataMappers.GeoLocationMapper;
 import org.models.GeoLocation;
-import org.models.users.RegisteredUser;
 import org.repositories.GeoLocationRepository;
 
 
@@ -18,26 +17,4 @@ public class GeoLocationService  extends Service<GeoLocation> {
         return (GeoLocation) this.mapper.mapDataToObject(result);
     }
 
-    //todo remove death code
-    /**
-     * Recupera o crea un oggetto geolocation
-     * @param geoLocData
-     * @return l'oggetto geolocation se esistente | null altrimenti
-     * @throws Exception
-     */
-//    public GeoLocation getOrCreate(Map<String, Object> geoLocData) throws Exception {
-//        Map<String, Object> geoLoc = (Map<String, Object>) geoLocData.get("geoLocation");
-//        GeoLocation geoLocation = null;
-//        Long geoLocId = null;
-//             geoLocId = (Long) geoLocData.get("geoLocation_id");
-//        if(geoLocId == null)
-//            geoLocId = (Long) geoLocData.get("id");
-//
-//        if(geoLoc != null)
-//            geoLocation = this.create(geoLoc);
-//        else if (geoLocId != null) {
-//            geoLocation = this.getObjectById(geoLocId, false);
-//        }
-//        return geoLocation;
-//    }
 }

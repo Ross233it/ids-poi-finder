@@ -1,16 +1,19 @@
 package org.models.users;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.httpServer.auth.AuthUtilities;
 import org.models.Content;
+import org.models.municipalities.Municipality;
 
 
 /**
  * Questa classe rappresenta un utente registrato all'interno del sistema
  */
-@Entity
-@Table(name="users")
+//@Entity
+//@Table(name="users")
 public class RegisteredUser extends Content implements IUser {
 
     private String username;
@@ -23,8 +26,9 @@ public class RegisteredUser extends Content implements IUser {
 
     private String role = null;
 
-    public  String accessToken = null;
+    private  String accessToken = null;
 
+    private Municipality municipality;
 
     public RegisteredUser(String username, String email,  String role) {
         this.username = username;
@@ -53,13 +57,17 @@ public class RegisteredUser extends Content implements IUser {
     public String getRole()     { return role; }
     public String getSalt()     { return salt; }
     public String getToken()    { return this.accessToken; }
+
+    public Municipality getMunicipality() { return municipality; }
+
     public Object[]getData()    { return new Object[] {
             this.getId(),
             this.getUsername(),
             this.getEmail(),
             this.getPassword(),
             this.getSalt(),
-            this.getRole()
+            this.getRole(),
+            this.getMunicipality() == null ? null : this.getMunicipality().getId()
         };
     }
 
@@ -73,7 +81,7 @@ public class RegisteredUser extends Content implements IUser {
     }
 
 
-    /** setters **/
+    /** SETTERS **/
 
     /**
      * Imposta il token di accesso per l'utente
@@ -91,4 +99,5 @@ public class RegisteredUser extends Content implements IUser {
     public void setEmail(String email)       { this.email = email; }
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role)         { this.role = role; }
+    public void setMunicipality(Municipality municipality) { this.municipality = municipality; }
 }

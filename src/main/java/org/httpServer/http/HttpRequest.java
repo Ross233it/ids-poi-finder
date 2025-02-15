@@ -29,7 +29,6 @@ public class HttpRequest {
 
     private Map<String, Object> bodyStreamData;
 
-    private RegisteredUser currentUser;
 
     public HttpRequest(HttpExchange exchange) throws IOException {
         this.exchange = exchange;
@@ -37,7 +36,6 @@ public class HttpRequest {
         this.queryParams = new HashMap<String, String>();
         this.pathParams  = new HashMap<String, String>();
         this.bodyStreamData = this.bodyStreamDataInit();
-        this.currentUserInit();
         this.queryStringParamsInit();
     }
 
@@ -59,11 +57,6 @@ public class HttpRequest {
      */
     public Map<String, Object> getBodyStreamData(){ return this.bodyStreamData; }
 
-    /**
-     * Ritorna l'utente chiamante se autenticato
-     * @return
-     */
-    public RegisteredUser getCurrentUser() { return currentUser; }
 
     /**
      * Ritorna il parametro id se presente nella url della richiesta
@@ -115,30 +108,7 @@ public class HttpRequest {
         }
     }
 
-    /**
-     * Setta l'utente chiamante se autenticato - null altrimenti
-     * @param currentUser
-     */
-    public void setCurrentUser(RegisteredUser currentUser) {
-        this.currentUser = currentUser;
-    }
-
     /*** SETTERS ***/
-
-
-    /**
-     * Recupera l'utente autenticato e setta il valore dell'utente
-     * chiamante della classe.
-     */
-    private void currentUserInit(){
-        String accessToken = AuthUtilities.getAccessToken(exchange);
-        RegisteredUserService service = new RegisteredUserService();
-        RegisteredUser currentUser = service.getByAccessToken(accessToken);
-        if(currentUser == null) {
-            this.currentUser = null;
-        }
-        this.currentUser = currentUser;
-    }
 
     /**
      * Recupera le informazioni dal body di una chiamata http

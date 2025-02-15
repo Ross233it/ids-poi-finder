@@ -1,5 +1,6 @@
 package org.controllers;
 
+import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
@@ -17,7 +18,7 @@ public class PoiController extends Controller<Poi, PoiService> {
     @Override
     public void create() throws IOException {
         Map<String, Object> data = request.getBodyStreamData();
-        RegisteredUser author = this.request.getCurrentUser();
+        RegisteredUser author = UserContext.getCurrentUser();
         data.put("author", author);
         if(
             author.hasRole("platformAdmin") ||

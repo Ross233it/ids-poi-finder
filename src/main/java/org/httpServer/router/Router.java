@@ -10,8 +10,10 @@ import java.util.Map;
 import org.controllers.Controller;
 import org.controllers.ControllerFactory;
 import org.httpServer.auth.AuthMiddleware;
+import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
+import org.models.users.RegisteredUser;
 
 /**
  * Questa classe definisce tutti gli end point raggiungibili nella piattaforma.
@@ -58,14 +60,19 @@ public class Router {
         }
     }
 
+    private void userInit(){
+        RegisteredUser currentUser = this.authMiddleware.getCurrentUser(exchange);
+        UserContext.setCurrentUser(currentUser);
+    }
     /**
      * Verifica se l'utente dispone dei privilegi necessari
      * @param route
      * @return
      */
     private boolean checkAuth(Route route) {
+        userInit();
         Integer requiredAuthLevel = route.getAuthLevel();
-        return authMiddleware.hasPermissions(this.exchange, requiredAuthLevel);
+        return authMiddleware.hasPermissions(requiredAuthLevel);
     }
 
     /**
@@ -97,6 +104,7 @@ public class Router {
                 e.printStackTrace();
             }
         }
+        UserContext.clear();
         HttpResponses.error(this.exchange, 404, "Risorsa non trovata");
     }
 

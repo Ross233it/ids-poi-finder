@@ -17,4 +17,19 @@ public class GeoLocationRepository extends Repository<GeoLocation> {
                     " (address, number, cap, latitude, longitude) VALUES (?, ?, ? ,? ,?)";
             return super.create( geoLoc, query );
     }
+
+
+    @Override
+    public GeoLocation update(GeoLocation geolocation, String query) throws Exception {
+        StringBuilder queryBuilder = new StringBuilder("UPDATE " + this.tableName)
+                      .append("SET  = ?, ")
+                      .append("address  = ?, ")
+                      .append("number  = ?, ")
+                      .append("cap  = ?, ")
+                      .append("longitude  = ?, ")
+                      .append("latitude  = ?, ");
+        query = queryBuilder.append(" WHERE id = ?").toString();
+        super.update(geolocation, query);
+        return geolocation;
+    }
 }

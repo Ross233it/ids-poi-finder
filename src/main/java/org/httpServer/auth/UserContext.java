@@ -1,6 +1,8 @@
 package org.httpServer.auth;
 
+
 import org.models.users.RegisteredUser;
+
 
 /**
  * Gestisce il contesto dell'utente autenticato per ogni thread.

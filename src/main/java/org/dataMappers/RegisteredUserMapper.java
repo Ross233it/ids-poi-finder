@@ -1,6 +1,8 @@
 package org.dataMappers;
 
+import org.models.municipalities.Municipality;
 import org.models.users.RegisteredUser;
+import org.services.MunicipalityService;
 
 import java.util.Map;
 
@@ -14,6 +16,17 @@ public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
             return this.mapRequestDataToObject(result);
         }
         RegisteredUser user = buildBaseUser(result);
+
+        if(result.get("municipality_id") != null){
+            MunicipalityService service = new MunicipalityService();
+            Municipality municipality = null;
+            try {
+                municipality = service.getObjectById((Long) result.get("municipality_id"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            user.setMunicipality(municipality);
+        }
 
         if(result.containsKey("A_id") ){
             Integer id = (Integer) result.getOrDefault("A_id", 0);

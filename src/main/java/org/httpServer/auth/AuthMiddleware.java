@@ -2,7 +2,6 @@ package org.httpServer.auth;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.models.users.RegisteredUser;
-import org.repositories.RegisteredUserRepository;
 import org.services.RegisteredUserService;
 
 import java.util.HashMap;
@@ -39,15 +38,43 @@ public class AuthMiddleware {
         return this.permissions;
     }
 
+
+    /**
+     * Recupera e ritorna l'utente autenticato se presente, null altrimenti
+     * @param exchange
+     * @return RegisteredUser l'utente correntemente autenticato.
+     */
+    public RegisteredUser getCurrentUser(HttpExchange exchange) {
+        String accessToken = AuthUtilities.getAccessToken(exchange);
+        if (accessToken != null && accessToken != "") {
+            RegisteredUserService userService = new RegisteredUserService();
+            RegisteredUser currentUser = userService.getByAccessToken(accessToken);
+            if (currentUser != null)
+                return currentUser;
+        }
+        return null;
+    }
+
+    /**
+     * Ritorna il ruolo/permesso dell'utente correntemente autenticato.
+     * Ritorna public se non autenticato.
+     * @return
+     */
+    private String getUserRole(){
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(currentUser != null)
+            return currentUser.getRole();
+        return "public";
+    }
+
     /**
      * Verifica se l'utente dispone di un livello di autorizzazione
      * corrispondente a quello richiesto come parametro.
-     * @param exchange
      * @param requiredPermission
      * @return
      */
-    public boolean hasPermissions(HttpExchange exchange, int requiredPermission){
-        String currentUserRole = this.getUserRole(exchange);
+    public boolean hasPermissions(int requiredPermission){
+        String currentUserRole = this.getUserRole();
         String[] authorizedRoles = this.permissions.get(requiredPermission);
         if (authorizedRoles != null) {
             for (String role : authorizedRoles) {
@@ -56,25 +83,7 @@ public class AuthMiddleware {
                 }
             }
         }
-            return false;
+        return false;
     }
 
-    /**
-     * Ritorna il ruolo/permesso dell'utente correntemente autenticato.
-     * Ritorna public se non autenticato.
-     * @param exchange
-     * @return
-     */
-    private String getUserRole(HttpExchange exchange){
-        String method = exchange.getRequestMethod();
-        String accessToken = AuthUtilities.getAccessToken(exchange);
-        if(accessToken != null && accessToken != ""){
-            RegisteredUserRepository repository = new RegisteredUserRepository();
-            RegisteredUserService userService = new RegisteredUserService();
-            RegisteredUser currentUser = userService.getByAccessToken(accessToken);
-            if(currentUser != null)
-                return currentUser.getRole();
-        }
-            return "public";
-    }
 }

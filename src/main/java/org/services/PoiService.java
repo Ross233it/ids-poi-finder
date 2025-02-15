@@ -1,10 +1,11 @@
 package org.services;
 
 import org.dataMappers.PoiMapper;
+
+import org.httpServer.auth.UserContext;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
-import org.models.users.RegisteredUser;
 import org.repositories.PoiRepository;
 
 import java.util.List;
@@ -37,7 +38,6 @@ public class PoiService extends Service<Poi> {
         Municipality municipality = municipalityService.get(entityData);
         poi.setGeoLocation(geoLocation);
         poi.setMunicipality(municipality);
-        this.eventManager.notify("POI get by id");
         return poi;
     }
 
@@ -52,9 +52,8 @@ public class PoiService extends Service<Poi> {
         Poi poi = (Poi) this.mapper.mapDataToObject(objectData);
 
         if(objectData.get("municipality_id") != null){
-
-            int municipality_id = (int) objectData.get("municipality_id");
-            Municipality municipality = municipalityService.getObjectById(municipality_id);
+            int municipalityId = (int) objectData.get("municipality_id");
+            Municipality municipality = municipalityService.getObjectById(municipalityId);
             poi.setMunicipality(municipality);
 
             if(poi.isLogical()){
@@ -75,6 +74,23 @@ public class PoiService extends Service<Poi> {
             eventManager.notify("Nuovo Punto di interesse auto-validato");
         }
         return poi;
+    }
+
+    public Poi update(long id, Map<String, Object> objectData) throws Exception {
+        Poi poi = this.getObjectById(id);
+        if(poi != null){
+            long authorId = poi.getAuthor().getId();
+            if(authorId != UserContext.getCurrentUser().getId())
+                return null;
+        }
+        Poi modifiedPoi = (Poi) this.mapper.mapDataToObject(objectData);
+        poi.setStatus("pending");
+        GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
+        modifiedPoi.setGeoLocation(modifiedGeolocation);
+
+        //todo implements notification and autovalidation
+        eventManager.notify("Nuovo Punto di interesse auto-validato");
+        return modifiedPoi;
     }
 
     public List<Poi> getByMunicipalityId(long id) throws Exception {

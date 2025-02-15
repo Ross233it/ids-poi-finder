@@ -94,8 +94,6 @@ public abstract class Repository<D extends Content> implements IRepository<D> {
             queryBuilder.append(" WHERE id = ? ;");
             query = queryBuilder.toString();
         }
-//        if(!isPublic)
-//            query += (" WHERE status <> 'pending' ");
 
         Object[] data = new Object[]{id};
         List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);

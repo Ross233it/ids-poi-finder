@@ -1,6 +1,8 @@
 package org.httpServer.auth;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.models.municipalities.Municipality;
+import org.models.users.RegisteredUser;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -92,5 +94,20 @@ public class AuthUtilities {
         return "";
     }
 
+    /**
+     * Verifica se l'utente corrente dispone dei permessi per interagire con
+     * uno specifico comune
+     * @param municipality_id l'id del comune con cui interagire
+     * @return
+     */
+    public static boolean canUserHandleMunicipality(int municipality_id){
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        long userMunicipalityId = 0;
+        if(currentUser != null && currentUser.getMunicipality() != null) {
+            Municipality municipality = currentUser.getMunicipality();
+            userMunicipalityId = municipality.getId();
+        }
+        return  municipality_id == userMunicipalityId;
+    };
 
 }

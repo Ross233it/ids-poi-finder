@@ -1,7 +1,9 @@
 package org.repositories;
 
 import org.httpServer.DbUtilities;
+import org.httpServer.auth.UserContext;
 import org.models.poi.Poi;
+import org.models.users.RegisteredUser;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -37,7 +39,12 @@ public class PoiRepository extends Repository<Poi> {
 
     @Override
     public List<Map<String, Object>> index(String query) throws Exception {
-        return super.index(this.queryBuilder.toString());
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(query == null && currentUser != null && currentUser.getRole() != null)
+            query = this.queryBuilder.toString();
+        else
+            query = this.queryBuilder.append(" WHERE P.status = 'published';").toString();
+        return super.index(query);
     }
 
     @Override
@@ -46,10 +53,14 @@ public class PoiRepository extends Repository<Poi> {
         if (fromIndex != -1) {
             this.queryBuilder.insert(fromIndex, ",M.* ");       }
 
-        query = this.queryBuilder
-                .append("WHERE P.id = ?;")
-                .toString();
-        return super.getById(id, query);
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+
+        this.queryBuilder.append(" WHERE P.id = ?");
+
+        if(currentUser == null)
+            this.queryBuilder.append("  AND  P.status = 'published';");
+
+        return super.getById(id, this.queryBuilder.toString());
     }
 
     @Override
@@ -63,7 +74,6 @@ public class PoiRepository extends Repository<Poi> {
 
     @Override
     public Poi update(Poi poi, String query) throws Exception {
-        long poiId = poi.getId();
         query = "UPDATE " + this.tableName + " " +
                 "SET poiname = ?, " +
                 "description = ?, " +
@@ -103,10 +113,13 @@ public class PoiRepository extends Repository<Poi> {
      * @throws Exception
      */
     public List<Map<String, Object>> getByMunicipalityId(Long id) throws Exception{
-        String query = this.queryBuilder
-                .append("WHERE P.municipality_id = ?;")
-                .toString();
+        String query = "";
 
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(currentUser != null && currentUser.getRole() != null)
+            query = this.queryBuilder.append("WHERE P.municipality_id = ?;").toString();
+        else
+            query = this.queryBuilder.append("WHERE P.municipality_id = ? AND  P.status = 'published';").toString();
         Object[] data = new Object[]{id};
         List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
         if (resultSet.isEmpty()) {

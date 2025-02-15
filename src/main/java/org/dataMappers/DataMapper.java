@@ -5,6 +5,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+/**
+ * Questa classe ha la responsabilità di "tradurre" i dati del repository
+ * in oggetti e viceversa.
+ * @param <D>
+ */
 public abstract class DataMapper<D> {
 
 
@@ -32,14 +37,6 @@ public abstract class DataMapper<D> {
     public abstract D mapDataToObject(Map<String, Object> result);
 
 
-    /**
-     *
-     * @param result
-     * @return
-     */
-//    public abstract D mapRequestDataToObject(Map<String, Object> result);
-
-
     protected  long castIdvalue(Object idValue){
         long id = 0L;
 
@@ -65,6 +62,7 @@ public abstract class DataMapper<D> {
      * @return
      * @throws IllegalAccessException
      */
+    //todo verify use
     public static String mapObjectToJson(Object obj) throws IllegalAccessException {
             if (obj == null) {
                 return "null";

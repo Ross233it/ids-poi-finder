@@ -1,6 +1,7 @@
 package org.controllers;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.services.IService;
@@ -63,7 +64,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
     @Override
     public void create() throws IOException {
         Map<String, Object> data = request.getBodyStreamData();
-        data.put("author", this.request.getCurrentUser());
+        data.put("author", UserContext.getCurrentUser());
         handleRequest(()->service.create(data), null);
     }
 
@@ -75,7 +76,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
     public void update() throws IOException {
         long id = request.getRequestId();
         Map<String, Object> data = this.request.getBodyStreamData();
-        data.put("author", this.request.getCurrentUser());
+        data.put("author", UserContext.getCurrentUser());
         handleRequest(()->service.update(id, data), null);
     }
 
@@ -84,7 +85,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      * @throws IOException
      */
     @Override
-    public void show(boolean isPublic) throws IOException {
+    public void show() throws IOException {
         if(this.request.getRequestId() > 0){
             handleRequest(()-> {return service.getObjectById(request.getRequestId());}, null);
         }
@@ -110,7 +111,7 @@ public abstract class Controller<T, S extends IService>  implements IController<
      */
     public void setStatus() throws Exception{
         Map<String, Object> data = request.getBodyStreamData();
-        data.put("approver", this.request.getCurrentUser());
+        data.put("approver", UserContext.getCurrentUser());
         long id = request.getRequestId();
         if(data.get("status") == null || id == 0)
             HttpResponses.error(this.exchange, 404, "Dati mancanti");

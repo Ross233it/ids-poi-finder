@@ -45,10 +45,9 @@ public class RoutesApi {
      * Costruisce la struttura dati che contiene le informazioni di associazione fra rotte, controller e metodi
      */
     public Map<String, Route> setUpGetRoutes(){
-        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 4);
-        this.addRoute("/"+prefix+"/public/poi" ,         "PoiController", "index", 5);
-        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "show", 4);
-        this.addRoute("/"+prefix+"/public/poi/{id}" ,         "PoiController", "show", 5);
+        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 5);
+        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "show", 5);
+
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 5);
         this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "show", 5);
         this.addRoute("/"+prefix+"/municipality/{id}/pois", "MunicipalityController", "getWithPois", 5);
@@ -76,7 +75,7 @@ public class RoutesApi {
 
     public Map<String, Route> setUpPatchRoutes(){
         this.addRoute("/"+prefix+"/user/set-role",     "RegisteredUserController", "setRole", 1);
-        this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 1);
+        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "update", 4);
         this.addRoute("/"+prefix+"/poi/{id}/validate" ,         "PoiController", "setStatus", 3);
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 1);
         this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "index", 1);

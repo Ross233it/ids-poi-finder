@@ -67,7 +67,7 @@ public class RegisteredUserRepository extends Repository<RegisteredUser> {
     public RegisteredUser create(RegisteredUser user, String query) throws Exception {
         query = "INSERT INTO "
                 + this.tableName +
-                " (id, username, email, password, salt, role) VALUES (?, ?, ?, ?, ?, ?)";
+                " (id, username, email, password, salt, role, municipality_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         super.create(user, query);
         return user;
     }

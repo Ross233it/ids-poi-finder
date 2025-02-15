@@ -2,7 +2,7 @@ package org.services;
 
 import org.dataMappers.RegisteredUserMapper;
 import org.httpServer.auth.AuthUtilities;
-import org.httpServer.auth.UserContext;
+import org.models.municipalities.Municipality;
 import org.models.users.RegisteredUser;
 import org.repositories.RegisteredUserRepository;
 
@@ -21,7 +21,6 @@ public class RegisteredUserService extends Service<RegisteredUser> {
     }
 
 
-
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
      * fornisce una password criptata e un salt per i futuri token di autenticazione.
@@ -33,9 +32,18 @@ public class RegisteredUserService extends Service<RegisteredUser> {
         objectData.put("method", "insert");
         objectData.put("salt", salt);
         objectData.put("password", AuthUtilities.hashPassword((String) objectData.get("password"), salt));
-        objectData.put("role", "contributor");
+
         RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(objectData);
         try {
+            if(objectData.get("municipality_id") != null && !objectData.get("role").equals("contributor")){
+                MunicipalityService service = new MunicipalityService();
+                try {
+                    Municipality municipality = service.getObjectById((Integer) objectData.get("municipality_id"));
+                    user.setMunicipality(municipality);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
             this.repository.create(user, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -59,11 +67,8 @@ public class RegisteredUserService extends Service<RegisteredUser> {
             if(AuthUtilities.verifyPassword(password, (String) userData.get("salt"), (String) userData.get("password"))){
                 String accessToken =  AuthUtilities.generateAccessToken(username);
                 ((RegisteredUserRepository) this.repository).saveAccessToken(accessToken, username);
-                RegisteredUser currentUser = this.getObjectById((Integer) userData.get("id"));
-                UserContext.setCurrentUser(currentUser);
                 return accessToken;
-            }
-            else
+            }else
                 return "";
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -95,7 +100,7 @@ public class RegisteredUserService extends Service<RegisteredUser> {
                 return null;
             RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(userData);
             user.setAccessToken(token);
-            user.setId((int) userData.get("id"));
+            user.setId((int)userData.get("id"));
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);

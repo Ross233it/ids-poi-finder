@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public interface IController<O>{
    void index()         throws IOException;
-   void show(boolean isPublic)   throws IOException;
+   void show()          throws IOException;
    void create()        throws IOException;
    void update()        throws IOException;
    void delete()        throws IOException;

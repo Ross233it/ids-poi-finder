@@ -9,9 +9,10 @@ public class GeoLocationMapper extends DataMapper<GeoLocation> {
 
     @Override
     public GeoLocation mapDataToObject(Map<String, Object> result) {
-        if(result.containsKey("geoLocation"))
+        if(result.containsKey("geoLocation")) {
             result = (Map<String, Object>) result.get("geoLocation");
-
+            result.put("G_id", result.get("id"));
+        }
         double def =  0;
         Object latitudeObj = result.getOrDefault("latitude", def);
         Object longitudeObj = result.getOrDefault("longitude", def);
