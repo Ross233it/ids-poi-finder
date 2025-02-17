@@ -118,4 +118,9 @@ public abstract class Controller<T, S extends IService>  implements IController<
         data.put("id", id);
         handleRequest(()-> service.setStatus(data), null);
     }
+
+    public void reportContent(){
+//        handleRequest(()-> service.reportContent(), null);
+    }
+
 }

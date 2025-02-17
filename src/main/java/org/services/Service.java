@@ -163,4 +163,7 @@ public class Service<D extends Content> implements IService<D> {
         }
         return null;
     }
+
+
+    public void reportContent(){}
 }

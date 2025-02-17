@@ -77,7 +77,7 @@ public abstract class DataMapper<D> {
             }
 
             if (obj instanceof Collection<?>) {
-                return convertCollectionToJson((Collection<?>) obj);
+                return mapCollectionToJson((Collection<?>) obj);
             }
 
             // Se è un array
@@ -151,7 +151,7 @@ public abstract class DataMapper<D> {
      * @return
      * @throws IllegalAccessException
      */
-    private static String convertCollectionToJson(Collection<?> obj) throws IllegalAccessException {
+    private static String mapCollectionToJson(Collection<?> obj) throws IllegalAccessException {
         Collection<?> collection = (Collection<?>) obj;
         StringBuilder jsonBuilder = new StringBuilder("[");
         Iterator<?> iterator = collection.iterator();

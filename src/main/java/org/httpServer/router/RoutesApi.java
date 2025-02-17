@@ -63,9 +63,15 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/user/login",        "RegisteredUserController", "login", 5);
         this.addRoute("/"+prefix+"/user/logout",       "RegisteredUserController", "logout", 4);
         this.addRoute("/"+prefix+"/user/register",       "RegisteredUserController", "register", 5);
+
+        this.addRoute("/"+prefix+"/report-content/{id}", "Controller", "reportContent", 5);
+
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "create", 1);
+
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "create", 4);
+
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "create",  2);
+
         this.addRoute("/"+prefix+"/migrate/{id}",      "migrationController", "index",  1);
         return this.getRoutes();
     }
@@ -77,7 +83,7 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/user/set-role",     "RegisteredUserController", "setRole", 1);
         this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "update", 4);
         this.addRoute("/"+prefix+"/poi/{id}/validate" ,         "PoiController", "setStatus", 3);
-        this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 1);
+        this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "update", 1);
         this.addRoute("/"+prefix+"/user",         "RegisteredUserController", "index", 1);
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "index", 1);
         this.addRoute("/"+prefix+"/migrate",      "migrationController", "index", 1);

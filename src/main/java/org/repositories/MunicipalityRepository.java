@@ -1,5 +1,6 @@
 package org.repositories;
 
+import org.httpServer.DbUtilities;
 import org.models.municipalities.Municipality;
 import org.models.users.RegisteredUser;
 
@@ -53,6 +54,22 @@ public class MunicipalityRepository extends Repository<Municipality> {
                 + this.tableName +
                 " (name, province, region, geolocation_id, author_id) VALUES (?, ?, ?, ?, ?)";
         return super.create(municipality, query);
+    }
+
+    @Override
+    public Municipality update(Municipality municipality, String query) throws Exception {
+        Object[] data = municipality.getData();
+
+        query = "UPDATE " + this.tableName + " " +
+                " SET " +
+                " name = ?, " +
+                " region = ?, " +
+                " province = ?, " +
+                " geolocation_id = ?," +
+                " author_id = ? " +
+                " WHERE id = "+ municipality.getId() +";";
+        DbUtilities.executeQuery(query, data);
+        return municipality;
     }
 
     /**

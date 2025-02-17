@@ -76,6 +76,7 @@ public class PoiService extends Service<Poi> {
         return poi;
     }
 
+    @Override
     public Poi update(long id, Map<String, Object> objectData) throws Exception {
         Poi poi = this.getObjectById(id);
         if(poi != null){
@@ -87,6 +88,7 @@ public class PoiService extends Service<Poi> {
         poi.setStatus("pending");
         GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
         modifiedPoi.setGeoLocation(modifiedGeolocation);
+        modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
 
         //todo implements notification and autovalidation
         eventManager.notify("Nuovo Punto di interesse auto-validato");

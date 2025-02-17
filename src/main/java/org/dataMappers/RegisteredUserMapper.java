@@ -35,7 +35,7 @@ public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
         return user;
     }
 
-     RegisteredUser mapRequestDataToObject(Map<String, Object> result){
+     public RegisteredUser mapRequestDataToObject(Map<String, Object> result){
             RegisteredUser user = buildBaseUser(result);
             user.setPassword((String) result.get("password"));
             user.setSalt((String) result.get("salt"));

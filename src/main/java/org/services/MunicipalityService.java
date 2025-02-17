@@ -1,8 +1,11 @@
 package org.services;
 
+import org.apache.catalina.User;
 import org.dataMappers.MunicipalityMapper;
+import org.httpServer.auth.UserContext;
 import org.models.GeoLocation;
 import org.models.municipalities.Municipality;
+import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 import org.repositories.MunicipalityRepository;
 
@@ -51,6 +54,19 @@ public class MunicipalityService extends Service<Municipality> {
         return (Municipality) repository.create(municipality, null);
     }
 
+    @Override
+    public Municipality update(long id, Map<String, Object> objectData) throws Exception {
+        Municipality municipality = this.getObjectById(id);
+        Municipality modifiedMunicipality = (Municipality) this.mapper.mapDataToObject(objectData);
+        GeoLocation modifiedGeolocation = geoLocationService.update(municipality.getGeoLocation().getId(), objectData);
+        modifiedMunicipality.setGeoLocation(modifiedGeolocation);
+        modifiedMunicipality.setAuthor(UserContext.getCurrentUser());
+        modifiedMunicipality.setId(id);
+        modifiedMunicipality = (Municipality) this.repository.update(modifiedMunicipality, null);
+        //todo implements notification and autovalidation
+        eventManager.notify("Nuovo Punto di interesse auto-validato");
+        return modifiedMunicipality;
+    }
 
     /**
      * Ritorna un Comune correadato della sua lista di Punti di interesse

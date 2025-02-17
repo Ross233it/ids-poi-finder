@@ -6,6 +6,10 @@ import org.services.RegisteredUserService;
 
 import java.util.HashMap;
 
+/**
+ * Questa classe ha la responsabilità di consentire la valutazione dei
+ * permessi di un utente in rapporto al suo ruolo
+ */
 public class AuthMiddleware {
 
     /**

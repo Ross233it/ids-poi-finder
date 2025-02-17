@@ -25,10 +25,7 @@ public class HttpRequestHandler<C extends Controller> implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String requestPath = exchange.getRequestURI().getPath();
         Router router = new Router(exchange);
-//        AuthMiddleware middleware = new AuthMiddleware();
-//        RegisteredUser currentUser = middleware.getCurrentUser(exchange);
-//        UserContext.setCurrentUser(currentUser);
         router.dispatch(requestPath);
-//        UserContext.clear();
+
     }
 }

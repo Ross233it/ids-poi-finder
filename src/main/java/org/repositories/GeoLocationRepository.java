@@ -1,5 +1,6 @@
 package org.repositories;
 
+import org.httpServer.DbUtilities;
 import org.models.GeoLocation;
 
 public class GeoLocationRepository extends Repository<GeoLocation> {
@@ -21,15 +22,16 @@ public class GeoLocationRepository extends Repository<GeoLocation> {
 
     @Override
     public GeoLocation update(GeoLocation geolocation, String query) throws Exception {
+        Object[] data = geolocation.getData();
         StringBuilder queryBuilder = new StringBuilder("UPDATE " + this.tableName)
-                      .append("SET  = ?, ")
-                      .append("address  = ?, ")
-                      .append("number  = ?, ")
-                      .append("cap  = ?, ")
-                      .append("longitude  = ?, ")
-                      .append("latitude  = ?, ");
-        query = queryBuilder.append(" WHERE id = ?").toString();
-        super.update(geolocation, query);
+                      .append(" SET ")
+                      .append(" address  = ?, ")
+                      .append(" number  = ?, ")
+                      .append(" cap  = ?, ")
+                      .append(" longitude  = ?, ")
+                      .append(" latitude  = ? ");
+        query = queryBuilder.append(" WHERE id = "+ geolocation.getId()).toString();
+        DbUtilities.executeQuery(query, data);
         return geolocation;
     }
 }
