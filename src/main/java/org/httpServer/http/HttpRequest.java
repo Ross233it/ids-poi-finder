@@ -3,9 +3,6 @@ package org.httpServer.http;
 import com.sun.net.httpserver.HttpExchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.httpServer.auth.AuthUtilities;
-import org.models.users.RegisteredUser;
-import org.services.RegisteredUserService;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -10,6 +10,9 @@ import org.models.Content;
 
 import org.models.users.RegisteredUser;
 import org.repositories.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +22,9 @@ import java.util.Map;
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 
-public class Service<D extends Content> implements IService<D> {
+@Service
+public class BaseService<D extends Content> implements IService<D> {
+
 
     protected Repository repository;
 
@@ -27,13 +32,23 @@ public class Service<D extends Content> implements IService<D> {
 
     protected EventManager eventManager;
 
-
-    public Service(Repository repository, DataMapper mapper) {
+    @Autowired
+    public BaseService(Repository repository, DataMapper mapper, EventManager eventManager){
         this.repository = repository;
         this.mapper = mapper;
-        this.eventManager = new EventManager();
-        eventManager.subscribe(new EmailNotifier());
-        eventManager.subscribe(new LogNotifier());
+        this.eventManager = eventManager;
+    }
+
+    public BaseService(Repository repository, DataMapper mapper) {
+        this(repository, mapper, new EventManager());
+        this.eventManagerInit();
+    }
+
+
+    @PostConstruct
+    private void eventManagerInit() {
+        this.eventManager.subscribe(new EmailNotifier());
+        this.eventManager.subscribe(new LogNotifier());
     }
 
     /**

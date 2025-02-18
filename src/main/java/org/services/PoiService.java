@@ -1,13 +1,16 @@
 package org.services;
 
+import org.dataMappers.MunicipalityMapper;
 import org.dataMappers.PoiMapper;
 
 import org.httpServer.auth.UserContext;
-import org.httpServer.http.HttpRequest;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
+import org.repositories.MunicipalityRepository;
 import org.repositories.PoiRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -16,12 +19,22 @@ import java.util.Map;
  * Ha la responsabilità di gestire la logica di business connessa alla
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
-
-public class PoiService extends Service<Poi> {
+@Service
+public class PoiService extends BaseService<Poi> {
 
     private GeoLocationService geoLocationService;
 
     private MunicipalityService municipalityService;
+
+    @Autowired
+    public PoiService(PoiRepository repository,
+                      PoiMapper mapper,
+                      GeoLocationService geoLocationService,
+                      PoiService poiService) {
+        super(repository, mapper);
+        this.geoLocationService = geoLocationService;
+    }
+
 
     public PoiService() {
         super(new PoiRepository(), new PoiMapper());

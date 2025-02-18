@@ -1,32 +1,46 @@
 package org.services;
 
-import org.apache.catalina.User;
 import org.dataMappers.MunicipalityMapper;
 import org.httpServer.auth.UserContext;
 import org.models.GeoLocation;
 import org.models.municipalities.Municipality;
-import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 import org.repositories.MunicipalityRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-
-public class MunicipalityService extends Service<Municipality> {
+@Service
+public class MunicipalityService extends BaseService<Municipality> {
 
     private GeoLocationService geoLocationService;
+
+    private PoiService poiService;
+
+    @Autowired
+    public MunicipalityService(MunicipalityRepository municipalityRepository,
+                               MunicipalityMapper municipalityMapper,
+                               GeoLocationService geoLocationService,
+                               PoiService poiService) {
+        super(municipalityRepository, municipalityMapper);
+        this.geoLocationService = geoLocationService;
+        this.poiService = poiService;
+    }
 
     public MunicipalityService() {
         super(new MunicipalityRepository(), new MunicipalityMapper());
         this.geoLocationService = new GeoLocationService();
+        this.poiService = new PoiService();
     }
+
 
     public Municipality get(Map<String, Object> result){
         return (Municipality) this.mapper.mapDataToObject(result);
     }
+
 
     @Override
     public Municipality getObjectById(long id) throws Exception {
@@ -76,7 +90,6 @@ public class MunicipalityService extends Service<Municipality> {
      */
     public Municipality getWithPois(Long id) throws IOException,Exception {
         Municipality municipality = super.getObjectById(id);
-        PoiService poiService = new PoiService();
         ArrayList pois = (ArrayList) poiService.getByMunicipalityId(id);
         municipality.setPois(pois);
         return municipality;

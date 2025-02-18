@@ -5,11 +5,15 @@ import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.services.IService;
-import org.services.Service;
+import org.services.BaseService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Map;
 
+@RestController
+@RequestMapping("api")
 public class Controller<T, S extends IService>  implements IController<T> {
 
     protected S service;
@@ -127,7 +131,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      */
     public void reportContent() throws Exception {
             handleRequest(() -> {
-                    Service myservice = (Service) this.service;
+                    BaseService myservice = (BaseService) this.service;
                     myservice.reportContent(this.request);
                         return "success";
                     },

@@ -5,6 +5,8 @@ import org.httpServer.auth.AuthUtilities;
 import org.models.municipalities.Municipality;
 import org.models.users.RegisteredUser;
 import org.repositories.RegisteredUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -12,12 +14,17 @@ import java.util.Map;
  * Ha la responsabilità di gestire la logica di business connessa alla
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
+@Service
+public class RegisteredUserService extends BaseService<RegisteredUser> {
 
-public class RegisteredUserService extends Service<RegisteredUser> {
-
+    @Autowired
+    public RegisteredUserService(RegisteredUserRepository repository,
+                                 RegisteredUserMapper mapper) {
+        super(repository, mapper);
+    }
 
     public RegisteredUserService() {
-       super(new RegisteredUserRepository(), new RegisteredUserMapper());
+        super(new RegisteredUserRepository(), new RegisteredUserMapper());
     }
 
 

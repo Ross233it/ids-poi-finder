@@ -4,11 +4,16 @@ import org.dataMappers.GeoLocationMapper;
 import org.models.GeoLocation;
 import org.repositories.GeoLocationRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 
 import java.util.Map;
 
-public class GeoLocationService  extends Service<GeoLocation> {
+@Service
+public class GeoLocationService extends BaseService<GeoLocation> {
 
+    @Autowired
     public GeoLocationService() {
         super(new GeoLocationRepository(),  new GeoLocationMapper());
     }
@@ -16,5 +21,4 @@ public class GeoLocationService  extends Service<GeoLocation> {
     public GeoLocation get(Map<String, Object> result){
         return (GeoLocation) this.mapper.mapDataToObject(result);
     }
-
 }
