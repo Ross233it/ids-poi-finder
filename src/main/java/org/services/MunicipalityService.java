@@ -64,7 +64,7 @@ public class MunicipalityService extends Service<Municipality> {
         modifiedMunicipality.setId(id);
         modifiedMunicipality = (Municipality) this.repository.update(modifiedMunicipality, null);
         //todo implements notification and autovalidation
-        eventManager.notify("Nuovo Punto di interesse auto-validato");
+        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
         return modifiedMunicipality;
     }
 

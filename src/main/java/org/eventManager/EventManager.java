@@ -1,7 +1,11 @@
 package org.eventManager;
 
+import org.httpServer.http.HttpRequest;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 
 public class EventManager {
 
@@ -19,8 +23,8 @@ public class EventManager {
         this.listeners.remove(listener);
     }
 
-    public void notify(String eventType){
+    public void notify(String eventType, Map<String, Object> data){
         for(EventListener listener : listeners)
-            listener.update(eventType);
+            listener.update(eventType, data);
     }
 }

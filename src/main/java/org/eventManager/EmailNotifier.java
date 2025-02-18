@@ -1,11 +1,20 @@
 package org.eventManager;
 
+
 import org.httpServer.auth.UserContext;
+import org.models.Content;
+import org.models.users.RegisteredUser;
+
+import java.util.Map;
 
 public class EmailNotifier implements  EventListener{
 
 
-    public void update(String eventType){
+    public void update(String eventType, Map<String, Object> data){
+        if(eventType == "content report"){
+            this.contentReport(data);
+        }
+        else if(data == null)
             this.pendingCrudNotification(eventType);
     }
 
@@ -18,5 +27,19 @@ public class EmailNotifier implements  EventListener{
         System.out.println("NOTIFICA VIA EMAIL INVIATA AGLI INDIRIZZI");
         String authorEmail = UserContext.getCurrentUser().getEmail();
         System.out.println(authorEmail);
+    }
+
+    /**
+     * Emula l'invio di una email stampando in console una serie di informazioni
+     * ricevute come parametro.
+     * @param data
+     */
+    private Map<String, Object> contentReport(Map<String, Object> data ){
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String key = entry.getKey();
+            String value = String.valueOf(entry.getValue());
+            System.out.println(key + ": " + value);
+        }
+        return data;
     }
 }

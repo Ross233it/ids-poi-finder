@@ -17,7 +17,7 @@ public class ActivityService  extends Service<Activity>{
     public Activity create(Map<String, Object> objectData) throws Exception{
         Activity newActivity = super.create(objectData);
         if(newActivity != null)
-            eventManager.notify("Nuovo Punto di interesse in attesa di validazione");
+            eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
         return newActivity;
     }
 

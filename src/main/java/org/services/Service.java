@@ -4,8 +4,10 @@ import org.dataMappers.DataMapper;
 import org.eventManager.EmailNotifier;
 import org.eventManager.EventManager;
 import org.eventManager.LogNotifier;
+import org.httpServer.http.HttpRequest;
 import org.models.Content;
 
+import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 import org.repositories.Repository;
 
@@ -158,12 +160,24 @@ public class Service<D extends Content> implements IService<D> {
         if(entity != null){
             entity.setStatus((String) data.get("status"));
             repository.setStatus(entity);
-            eventManager.notify("Nuovo Punto di interesse pubblicato");
+            eventManager.notify("Nuovo Punto di interesse pubblicato", null);
             return entity;
         }
         return null;
     }
 
 
-    public void reportContent(){}
+    /**
+     * Servizio di segnalazione di un contenuto ad un utente
+     * responsabile.
+     * @param request
+     */
+    public void reportContent(HttpRequest request) throws Exception {
+        long id = request.getRequestId();
+        Map<String, Object> reportData = request.getBodyStreamData();
+        Map<String, Object> entityData =  this.repository.getById(id, null);
+        D entity = (D) this.mapper.mapDataToObject(entityData);
+        reportData.put("Poi id", id);
+        this.eventManager.notify("content report", reportData);
+    }
 }

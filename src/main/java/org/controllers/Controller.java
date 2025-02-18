@@ -5,11 +5,12 @@ import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.services.IService;
+import org.services.Service;
 
 import java.io.IOException;
 import java.util.Map;
 
-public abstract class Controller<T, S extends IService>  implements IController<T> {
+public class Controller<T, S extends IService>  implements IController<T> {
 
     protected S service;
 
@@ -119,8 +120,17 @@ public abstract class Controller<T, S extends IService>  implements IController<
         handleRequest(()-> service.setStatus(data), null);
     }
 
-    public void reportContent(){
-//        handleRequest(()-> service.reportContent(), null);
-    }
+    /**
+     * Gestisce le richieste di segnalazione dei Poi ad
+     * un utente responsabile.
+     */
+    public void reportContent() throws Exception {
 
+            handleRequest(() -> {
+                    Service myservice = (Service) this.service;
+                    myservice.reportContent(this.request);
+                        return "success";
+                    },
+                    "Segnalazione inviata con successo");
+    }
 }

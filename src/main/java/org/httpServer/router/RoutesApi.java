@@ -64,7 +64,7 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/user/logout",       "RegisteredUserController", "logout", 4);
         this.addRoute("/"+prefix+"/user/register",       "RegisteredUserController", "register", 5);
 
-        this.addRoute("/"+prefix+"/report-content/{id}", "Controller", "reportContent", 5);
+        this.addRoute("/"+prefix+"/poi/{id}/report-content", "PoiController", "reportContent", 5);
 
         this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "create", 1);
 

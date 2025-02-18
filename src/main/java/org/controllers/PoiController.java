@@ -39,4 +39,5 @@ public class PoiController extends Controller<Poi, PoiService> {
         handleRequest(()-> service.getByMunicipalityId(municipalityId), null);
     }
 
+
 }

@@ -1,10 +1,7 @@
 package org.controllers;
 
 import org.httpServer.http.HttpRequest;
-import org.services.ActivityService;
-import org.services.MunicipalityService;
-import org.services.PoiService;
-import org.services.RegisteredUserService;
+import org.services.*;
 
 public class ControllerFactory {
 

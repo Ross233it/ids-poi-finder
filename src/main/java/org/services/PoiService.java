@@ -3,6 +3,7 @@ package org.services;
 import org.dataMappers.PoiMapper;
 
 import org.httpServer.auth.UserContext;
+import org.httpServer.http.HttpRequest;
 import org.models.municipalities.Municipality;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -66,12 +67,12 @@ public class PoiService extends Service<Poi> {
         }else
             return null;
 
-        eventManager.notify("Nuovo Punto di interesse in attesa di validazione");
+        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
         poi =  (Poi) repository.create(poi, null);
         if(objectData.containsKey("status")){
             objectData.put("id", poi.getId());
             poi = this.setStatus(objectData);
-            eventManager.notify("Nuovo Punto di interesse auto-validato");
+            eventManager.notify("Nuovo Punto di interesse auto-validato", null);
         }
         return poi;
     }
@@ -91,7 +92,7 @@ public class PoiService extends Service<Poi> {
         modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
 
         //todo implements notification and autovalidation
-        eventManager.notify("Nuovo Punto di interesse auto-validato");
+        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
         return modifiedPoi;
     }
 
@@ -99,4 +100,20 @@ public class PoiService extends Service<Poi> {
         List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
         return this.mapper.mapDbDataToObjects(results);
     }
+
+//    /**
+//     * Servizio di segnalazione di un poi ad un utente
+//     * responsabile.
+//     * @param request
+//     */
+//    public void reportContent(HttpRequest request) throws Exception{
+//        long id = request.getRequestId();
+//        Map<String, Object> reportData = request.getBodyStreamData();
+//        Map<String, Object> entityData =  this.repository.getById(id, null);
+//        Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
+//        reportData.put("author_email", poi.getAuthor().getEmail());
+//        reportData.put("approver_email", poi.getApprover().getEmail());
+//        reportData.put("poi_content", poi.getData());
+//        this.eventManager.notify("content report", entityData);
+//    }
 }
