@@ -112,7 +112,8 @@ public class Controller<T, S extends IService>  implements IController<T> {
      */
     public void setStatus() throws Exception{
         Map<String, Object> data = request.getBodyStreamData();
-        data.put("approver", UserContext.getCurrentUser());
+        if(UserContext.getCurrentUser() != null)
+            data.put("approver", UserContext.getCurrentUser());
         long id = request.getRequestId();
         if(data.get("status") == null || id == 0)
             HttpResponses.error(this.exchange, 404, "Dati mancanti");
@@ -125,12 +126,11 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * un utente responsabile.
      */
     public void reportContent() throws Exception {
-
             handleRequest(() -> {
                     Service myservice = (Service) this.service;
                     myservice.reportContent(this.request);
                         return "success";
                     },
-                    "Segnalazione inviata con successo");
+     "Segnalazione inviata con successo");
     }
 }

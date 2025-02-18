@@ -4,10 +4,10 @@ import org.dataMappers.DataMapper;
 import org.eventManager.EmailNotifier;
 import org.eventManager.EventManager;
 import org.eventManager.LogNotifier;
+import org.httpServer.auth.UserContext;
 import org.httpServer.http.HttpRequest;
 import org.models.Content;
 
-import org.models.poi.Poi;
 import org.models.users.RegisteredUser;
 import org.repositories.Repository;
 
@@ -155,10 +155,10 @@ public class Service<D extends Content> implements IService<D> {
         String status = (String) data.get("status");
 
         D entity = this.getObjectById( (Long) data.get("id"));
-        entity.setStatus( (String) data.get("status") );
-        entity.setApprover( (RegisteredUser) data.get("author"));
+        entity.setStatus( status );
+        entity.setApprover(UserContext.getCurrentUser());
+
         if(entity != null){
-            entity.setStatus((String) data.get("status"));
             repository.setStatus(entity);
             eventManager.notify("Nuovo Punto di interesse pubblicato", null);
             return entity;

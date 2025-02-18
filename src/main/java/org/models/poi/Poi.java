@@ -1,12 +1,13 @@
 package org.models.poi;
 
+import org.models.Content;
 import org.models.municipalities.Municipality;
 import org.models.taxonomy.Category;
 import org.models.GeoLocation;
 import org.models.taxonomy.Tag;
 import java.util.List;
 
-public class Poi extends  IPoi {
+public class Poi extends Content {
     private String  poiname;
 
     private String  description;
@@ -82,23 +83,30 @@ public class Poi extends  IPoi {
         };
     }
 
-    @Override
+    public String getStatus() {return this.status; }
+//    @Override
     public Municipality getMunicipality() {return municipality;}
 
-    @Override
+//    @Override
     public GeoLocation getGeoLocation() { return geoLocation; }
 
     public String  getName()       { return poiname; }
 
     public Boolean isLogical(){ return this.isLogical;}
 
+
+
     /** setters **/
-    @Override
+//    @Override
+    public void setStatus(String status) {this.status = status; }
+
+
+//    @Override
     public void setGeoLocation(GeoLocation geoLocation) {
         this.geoLocation = geoLocation;
     }
 
-    @Override
+//    @Override
     public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
 
 }

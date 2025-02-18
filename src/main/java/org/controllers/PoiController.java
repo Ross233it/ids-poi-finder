@@ -40,4 +40,9 @@ public class PoiController extends Controller<Poi, PoiService> {
     }
 
 
+    public void validate(){
+
+    }
+
+
 }
