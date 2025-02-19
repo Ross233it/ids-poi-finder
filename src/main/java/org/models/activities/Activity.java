@@ -1,8 +1,8 @@
 package org.models.activities;
 
+import jakarta.persistence.*;
 import org.models.Content;
 import org.models.poi.Poi;
-import org.models.poi.PoiBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,21 @@ import java.util.List;
  * promuovere l'interazione tra utenti o la partecipazione ad eventi.
  */
 
-
+@Entity
+@Table(name="activities")
 public class Activity extends Content {
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(length = 500)
     private String description;
 
+    @Column(nullable = false)
     private String type;
 
+    @OneToMany
+    @JoinColumn(name = "activity_id")
     private List<Poi> poiList;
 
      public Activity(String name, String description, String type) {
@@ -33,9 +39,10 @@ public class Activity extends Content {
 
 
     public Activity(ActivityBuilder builder){
+        this.poiList = new ArrayList<Poi>();
     }
 
-
+    public Activity() { }
 
 
     /** setters **/

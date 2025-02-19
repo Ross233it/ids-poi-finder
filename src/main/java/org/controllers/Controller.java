@@ -6,8 +6,8 @@ import org.httpServer.http.HttpRequest;
 import org.httpServer.http.HttpResponses;
 import org.services.IService;
 import org.services.BaseService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,9 +22,17 @@ public class Controller<T, S extends IService>  implements IController<T> {
 
     protected HttpRequest request;
 
+    @Autowired
     public Controller(S service, HttpRequest request) {
         this.service = service;
         this.request  = request;
+        this.exchangeInit();
+    }
+
+    /**
+     * Inizializza un exchange per l'esecuzione senza Spring Boot
+     */
+    private void exchangeInit(){
         this.exchange = request.getExchange();
     }
 
@@ -52,6 +60,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * base ad eventuali filtri della query string ed all'utente richiedente
      * @throws IOException
      */
+    @GetMapping
     @Override
     public void index() throws IOException {
         Map<String, String>queryParams = request.getQueryParams();
@@ -66,6 +75,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * Ritorna una response HTTP al chiamante.
      * @throws IOException
      */
+    @PostMapping
     @Override
     public void create() throws IOException {
         Map<String, Object> data = request.getBodyStreamData();
@@ -77,6 +87,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * Gestisce la richiesta di aggiornamento di una specifica risorsa.
      * @throws IOException
      */
+    @PatchMapping("/{id}/status")
     @Override
     public void update() throws IOException {
         long id = request.getRequestId();
@@ -89,6 +100,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * Gestisce la richiesta di visualizzazione di una specifica risorsa.
      * @throws IOException
      */
+    @GetMapping("/{id}")
     @Override
     public void show() throws IOException {
         if(this.request.getRequestId() > 0){
@@ -100,6 +112,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * Gestisce la richiesta di eliminazione di una specifica risorsa.
      * @throws IOException
      */
+    @DeleteMapping("/{id}")
     @Override
     public void delete() throws IOException {
         if(this.request.getRequestId() > 0) {
@@ -114,6 +127,7 @@ public class Controller<T, S extends IService>  implements IController<T> {
      * Gestisce la richiesta di validazione di un contenuto
      * @throws Exception
      */
+    @PatchMapping("/{id}/status")
     public void setStatus() throws Exception{
         Map<String, Object> data = request.getBodyStreamData();
         if(UserContext.getCurrentUser() != null)

@@ -7,6 +7,9 @@ import org.httpServer.http.HttpResponses;
 import org.migrations.DownQueriesManager;
 import org.migrations.QueriesManager;
 import org.migrations.UpQueriesManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -21,13 +24,23 @@ import java.util.ArrayList;
  * E' una classe di servizio per strutturare il database in modo automatico
  * senza l'ausilio di orm o framework.
  */
+
+@RestController
+@RequestMapping("api/migrations")
 public class MigrationsController implements HttpHandler {
+
 
     private ArrayList<String> upQueries;
 
     private ArrayList<String> downQueries;
 
 
+
+    @Autowired
+    public MigrationsController(QueriesManager upQueryManager, QueriesManager downQueryManager ){
+        this.upQueries = (ArrayList<String>) upQueryManager.getQueries();
+        this.downQueries = (ArrayList<String>) downQueryManager.getQueries();
+    }
     /**
      * Costruttore
      */

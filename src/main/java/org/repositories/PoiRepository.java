@@ -85,27 +85,6 @@ public class PoiRepository extends Repository<Poi> {
         return poi;
     }
 
-//    /**
-//     * Modifica lo stato di un punto di interesse
-//     * @param poi il poi di cui modificare lo stato
-//     * @return poi il poi modificato
-//     * @throws Exception
-//     */
-//    public Poi setStatus(Poi poi) throws Exception {
-//        if (poi == null) {
-//            throw new IllegalArgumentException("L'entity non può essere null.");
-//        }
-//        long poiId = poi.getId();
-//        String status = poi.getStatus();
-//        Object[] data = { status, poiId };
-//
-//        String query = "UPDATE " + this.tableName + " " +
-//                "SET status = ? " +
-//                "WHERE id = ?;";
-//        long entityId = DbUtilities.executeQuery(query, data);
-//        return poi;
-//    };
-
     /**
      * Ritorna le informazioni di tutti i punti di interesse relativi ad un comune
      * @param id l'identificativo unico del comune

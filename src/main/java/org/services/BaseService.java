@@ -40,7 +40,9 @@ public class BaseService<D extends Content> implements IService<D> {
     }
 
     public BaseService(Repository repository, DataMapper mapper) {
-        this(repository, mapper, new EventManager());
+        this.repository = repository;
+        this.mapper = mapper;
+        this.eventManager = new EventManager();
         this.eventManagerInit();
     }
 

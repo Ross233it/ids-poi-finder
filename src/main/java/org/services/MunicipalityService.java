@@ -33,7 +33,6 @@ public class MunicipalityService extends BaseService<Municipality> {
     public MunicipalityService() {
         super(new MunicipalityRepository(), new MunicipalityMapper());
         this.geoLocationService = new GeoLocationService();
-        this.poiService = new PoiService();
     }
 
 
@@ -90,6 +89,7 @@ public class MunicipalityService extends BaseService<Municipality> {
      */
     public Municipality getWithPois(Long id) throws IOException,Exception {
         Municipality municipality = super.getObjectById(id);
+        PoiService poiService = new PoiService();
         ArrayList pois = (ArrayList) poiService.getByMunicipalityId(id);
         municipality.setPois(pois);
         return municipality;

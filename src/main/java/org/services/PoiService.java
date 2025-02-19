@@ -38,7 +38,7 @@ public class PoiService extends BaseService<Poi> {
 
     public PoiService() {
         super(new PoiRepository(), new PoiMapper());
-        this.geoLocationService = new GeoLocationService();
+        this.geoLocationService  = new GeoLocationService();
         this.municipalityService = new MunicipalityService();
     }
 
@@ -94,9 +94,10 @@ public class PoiService extends BaseService<Poi> {
     public Poi update(long id, Map<String, Object> objectData) throws Exception {
         Poi poi = this.getObjectById(id);
         if(poi != null){
-            long authorId = poi.getAuthor().getId();
-            if(authorId != UserContext.getCurrentUser().getId())
-                return null;
+            poi.setAuthor(UserContext.getCurrentUser());
+
+//            if(authorId != UserContext.getCurrentUser().getId())
+//                return null;
         }
         Poi modifiedPoi = (Poi) this.mapper.mapDataToObject(objectData);
         poi.setStatus("pending");

@@ -14,6 +14,10 @@ import java.util.Map;
 public class GeoLocationService extends BaseService<GeoLocation> {
 
     @Autowired
+    public GeoLocationService(GeoLocationRepository repository,  GeoLocationMapper mapper) {
+        super(repository,  mapper);
+    }
+
     public GeoLocationService() {
         super(new GeoLocationRepository(),  new GeoLocationMapper());
     }

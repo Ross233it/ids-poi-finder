@@ -49,7 +49,7 @@ public class Poi extends Content {
                 + "\"poiname\":\"" + poiname + "\","
                 + "\"description\":\"" + description + "\","
                 + "\"type\":\"" + type + "\","
-                + "\"isLogical\":\"" + isLogical + "\","
+                + "\"is_logical\":\"" + isLogical + "\","
                 + "\"status\":\"" + getStatus() + "\""
                 ;
         if(municipality != null)

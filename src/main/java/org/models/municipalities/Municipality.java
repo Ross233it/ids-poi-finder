@@ -1,5 +1,6 @@
 package org.models.municipalities;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.models.Content;
 import org.models.GeoLocation;
 import org.models.poi.Poi;
@@ -8,10 +9,15 @@ import org.models.poi.Poi;
 import java.util.ArrayList;
 
 public class Municipality extends Content {
-
+    @NotNull
     private String name;
+
+    @NotNull
     private String region;
+
+    @NotNull
     private String province;
+
     private String status;
 
     private GeoLocation geoLocation;
