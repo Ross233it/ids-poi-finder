@@ -1,5 +1,5 @@
 ## Documentazione e diagrammi
-Cartella docs del repository
+Cartella docs del baseRepository
 ### Contiene: 
 log delle iterazioni
 report - riassunto analisi nome verbo
