@@ -1,6 +1,10 @@
 package org.poifinder.dataMappers;
 
+import jakarta.persistence.MappedSuperclass;
+import org.poifinder.models.users.RegisteredUser;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -12,7 +16,9 @@ import java.util.*;
  * in oggetti e viceversa.
  * @param <D>
  */
-@Component
+@Service
+@Primary
+@MappedSuperclass
 public abstract class DataMapper<D> {
 
 
@@ -39,6 +45,8 @@ public abstract class DataMapper<D> {
      */
     public abstract D mapDataToObject(Map<String, Object> result);
 
+
+    public abstract D updateEntityFromMap(D item, Map<String, Object> result);
 
     protected  long castIdvalue(Object idValue){
         long id = 0L;

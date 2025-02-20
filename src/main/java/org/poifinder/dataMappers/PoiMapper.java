@@ -5,9 +5,11 @@ import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.poi.PoiBuilder;
 import org.poifinder.models.users.RegisteredUser;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class PoiMapper extends DataMapper<Poi>{
 
 
@@ -36,5 +38,10 @@ public class PoiMapper extends DataMapper<Poi>{
            poi.setId(id);
         }
         return poi;
+    }
+
+    @Override
+    public Poi updateEntityFromMap(Poi item, Map<String, Object> result) {
+        return null;
     }
 }

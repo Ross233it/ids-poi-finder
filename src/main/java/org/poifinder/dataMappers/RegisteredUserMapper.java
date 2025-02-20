@@ -3,9 +3,12 @@ package org.poifinder.dataMappers;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.services.MunicipalityService;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+
+@Service
 public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
 
     public RegisteredUser mapDataToObject(Map<String, Object> result) {
@@ -35,7 +38,7 @@ public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
         return user;
     }
 
-     public RegisteredUser mapRequestDataToObject(Map<String, Object> result){
+    public RegisteredUser mapRequestDataToObject(Map<String, Object> result){
             RegisteredUser user = buildBaseUser(result);
             user.setPassword((String) result.get("password"));
             user.setSalt((String) result.get("salt"));
@@ -49,5 +52,10 @@ public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
                 (String) result.getOrDefault("role", null)
         );
         return user;
+    }
+
+    @Override
+    public RegisteredUser updateEntityFromMap(RegisteredUser item, Map<String, Object> result) {
+        return null;
     }
 }

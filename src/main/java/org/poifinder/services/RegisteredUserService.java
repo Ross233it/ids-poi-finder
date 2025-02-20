@@ -8,6 +8,7 @@ import org.poifinder.repositories.RegisteredUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +51,7 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
                     throw new RuntimeException(e);
                 }
             }
-            this.baseRepository.create(user, "");
+            this.repository.create(user, "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -67,12 +68,12 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
         try {
             String username = (String) data.get("username");
             String password = (String) data.get("password");
-            Map<String, Object> userData = ((RegisteredUserRepository) this.baseRepository).getByUsername(username);
+            Map<String, Object> userData = ((RegisteredUserRepository) this.repository).getByUsername(username);
             if (userData == null)
                 return "";
             if(AuthUtilities.verifyPassword(password, (String) userData.get("salt"), (String) userData.get("password"))){
                 String accessToken =  AuthUtilities.generateAccessToken(username);
-                ((RegisteredUserRepository) this.baseRepository).saveAccessToken(accessToken, username);
+                ((RegisteredUserRepository) this.repository).saveAccessToken(accessToken, username);
                 return accessToken;
             }else
                 return "";
@@ -88,7 +89,7 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
     public void logout(RegisteredUser user) {
         try {
             user.setAccessToken(null);
-            ((RegisteredUserRepository) this.baseRepository).saveAccessToken(null, user.getUsername());
+            ((RegisteredUserRepository) this.repository).saveAccessToken(null, user.getUsername());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -101,7 +102,7 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
      */
     public RegisteredUser getByAccessToken(String token) {
         try {
-            Map<String, Object> userData =  ((RegisteredUserRepository)this.baseRepository).getByAccessToken(token);
+            Map<String, Object> userData =  ((RegisteredUserRepository)this.repository).getByAccessToken(token);
             if(userData == null)
                 return null;
             RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(userData);
@@ -127,7 +128,7 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
                 return null;
             user.setRole(newRole);
             user.setId(userId);
-            ((RegisteredUserRepository) this.baseRepository).setRole(user);
+            ((RegisteredUserRepository) this.repository).setRole(user);
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -145,10 +146,25 @@ public class RegisteredUserService extends BaseService<RegisteredUser> {
             if(user == null)
                 return null;
             user.setId(id);
-            this.baseRepository.delete(user, null);
+            this.repository.delete(user, null);
             return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<RegisteredUser> filter(Map<String, String> queryParams) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public RegisteredUser setStatus(Map<String, Object> data) throws Exception {
+        return null;
+    }
+
+    @Override
+    public RegisteredUser delete(long id) throws Exception {
+        return null;
     }
 }

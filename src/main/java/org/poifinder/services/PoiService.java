@@ -34,8 +34,8 @@ public class PoiService extends BaseService<Poi> {
     }
 
     @Autowired
-    public PoiService(PoiRepository poiRepository) {
-        super(poiRepository);
+    public PoiService(PoiRepository repository, PoiMapper mapper) {
+        super(repository, mapper);
         this.geoLocationService  = new GeoLocationService();
         this.municipalityService = new MunicipalityService();
     }
@@ -47,8 +47,18 @@ public class PoiService extends BaseService<Poi> {
     }
 
     @Override
+    public List<Poi> filter(Map<String, String> queryParams) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public Poi setStatus(Map<String, Object> data) throws Exception {
+        return null;
+    }
+
+    @Override
     public Poi getObjectById(long id) throws Exception {
-        Map<String, Object> entityData =  this.baseRepository.getById(id, null);
+        Map<String, Object> entityData =  this.repository.getById(id, null);
         if(entityData == null)
             return null;
         Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
@@ -85,7 +95,7 @@ public class PoiService extends BaseService<Poi> {
             return null;
 
         eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
-        poi =  (Poi) baseRepository.create(poi, null);
+        poi =  (Poi) repository.create(poi, null);
         if(objectData.containsKey("status")){
             objectData.put("id", poi.getId());
             poi = this.setStatus(objectData);
@@ -107,15 +117,20 @@ public class PoiService extends BaseService<Poi> {
         poi.setStatus("pending");
         GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
         modifiedPoi.setGeoLocation(modifiedGeolocation);
-        modifiedPoi = (Poi) this.baseRepository.update(modifiedPoi , null);
+        modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
 
         //todo implements notification and autovalidation
         eventManager.notify("Nuovo Punto di interesse auto-validato", null);
         return modifiedPoi;
     }
 
+    @Override
+    public Poi delete(long id) throws Exception {
+        return null;
+    }
+
     public List<Poi> getByMunicipalityId(long id) throws Exception {
-        List<Map<String, Object>> results =  ((PoiRepository)this.baseRepository).getByMunicipalityId(id);
+        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
         return this.mapper.mapDbDataToObjects(results);
     }
 

@@ -2,10 +2,14 @@ package org.poifinder.dataMappers;
 
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.municipalities.MunicipalityBuilder;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class MunicipalityMapper extends DataMapper<Municipality> {
+
+
 
     /**
      * Mappa una serie di dati in un oggetto della classe
@@ -27,6 +31,11 @@ public class MunicipalityMapper extends DataMapper<Municipality> {
             municipality.setId(id);
         }
         return municipality;
+    }
+
+    @Override
+    public Municipality updateEntityFromMap(Municipality item, Map<String, Object> result) {
+        return null;
     }
 }
 

@@ -7,6 +7,7 @@ import org.poifinder.eventManager.LogNotifier;
 import org.poifinder.httpServer.http.HttpRequest;
 import org.poifinder.models.Content;
 import org.poifinder.repositories.IRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,21 +22,26 @@ public abstract class BaseService<D extends Content> implements IService<D> {
 
     protected EventManager eventManager;
 
-//    protected DataMapper mapper;
+    protected DataMapper mapper;
 
-
+    @Autowired
     public BaseService(IRepository<D> repository,
-                       EventManager eventManager,
-                       DataMapper mapper
-                       EmailNotifier emailNotifier,
-                       LogNotifier logNotifier
-    ) {
+                       DataMapper mapper) {
         this.repository = repository;
-        this.eventManager = eventManager;
         this.mapper = mapper;
-        eventManager.subscribe(emailNotifier);
-        eventManager.subscribe(logNotifier);
+        this.initListeners();
     }
+
+    /**
+     * Inizializza i listener associati agli eventi
+     * generati dal servizio
+     */
+    private void initListeners(){
+        this.eventManager = new EventManager();
+        eventManager.subscribe(new EmailNotifier());
+        eventManager.subscribe(new LogNotifier());
+    }
+
 
     @Override
     public List<D> index() {
@@ -53,7 +59,7 @@ public abstract class BaseService<D extends Content> implements IService<D> {
     @Override
     @Transactional
     public D create(Map<String, Object> data) throws Exception {
-        D entity = mapper.mapToEntity(data);
+        D entity = (D) mapper.mapDataToObject(data);
         return repository.save(entity);
     }
 
@@ -61,32 +67,21 @@ public abstract class BaseService<D extends Content> implements IService<D> {
     @Transactional
     public D update(long id, Map<String, Object> data) throws Exception {
         D entity = getObjectById(id);
-        updateEntityFromMap(entity, data);
+        mapper.updateEntityFromMap(entity, data);
         return repository.save(entity);
     }
 
 
     public void deleteById(Long id) {
-        return repository.deleteById(id);
+         repository.deleteById(id);
     }
 
 
-    public List<D> search(String searchField) {
-        return repository.search(searchField);
+    public List<D> search(Map<String, String> params) throws Exception {
+        return repository.search(params);
     }
 
 
-    @Override
-    @Transactional
-    public D delete(long id) throws Exception {
-        D entity = getObjectById(id);
-        repository.delete(entity);
-        return entity;
-    }
-
-//    protected abstract D mapToEntity(Map<String, Object> data) throws Exception;
-
-//    protected abstract void updateEntityFromMap(D entity, Map<String, Object> data) throws Exception;
     /**
      * Servizio di segnalazione di un contenuto ad un utente
      * responsabile.
@@ -95,11 +90,9 @@ public abstract class BaseService<D extends Content> implements IService<D> {
     public void reportContent(HttpRequest request) throws Exception {
         long id = request.getRequestId();
         Map<String, Object> reportData = request.getBodyStreamData();
-        Map<String, Object> entityData =  this.baseRepository.getById(id, null);
+        Map<String, Object> entityData =  this.repository.getById(id, null);
         D entity = (D) this.mapper.mapDataToObject(entityData);
         reportData.put("Poi id", id);
         this.eventManager.notify("content report", reportData);
     }
-
-
 }

@@ -1,10 +1,11 @@
 package org.poifinder.dataMappers;
 
 import org.poifinder.models.GeoLocation;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
+@Component
 public class GeoLocationMapper extends DataMapper<GeoLocation> {
 
     @Override

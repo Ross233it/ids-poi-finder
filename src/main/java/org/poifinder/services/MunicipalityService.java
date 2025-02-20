@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,6 +40,16 @@ public class MunicipalityService extends BaseService<Municipality> {
         return (Municipality) this.mapper.mapDataToObject(result);
     }
 
+
+    @Override
+    public List<Municipality> filter(Map<String, String> queryParams) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public Municipality setStatus(Map<String, Object> data) throws Exception {
+        return null;
+    }
 
     @Override
     public Municipality getObjectById(long id) throws Exception {
@@ -78,6 +89,11 @@ public class MunicipalityService extends BaseService<Municipality> {
         //todo implements notification and autovalidation
         eventManager.notify("Nuovo Punto di interesse auto-validato", null);
         return modifiedMunicipality;
+    }
+
+    @Override
+    public Municipality delete(long id) throws Exception {
+        return null;
     }
 
     /**
