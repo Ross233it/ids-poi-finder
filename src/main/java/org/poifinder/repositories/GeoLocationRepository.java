@@ -1,11 +1,11 @@
 package org.poifinder.repositories;
 
-import org.poifinder.httpServer.DbUtilities;
 import org.poifinder.models.GeoLocation;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GeoLocationRepository extends BaseRepository<GeoLocation> {
+public interface GeoLocationRepository extends JpaRepository<GeoLocation, Long> {
 
 
 //    public GeoLocationRepository() {

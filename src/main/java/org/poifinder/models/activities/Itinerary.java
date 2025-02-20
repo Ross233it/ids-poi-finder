@@ -1,6 +1,6 @@
 package org.poifinder.models.activities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import org.poifinder.models.poi.Poi;
 
 import java.util.*;
@@ -10,24 +10,32 @@ import java.util.*;
  * Un itinerario è una sequenza ordinata di punti di interesse.
  */
 @Entity
+@DiscriminatorValue("itinerary")
 public class Itinerary extends Activity {
-   
+
+    @ManyToMany
+    @JoinTable(name= "pois_itineraries",
+            joinColumns = @JoinColumn(name = "poi_id"),
+            inverseJoinColumns = @JoinColumn(name = "itinerary_id"))
     private List<Poi> poiList;
 
-    public Itinerary(String name, String description,String type, List<Long> orderedIds) {
-        super(name, description, type);
-        this.poiList = new ArrayList<>();
+
+    public Itinerary(String name,
+                     String description,
+                     List<Long> orderedIds,
+                     List<Poi> poiList) {
+        super(name, description, "itinerary");
+        this.poiList = poiList;
         this.orderPoi(orderedIds);
     }
 
     public Itinerary() {
         super();
-        this.poiList = new ArrayList<>();
     }
 
     /**
-     * Ordina i poi secondo una lista di id che identificano l'ordine
-     * delle tappe.
+     * Ordina i poi dell'itinerario secondo una lista di id che
+     * identificano l'ordine delle tappe.
      * @param orderedIds
      */
     private void orderPoi(List<Long> orderedIds) {

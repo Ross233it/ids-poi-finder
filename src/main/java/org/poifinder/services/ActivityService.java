@@ -13,6 +13,7 @@ import java.util.Map;
 @Service
 public class ActivityService extends BaseService<Activity> {
 
+
     @Autowired
     public ActivityService(ActivityRepository repository, ActivityMapper mapper) {
         super(repository, mapper);

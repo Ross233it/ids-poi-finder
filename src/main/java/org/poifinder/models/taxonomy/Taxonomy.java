@@ -1,11 +1,8 @@
 package org.poifinder.models.taxonomy;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
 import org.poifinder.models.Content;
 
-
-@Entity
 @MappedSuperclass
 public abstract  class Taxonomy extends Content {
 
@@ -19,7 +16,6 @@ public abstract  class Taxonomy extends Content {
         this.name = name;
         this.description = description;
     }
-
 
 
     /** getters **/

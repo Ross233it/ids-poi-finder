@@ -1,42 +1,29 @@
 package org.poifinder.models.taxonomy;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 
 @Entity
+@Table(name="categories")
 public class Category extends Taxonomy{
 
-    private ArrayList<Category> subCategories;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id", nullable = true)
     private Category parentCategory;
 
     public Category(String name, String description) {
         super(name, description);
-        this.subCategories = new ArrayList<Category>();
     }
 
-    public Category() {
-        super();
-    }
+    public Category() { super(); }
 
     /** getters **/
-    @Override
-    public Object[] getData() {
-        return new Object[]{
-                this.getId(),
-                this.getName(),
-                this.getDescription()};
-    }
-
-    public ArrayList<Category> getSubCategories() { return subCategories; }
 
     public Category getParentCategory() { return parentCategory; }
 
     /** setters **/
-    public void addSubCategories(Category subCategory) { this.subCategories.add(subCategory); }
-
-    public void removeSubCategories(Category subCategory) { this.subCategories.remove(subCategory); }
 
     public void setParentCategory(Category parentCategory) { this.parentCategory = parentCategory; }
 
@@ -54,15 +41,6 @@ public class Category extends Taxonomy{
         } else {
             sb.append("\"parentCategory\": null, ");
         }
-
-        sb.append("\"subCategories\": [");
-        for (int i = 0; i < subCategories.size(); i++) {
-            sb.append(subCategories.get(i).toString());
-            if (i < subCategories.size() - 1) {
-                sb.append(", ");
-            }
-        }
-        sb.append("]");
         sb.append("}");
         return sb.toString();
     }

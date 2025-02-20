@@ -50,12 +50,6 @@ public abstract  class Content implements IModel {
 
     public void setApprover(RegisteredUser approver) { this.approver = approver; }
 
-    /**
-     * Restituisce i dati dell'oggetto
-     * @return Object[] array di oggetti
-     */
-    @Override
-    public abstract Object[] getData();
 
     /**
      * Restituisce una rappresentazione testuale dell'oggetto

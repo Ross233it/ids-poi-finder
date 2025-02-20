@@ -10,7 +10,6 @@ import org.poifinder.models.poi.Poi;
 import java.util.ArrayList;
 
 @Entity
-@Embeddable
 @Table(name="municipalities")
 public class Municipality extends Content {
 //    @NotNull
@@ -72,17 +71,6 @@ public class Municipality extends Content {
     }
 
     /** getters **/
-
-    @Override
-    public Object[]  getData(){
-        return new Object[]{
-                this.getName(),
-                this.getRegion(),
-                this.getProvince(),
-                this.getGeoLocation().getId(),
-                this.getAuthor().getId()
-        };
-    }
 
     public String getName()          { return name; }
 

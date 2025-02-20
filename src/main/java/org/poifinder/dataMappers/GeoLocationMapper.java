@@ -35,4 +35,9 @@ public class GeoLocationMapper extends DataMapper<GeoLocation> {
 
         return geoLocation;
     }
+
+    @Override
+    public GeoLocation updateEntityFromMap(GeoLocation item, Map<String, Object> result) {
+        return null;
+    }
 }

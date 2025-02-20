@@ -1,18 +1,17 @@
 package org.poifinder.main;
 
 import org.poifinder.httpServer.DbConnectionManager;
-import org.poifinder.httpServer.Server;
 
 public class Main {
     public static void main(String[] args) {
 
-        /** Avvio del server http */
-        Server server = new Server(8080);
-        try{
-            server.startServer();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+//        /** Avvio del server http */
+//        Server server = new Server(8080);
+//        try{
+//            server.startServer();
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
 
         /**  DB check  */
         DbConnectionManager dbConnectionManager = DbConnectionManager.getInstance();

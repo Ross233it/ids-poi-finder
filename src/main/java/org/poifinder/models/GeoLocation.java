@@ -3,19 +3,19 @@ package org.poifinder.models;
 import jakarta.persistence.*;
 
 @Entity
-@Embeddable
 @Table(name="geolocations")
 public class GeoLocation extends Content {
-
-    private double latitude;
-
-    private double longitude;
 
     private String address;
 
     private String number;
 
     private String cap;
+
+    private double latitude;
+
+    private double longitude;
+
 
     public GeoLocation() {  }
 
@@ -43,20 +43,6 @@ public class GeoLocation extends Content {
         this.longitude = longitude;
     }
 
-    /**
-     * Restituisce i dati dell'oggetto
-     * @return Object[] array di oggetti
-     */
-    @Override
-    public Object[]  getData(){
-        return new Object[] {
-            this.getAddress(),
-            this.getNumber(),
-            this.getCap(),
-            this.getLongitude(),
-            this.getLatitude()
-        };
-    }
 
     /** getters **/
     public double getLatitude()  { return latitude; }

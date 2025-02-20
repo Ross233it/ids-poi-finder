@@ -6,6 +6,7 @@ import org.poifinder.models.GeoLocation;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.repositories.MunicipalityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,19 +21,15 @@ public class MunicipalityService extends BaseService<Municipality> {
 
     private PoiService poiService;
 
-//    @Autowired
-    public MunicipalityService(MunicipalityRepository municipalityRepository,
+    @Autowired
+    public MunicipalityService(MunicipalityRepository repository,
                                MunicipalityMapper municipalityMapper,
-                               GeoLocationService geoLocationService,
-                               PoiService poiService) {
-        super(municipalityRepository, municipalityMapper);
+                               GeoLocationService geoLocationService
+//                               PoiService poiService
+    ) {
+        super(repository, municipalityMapper);
         this.geoLocationService = geoLocationService;
-        this.poiService = poiService;
-    }
-
-    public MunicipalityService() {
-        super(new MunicipalityRepository(), new MunicipalityMapper());
-        this.geoLocationService = new GeoLocationService();
+//        this.poiService = poiService;
     }
 
 
@@ -53,13 +50,14 @@ public class MunicipalityService extends BaseService<Municipality> {
 
     @Override
     public Municipality getObjectById(long id) throws Exception {
-        Map<String, Object> entityData =  this.baseRepository.getById(id, null);
-        if(entityData == null)
-            return null;
-        Municipality municipality= (Municipality) this.mapper.mapDataToObject(entityData);
-        GeoLocation geoLocation = geoLocationService.get(entityData);
-        municipality.setGeoLocation(geoLocation);
-        return municipality;
+//        Map<String, Object> entityData =  this.repository.getById(id, null);
+//        if(entityData == null)
+//            return null;
+//        Municipality municipality= (Municipality) this.mapper.mapDataToObject(entityData);
+//        GeoLocation geoLocation = geoLocationService.get(entityData);
+//        municipality.setGeoLocation(geoLocation);
+//        return municipality;
+        return null;
     }
 
     /**
@@ -70,25 +68,27 @@ public class MunicipalityService extends BaseService<Municipality> {
      */
     @Override
     public Municipality create(Map<String, Object> objectData) throws Exception{
-        GeoLocation geoLocation = geoLocationService.create(objectData);
-        Municipality municipality = (Municipality) this.mapper.mapDataToObject(objectData);
-        municipality.setGeoLocation(geoLocation);
-        municipality.setAuthor((RegisteredUser) objectData.get("author"));
-        return (Municipality) baseRepository.create(municipality, null);
+//        GeoLocation geoLocation = geoLocationService.create(objectData);
+//        Municipality municipality = (Municipality) this.mapper.mapDataToObject(objectData);
+//        municipality.setGeoLocation(geoLocation);
+//        municipality.setAuthor((RegisteredUser) objectData.get("author"));
+//        return (Municipality) repository.create(municipality, null);
+        return null;
     }
 
     @Override
     public Municipality update(long id, Map<String, Object> objectData) throws Exception {
-        Municipality municipality = this.getObjectById(id);
-        Municipality modifiedMunicipality = (Municipality) this.mapper.mapDataToObject(objectData);
-        GeoLocation modifiedGeolocation = geoLocationService.update(municipality.getGeoLocation().getId(), objectData);
-        modifiedMunicipality.setGeoLocation(modifiedGeolocation);
-        modifiedMunicipality.setAuthor(UserContext.getCurrentUser());
-        modifiedMunicipality.setId(id);
-        modifiedMunicipality = (Municipality) this.baseRepository.update(modifiedMunicipality, null);
-        //todo implements notification and autovalidation
-        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
-        return modifiedMunicipality;
+//        Municipality municipality = this.getObjectById(id);
+//        Municipality modifiedMunicipality = (Municipality) this.mapper.mapDataToObject(objectData);
+//        GeoLocation modifiedGeolocation = geoLocationService.update(municipality.getGeoLocation().getId(), objectData);
+//        modifiedMunicipality.setGeoLocation(modifiedGeolocation);
+//        modifiedMunicipality.setAuthor(UserContext.getCurrentUser());
+//        modifiedMunicipality.setId(id);
+//        modifiedMunicipality = (Municipality) this.repository.update(modifiedMunicipality, null);
+//        //todo implements notification and autovalidation
+//        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
+//        return modifiedMunicipality;
+        return null;
     }
 
     @Override
@@ -103,11 +103,12 @@ public class MunicipalityService extends BaseService<Municipality> {
      * @throws Exception
      */
     public Municipality getWithPois(Long id) throws IOException,Exception {
-        Municipality municipality = super.getObjectById(id);
-        PoiService poiService = new PoiService();
-        ArrayList pois = (ArrayList) poiService.getByMunicipalityId(id);
-        municipality.setPois(pois);
-        return municipality;
+//        Municipality municipality = super.getObjectById(id);
+//        PoiService poiService = new PoiService();
+//        ArrayList pois = (ArrayList) poiService.getByMunicipalityId(id);
+//        municipality.setPois(pois);
+//        return municipality;
+        return null;
     }
 }
 

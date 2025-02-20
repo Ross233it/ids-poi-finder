@@ -1,11 +1,13 @@
 package org.poifinder.services;
 
+import org.poifinder.dataMappers.MunicipalityMapper;
 import org.poifinder.dataMappers.PoiMapper;
 
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
 import org.poifinder.models.poi.Poi;
+import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.PoiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,16 +36,13 @@ public class PoiService extends BaseService<Poi> {
     }
 
     @Autowired
-    public PoiService(PoiRepository repository, PoiMapper mapper) {
+    public PoiService(PoiRepository repository,
+                      PoiMapper mapper,
+//                      MunicipalityService municipalityService,
+                      GeoLocationService geoLocationService) {
         super(repository, mapper);
-        this.geoLocationService  = new GeoLocationService();
-        this.municipalityService = new MunicipalityService();
-    }
-
-    public PoiService() {
-        super(new PoiRepository(), new PoiMapper());
-        this.geoLocationService  = new GeoLocationService();
-        this.municipalityService = new MunicipalityService();
+        this.geoLocationService = geoLocationService;
+//        this.municipalityService = municipalityService;
     }
 
     @Override
@@ -58,15 +57,16 @@ public class PoiService extends BaseService<Poi> {
 
     @Override
     public Poi getObjectById(long id) throws Exception {
-        Map<String, Object> entityData =  this.repository.getById(id, null);
-        if(entityData == null)
-            return null;
-        Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
-        GeoLocation geoLocation = geoLocationService.get(entityData);
-        Municipality municipality = municipalityService.get(entityData);
-        poi.setGeoLocation(geoLocation);
-        poi.setMunicipality(municipality);
-        return poi;
+//        Map<String, Object> entityData =  this.repository.getById(id, null);
+//        if(entityData == null)
+//            return null;
+//        Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
+//        GeoLocation geoLocation = geoLocationService.get(entityData);
+//        Municipality municipality = municipalityService.get(entityData);
+//        poi.setGeoLocation(geoLocation);
+//        poi.setMunicipality(municipality);
+//        return poi;
+        return null;
     }
 
     /**
@@ -77,51 +77,53 @@ public class PoiService extends BaseService<Poi> {
      */
     @Override
     public Poi create(Map<String, Object> objectData) throws Exception{
-        Poi poi = (Poi) this.mapper.mapDataToObject(objectData);
-
-        if(objectData.get("municipality_id") != null){
-            int municipalityId = (int) objectData.get("municipality_id");
-            Municipality municipality = municipalityService.getObjectById(municipalityId);
-            poi.setMunicipality(municipality);
-
-            if(poi.isLogical()){
-                poi.setGeoLocation(municipality.getGeoLocation());
-            }else if(objectData.get("geoLocation") != null){
-                GeoLocation geolocation = geoLocationService.create ((Map<String, Object>) objectData.get("geoLocation"));
-                poi.setGeoLocation(geolocation);
-            }else
-                return null;
-        }else
-            return null;
+//        Poi poi = (Poi) this.mapper.mapDataToObject(objectData);
+//
+//        if(objectData.get("municipality_id") != null){
+//            int municipalityId = (int) objectData.get("municipality_id");
+//            Municipality municipality = municipalityService.getObjectById(municipalityId);
+//            poi.setMunicipality(municipality);
+//
+//            if(poi.isLogical()){
+//                poi.setGeoLocation(municipality.getGeoLocation());
+//            }else if(objectData.get("geoLocation") != null){
+//                GeoLocation geolocation = geoLocationService.create ((Map<String, Object>) objectData.get("geoLocation"));
+//                poi.setGeoLocation(geolocation);
+//            }else
+//                return null;
+//        }else
+//            return null;
 
         eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
-        poi =  (Poi) repository.create(poi, null);
-        if(objectData.containsKey("status")){
-            objectData.put("id", poi.getId());
-            poi = this.setStatus(objectData);
-            eventManager.notify("Nuovo Punto di interesse auto-validato", null);
-        }
-        return poi;
+//        poi =  (Poi) repository.create(poi, null);
+//        if(objectData.containsKey("status")){
+//            objectData.put("id", poi.getId());
+//            poi = this.setStatus(objectData);
+//            eventManager.notify("Nuovo Punto di interesse auto-validato", null);
+//        }
+//        return poi;
+        return null;
     }
 
     @Override
     public Poi update(long id, Map<String, Object> objectData) throws Exception {
-        Poi poi = this.getObjectById(id);
-        if(poi != null){
-            poi.setAuthor(UserContext.getCurrentUser());
-
-//            if(authorId != UserContext.getCurrentUser().getId())
-//                return null;
-        }
-        Poi modifiedPoi = (Poi) this.mapper.mapDataToObject(objectData);
-        poi.setStatus("pending");
-        GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
-        modifiedPoi.setGeoLocation(modifiedGeolocation);
-        modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
-
-        //todo implements notification and autovalidation
-        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
-        return modifiedPoi;
+//        Poi poi = this.getObjectById(id);
+//        if(poi != null){
+//            poi.setAuthor(UserContext.getCurrentUser());
+//
+////            if(authorId != UserContext.getCurrentUser().getId())
+////                return null;
+//        }
+//        Poi modifiedPoi = (Poi) this.mapper.mapDataToObject(objectData);
+//        poi.setStatus("pending");
+//        GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
+//        modifiedPoi.setGeoLocation(modifiedGeolocation);
+//        modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
+//
+//        //todo implements notification and autovalidation
+//        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
+//        return modifiedPoi;
+        return null;
     }
 
     @Override
@@ -130,8 +132,9 @@ public class PoiService extends BaseService<Poi> {
     }
 
     public List<Poi> getByMunicipalityId(long id) throws Exception {
-        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
-        return this.mapper.mapDbDataToObjects(results);
+//        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
+//        return this.mapper.mapDbDataToObjects(results);
+        return null;
     }
 
 //    /**

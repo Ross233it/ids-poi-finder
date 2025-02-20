@@ -15,12 +15,8 @@ public class GeoLocationService extends BaseService<GeoLocation> {
 
     @Autowired
     public GeoLocationService(GeoLocationRepository repository, GeoLocationMapper mapper) {
-        super(repository,  mapper);
-    }
+        super(repository,  mapper);    }
 
-    public GeoLocationService() {
-        super(new GeoLocationRepository(),  new GeoLocationMapper());
-    }
 
     public GeoLocation get(Map<String, Object> result){
         return (GeoLocation) this.mapper.mapDataToObject(result);

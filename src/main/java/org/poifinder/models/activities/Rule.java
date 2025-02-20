@@ -2,6 +2,8 @@ package org.poifinder.models.activities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import org.poifinder.models.taxonomy.Taxonomy;
 
 /**
  * Questa classe rappresenta una regola, nello specifico per i contest-
@@ -9,7 +11,8 @@ import jakarta.persistence.Id;
  * in caso di trasgressione o ottemperanza.
  */
 @Entity
-public class Rule {
+@Table(name="rules")
+public class Rule extends Taxonomy {
 
     @Id
     private Long id;
@@ -30,8 +33,6 @@ public class Rule {
     }
 
     /** getters **/
-
-    public Long getId() { return id; }
 
     public String getDescription() { return description; }
 

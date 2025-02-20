@@ -14,25 +14,26 @@ import java.util.List;
 
 @Entity
 @Table(name="activities")
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 public class Activity extends Content {
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String name;
 
-//    @Column(length = 500)
+    @Column(length = 500)
     private String description;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String type;
 
-    @OneToMany
-    @JoinColumn(name = "activity_id")
+    @ManyToMany
+    @JoinTable(name= "activities_pois",
+            joinColumns = @JoinColumn(name = "activity_id"),
+            inverseJoinColumns = @JoinColumn(name = "poi_id"))
     private List<Poi> poiList;
 
-
-
-     public Activity(String name, String description, String type) {
+    public Activity(String name, String description, String type) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -44,7 +45,7 @@ public class Activity extends Content {
         this.poiList = new ArrayList<Poi>();
     }
 
-    public Activity() { }
+    public Activity(){ }
 
 
     /** setters **/
@@ -60,22 +61,6 @@ public class Activity extends Content {
     public void removePoi(Poi poi){ this.poiList.remove(poi); }
     /** getters **/
 
-    /**
-     * Restituisce i dati dell'oggetto
-     * @return Object[] array di oggetti
-     */
-    @Override
-    public Object[] getData() {
-        return new Object[] {
-            this.getName(),
-            this.getDescription(),
-            this.getType(),
-            this.getPoiList(),
-            this.getStatus() != null ? this.getStatus() : null,
-            this.getAuthor() != null ? this.getAuthor().getId() : null,
-            this.getApprover() != null ? this.getApprover().getId() : null
-        };
-    }
 
     @Override
     public String toString() {

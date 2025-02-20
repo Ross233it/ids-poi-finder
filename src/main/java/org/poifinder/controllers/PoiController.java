@@ -1,10 +1,7 @@
 package org.poifinder.controllers;
 
-import org.poifinder.httpServer.auth.UserContext;
-import org.poifinder.httpServer.http.HttpRequest;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
-import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.services.PoiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,44 +10,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/poi")
-public class PoiController extends Controller<Poi, PoiService> {
+public class PoiController extends BaseController<Poi, PoiService> {
 
     @Autowired
     public  PoiController(PoiService service) {
         super(service);
     }
 
-    public  PoiController(PoiService service, HttpRequest request) {
-        super(service, request);
-    }
 
 
     @GetMapping("/api/municipality/{id}")
-    public Municipality showTest(@PathVariable long id){
+    public Poi showTest(@PathVariable long id){
         try {
-            return service.getObjectById(id).getMunicipality();
+            return service.getObjectById(id);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    @GetMapping("/api/poi/")
     public void create() throws IOException {
-        Map<String, Object> data = request.getBodyStreamData();
-        RegisteredUser author = UserContext.getCurrentUser();
-        data.put("author", author);
-        if(
-            author.hasRole("platformAdmin") ||
-            author.hasRole("animator") ||
-            author.hasRole("authContributor")
-        ){
-            data.put("status", "published");
-        }
-        handleRequest(()->service.create(data), null);
+//        Map<String, Object> data = request.getBodyStreamData();
+//        RegisteredUser author = UserContext.getCurrentUser();
+//        data.put("author", author);
+//        if(
+//            author.hasRole("platformAdmin") ||
+//            author.hasRole("animator") ||
+//            author.hasRole("authContributor")
+//        ){
+//            data.put("status", "published");
+//        }
+//        handleRequest(()->service.create(data), null);
     }
 
     /**
@@ -60,8 +54,8 @@ public class PoiController extends Controller<Poi, PoiService> {
 
 
     public void getByMunicipalityId() throws IOException {
-        long municipalityId = request.getRequestId();
-        handleRequest(()-> service.getByMunicipalityId(municipalityId), null);
+//        long municipalityId = request.getRequestId();
+//        handleRequest(()-> service.getByMunicipalityId(municipalityId), null);
     }
 
 

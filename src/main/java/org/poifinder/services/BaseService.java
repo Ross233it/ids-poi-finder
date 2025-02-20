@@ -4,10 +4,10 @@ import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.eventManager.EmailNotifier;
 import org.poifinder.eventManager.EventManager;
 import org.poifinder.eventManager.LogNotifier;
-import org.poifinder.httpServer.http.HttpRequest;
 import org.poifinder.models.Content;
-import org.poifinder.repositories.IRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +16,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public abstract class BaseService<D extends Content> implements IService<D> {
+public  class BaseService<D extends Content> implements IService<D> {
 
-    protected IRepository<D> repository;
+    protected JpaRepository<D, Long> repository;
 
     protected EventManager eventManager;
 
     protected DataMapper mapper;
 
     @Autowired
-    public BaseService(IRepository<D> repository,
+    public BaseService(JpaRepository<D, Long> repository,
                        DataMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
@@ -46,6 +46,16 @@ public abstract class BaseService<D extends Content> implements IService<D> {
     @Override
     public List<D> index() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<D> filter(Map<String, String> queryParams) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public D setStatus(Map<String, Object> data) throws Exception {
+        return null;
     }
 
 
@@ -71,6 +81,11 @@ public abstract class BaseService<D extends Content> implements IService<D> {
         return repository.save(entity);
     }
 
+    @Override
+    public D delete(long id) throws Exception {
+        return null;
+    }
+
 
     public void deleteById(Long id) {
          repository.deleteById(id);
@@ -78,21 +93,21 @@ public abstract class BaseService<D extends Content> implements IService<D> {
 
 
     public List<D> search(Map<String, String> params) throws Exception {
-        return repository.search(params);
+//        return repository.search(params);
+        return null;
     }
 
 
     /**
      * Servizio di segnalazione di un contenuto ad un utente
      * responsabile.
-     * @param request
      */
-    public void reportContent(HttpRequest request) throws Exception {
-        long id = request.getRequestId();
-        Map<String, Object> reportData = request.getBodyStreamData();
-        Map<String, Object> entityData =  this.repository.getById(id, null);
-        D entity = (D) this.mapper.mapDataToObject(entityData);
-        reportData.put("Poi id", id);
-        this.eventManager.notify("content report", reportData);
+    public void reportContent() throws Exception {
+//        long id = request.getRequestId();
+//        Map<String, Object> reportData = request.getBodyStreamData();
+//        Map<String, Object> entityData =  this.repository.getById(id, null);
+//        D entity = (D) this.mapper.mapDataToObject(entityData);
+//        reportData.put("Poi id", id);
+//        this.eventManager.notify("content report", reportData);
     }
 }

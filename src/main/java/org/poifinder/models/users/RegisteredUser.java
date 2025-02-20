@@ -21,8 +21,10 @@ public class RegisteredUser extends Content implements IUser {
 
     private String salt = null;
 
+
     private String role = null;
 
+    @Column(name = "access_token")
     private  String accessToken = null;
 
     @OneToOne

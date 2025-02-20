@@ -5,13 +5,6 @@ package org.poifinder.models;
  * e che può essere rappresentata da un array di oggetti.
  */
 public interface IModel {
-
-    /**
-     * Restituisce i dati dell'oggetto
-     * @return Object[] array di oggetti
-     */
-    Object[] getData();
-
     /**
      * Restituisce l'identificativo univoco dell'informazione
      * @return id univoco
@@ -23,7 +16,5 @@ public interface IModel {
      * @param id un valore numerico da assegnare
      */
     void setId(long id);
-
-
 
 }

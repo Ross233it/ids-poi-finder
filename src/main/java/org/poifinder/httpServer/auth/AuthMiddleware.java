@@ -10,6 +10,9 @@ import java.util.HashMap;
  * Questa classe ha la responsabilità di consentire la valutazione dei
  * permessi di un utente in rapporto al suo ruolo
  */
+
+/** DEPRECATO - classe necessaria solo per la versione JAVA **/
+//TODO da rimuovere
 public class AuthMiddleware {
 
     /**
@@ -49,13 +52,13 @@ public class AuthMiddleware {
      * @return RegisteredUser l'utente correntemente autenticato.
      */
     public RegisteredUser getCurrentUser(HttpExchange exchange) {
-        String accessToken = AuthUtilities.getAccessToken(exchange);
-        if (accessToken != null && accessToken != "") {
-            RegisteredUserService userService = new RegisteredUserService();
-            RegisteredUser currentUser = userService.getByAccessToken(accessToken);
-            if (currentUser != null)
-                return currentUser;
-        }
+//        String accessToken = AuthUtilities.getAccessToken(exchange);
+//        if (accessToken != null && accessToken != "") {
+//            RegisteredUserService userService = new RegisteredUserService();
+//            RegisteredUser currentUser = userService.getByAccessToken(accessToken);
+//            if (currentUser != null)
+//                return currentUser;
+//        }
         return null;
     }
 

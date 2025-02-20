@@ -12,30 +12,31 @@ import java.util.Map;
 public class RegisteredUserMapper extends DataMapper<RegisteredUser> {
 
     public RegisteredUser mapDataToObject(Map<String, Object> result) {
-        if(result.containsKey("author") && result.get("author") != null){
-            return (RegisteredUser) result.get("author");
-        }
-        if (result.get("method") == "insert") {
-            return this.mapRequestDataToObject(result);
-        }
-        RegisteredUser user = buildBaseUser(result);
-
-        if(result.get("municipality_id") != null){
-            MunicipalityService service = new MunicipalityService();
-            Municipality municipality = null;
-            try {
-                municipality = service.getObjectById((Long) result.get("municipality_id"));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            user.setMunicipality(municipality);
-        }
-
-        if(result.containsKey("A_id") ){
-            Integer id = (Integer) result.getOrDefault("A_id", 0);
-            user.setId(id.longValue());
-        }
-        return user;
+//        if(result.containsKey("author") && result.get("author") != null){
+//            return (RegisteredUser) result.get("author");
+//        }
+//        if (result.get("method") == "insert") {
+//            return this.mapRequestDataToObject(result);
+//        }
+//        RegisteredUser user = buildBaseUser(result);
+//
+//        if(result.get("municipality_id") != null){
+//            MunicipalityService service = new MunicipalityService();
+//            Municipality municipality = null;
+//            try {
+//                municipality = service.getObjectById((Long) result.get("municipality_id"));
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//            user.setMunicipality(municipality);
+//        }
+//
+//        if(result.containsKey("A_id") ){
+//            Integer id = (Integer) result.getOrDefault("A_id", 0);
+//            user.setId(id.longValue());
+//        }
+//        return user;
+        return null;
     }
 
     public RegisteredUser mapRequestDataToObject(Map<String, Object> result){

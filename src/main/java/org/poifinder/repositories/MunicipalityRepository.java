@@ -1,16 +1,11 @@
 package org.poifinder.repositories;
 
-import org.poifinder.httpServer.DbUtilities;
 import org.poifinder.models.municipalities.Municipality;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
 @Repository
-public class MunicipalityRepository extends BaseRepository<Municipality> {
+public interface MunicipalityRepository extends JpaRepository<Municipality, Long> {
 
 
 //    public MunicipalityRepository() {

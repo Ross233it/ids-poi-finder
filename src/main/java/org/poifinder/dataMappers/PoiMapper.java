@@ -5,11 +5,13 @@ import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.poi.PoiBuilder;
 import org.poifinder.models.users.RegisteredUser;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@Primary
 public class PoiMapper extends DataMapper<Poi>{
 
 

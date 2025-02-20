@@ -17,7 +17,6 @@ import java.util.*;
  * @param <D>
  */
 @Service
-@Primary
 @MappedSuperclass
 public abstract class DataMapper<D> {
 

@@ -1,26 +1,24 @@
 package org.poifinder.controllers;
 
-import org.poifinder.httpServer.http.HttpRequest;
 import org.poifinder.models.activities.Activity;
 import org.poifinder.services.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-//@RestController
-//@RequestMapping("api/activitiy")
-public class ActivityController extends Controller<Activity, ActivityService> {
+@RestController
+@RequestMapping("api/activitiy")
+public class ActivityController extends BaseController<Activity, ActivityService> {
 
-//    @Autowired
-    public  ActivityController(ActivityService service, HttpRequest request) {
-        super(service, request);
+    @Autowired
+    public  ActivityController(ActivityService service) {
+        super(service);
     }
 
-//    @PostMapping
+    @PostMapping
     public void create( Activity activity) throws IOException {
 
     }

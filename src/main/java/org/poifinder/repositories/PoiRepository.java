@@ -2,12 +2,13 @@ package org.poifinder.repositories;
 
 import org.poifinder.httpServer.DbUtilities;
 import org.poifinder.httpServer.auth.UserContext;
+import org.poifinder.models.activities.Activity;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,8 @@ import java.util.Map;
  * Costruisce le query specifiche per la gestione dei Point of Interest.
  */
 @Repository
-public class PoiRepository extends BaseRepository<Poi> {
+@Primary
+public interface PoiRepository extends JpaRepository<Poi, Long> {
 
 
 
@@ -33,21 +35,21 @@ public class PoiRepository extends BaseRepository<Poi> {
      * @return Map<String, Object> lista di punti di interesse
      * @throws Exception
      */
-    public List<Map<String, Object>> getByMunicipalityId(Long id) throws Exception{
-        String query = "";
-
-        RegisteredUser currentUser = UserContext.getCurrentUser();
-        if(currentUser != null && currentUser.getRole() != null)
-            query = this.queryBuilder.append("WHERE P.municipality_id = ?;").toString();
-        else
-            query = this.queryBuilder.append("WHERE P.municipality_id = ? AND  P.status = 'published';").toString();
-        Object[] data = new Object[]{id};
-        List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
-        if (resultSet.isEmpty()) {
-            return null;
-        }
-        return resultSet;
-    }
+//    public List<Map<String, Object>> getByMunicipalityId(Long id) throws Exception{
+//        String query = "";
+//
+//        RegisteredUser currentUser = UserContext.getCurrentUser();
+//        if(currentUser != null && currentUser.getRole() != null)
+//            query = this.queryBuilder.append("WHERE P.municipality_id = ?;").toString();
+//        else
+//            query = this.queryBuilder.append("WHERE P.municipality_id = ? AND  P.status = 'published';").toString();
+//        Object[] data = new Object[]{id};
+//        List<Map<String, Object>> resultSet = DbUtilities.executeSelectQuery(query, data);
+//        if (resultSet.isEmpty()) {
+//            return null;
+//        }
+//        return resultSet;
+//    }
 
 //    @Override
 //    public  int delete(Poi entity, String query)  throws SQLException {

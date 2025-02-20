@@ -1,30 +1,34 @@
 package org.poifinder.models.activities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Entity
+@DiscriminatorValue("contest")
 public class Contest extends Activity{
 
+    @Column(name = "begin_date")
     private String beginDate;
 
+    @Column(name = "end_date")
     private String endDate;
 
     @ManyToMany
+    @JoinTable(name= "contests_rules",
+            joinColumns = @JoinColumn(name = "contest_id"),
+            inverseJoinColumns = @JoinColumn(name = "rule_id"))
     private List<Rule> rules;
 
     @ManyToMany
+    @JoinTable(name= "contests_prizes",
+            joinColumns = @JoinColumn(name = "contest_id"),
+            inverseJoinColumns = @JoinColumn(name = "prize_id"))
     private List<Prize> prizes;
 
-    public Contest(String name,
-                   String description,
-                   String type) {
-        super(name, description, type);
+    public Contest(String name, String description) {
+        super(name, description, "contest");
         this.listInit();
     }
 
@@ -50,18 +54,6 @@ public class Contest extends Activity{
     public void setRules(List<Rule> rules) { this.rules = rules;}
 
     /** Getters **/
-    @Override
-    public Object[] getData() {
-        Object[] data = super.getData();
-
-        Object[] newData = new Object[] {
-                getBeginDate(),
-                getEndDate(),
-                getRules(),
-        };
-        return Stream.concat(Arrays.stream(data), Arrays.stream( newData )).toArray();
-    }
-
     public String getBeginDate() { return beginDate; }
 
     public String getEndDate() { return endDate; }
@@ -71,6 +63,10 @@ public class Contest extends Activity{
     public List<Prize> getPrizes() { return prizes; }
 
     public void addRule(Rule rule) { rules.add(rule); }
+
+    public void addPrize(Prize prize) { prizes.add(prize); }
+
+    public void removePrize(Prize prize) { rules.remove(prize); }
 
     public void removeRule(Rule rule) { rules.remove(rule); }
 }

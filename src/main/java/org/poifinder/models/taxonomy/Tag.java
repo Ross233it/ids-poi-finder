@@ -1,34 +1,21 @@
 package org.poifinder.models.taxonomy;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * Questa classe rappresenta un tag - etichetta qualificativa
  * associabile ad un oggetto
  */
 @Entity
+@Table(name="tags")
 public class Tag extends Taxonomy {
 
     public Tag(String name, String description) {
         super(name, description);
     }
 
-    public Tag() {
-        super();
-    }
-
-    /**
-     * Restituisce un array di oggetti che rappresentano i dati dell'oggetto corrente.
-     * @return Array di oggetti.
-     */
-
-    @Override
-    public Object[] getData() {
-        return new Object[]{
-                this.getId(),
-                this.getName(),
-                this.getDescription()};
-    }
+    public Tag() { super(); }
 
     /**
      * Restituisce una stringa che rappresenta l'oggetto corrente.

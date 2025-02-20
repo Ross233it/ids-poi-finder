@@ -1,9 +1,6 @@
 package org.poifinder.models.poi;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.poifinder.models.Content;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.taxonomy.Category;
@@ -13,28 +10,36 @@ import java.util.List;
 
 @Entity
 @Table(name="pois")
-public class Poi extends Content {
+public class Poi extends Content implements IPoi {
+
     private String  poiname;
 
     private String  description;
 
     private String  type;
 
+    @Column(name = "is_logical")
     private Boolean isLogical = false;
 
     @OneToOne
+    @JoinColumn(name="municipality_id", referencedColumnName = "id", nullable = false)
     private Municipality municipality = null;
 
     @OneToOne
+    @JoinColumn(name="geolocation_id", referencedColumnName = "id", nullable = false)
     private GeoLocation geoLocation = null;
 
-    @OneToMany
-    private List<Tag> tags;
-
-    @OneToMany
+    @ManyToMany
+    @JoinTable(name= "pois_categories",
+            joinColumns = @JoinColumn(name = "poi_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
-    private String status;
+    @ManyToMany
+    @JoinTable(name= "pois_itineraries",
+            joinColumns = @JoinColumn(name = "poi_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
 
 
     public Poi(PoiBuilder builder) {
@@ -51,6 +56,7 @@ public class Poi extends Content {
         this.setAuthor(builder.getAuthor());
     }
 
+    public Poi() { }
 
     @Override
     public String toString() {
@@ -73,50 +79,26 @@ public class Poi extends Content {
 
     /** getters **/
 
-    /**
-     * Restituisce i dati dell'oggetto
-     * @return Object[] array di oggetti
-     */
     @Override
-    public Object[] getData(){
+    public Municipality getMunicipality() { return municipality; }
 
-        return new Object[] {
-            this.poiname,
-            this.description,
-            this.type,
-            this.getStatus() != null ? this.getStatus() : null,
-            this.isLogical,
-            this.municipality.getId(),
-            this.geoLocation.getId(),
-            this.getAuthor() != null ? this.getAuthor().getId() : null,
-            this.getApprover() != null ? this.getApprover().getId() : null
-        };
-    }
-
-    public String getStatus() {return this.status; }
-//    @Override
-    public Municipality getMunicipality() {return municipality;}
-
-//    @Override
+    @Override
     public GeoLocation getGeoLocation() { return geoLocation; }
 
-    public String  getName()       { return poiname; }
+    public String  getName() { return poiname; }
 
     public Boolean isLogical(){ return this.isLogical;}
 
 
-
     /** setters **/
-//    @Override
-    public void setStatus(String status) {this.status = status; }
 
-
-//    @Override
+    @Override
     public void setGeoLocation(GeoLocation geoLocation) {
         this.geoLocation = geoLocation;
     }
 
-//    @Override
-    public void setMunicipality(Municipality municipality) {this.municipality = municipality;}
-
+    @Override
+    public void setMunicipality(Municipality municipality) {
+        this.municipality = municipality;
+    }
 }

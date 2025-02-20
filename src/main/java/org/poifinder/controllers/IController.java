@@ -3,7 +3,7 @@ package org.poifinder.controllers;
 import java.io.IOException;
 
 /**
- * Le classi che implementano questa interfaccia assumono il ruolo di Controller
+ * Le classi che implementano questa interfaccia assumono il ruolo di BaseController
  * che nel pattern Mvc ha la responsabilità di gestire le interazioni fra il sistema
  * e l'interfaccia utente.
  * @param <O>

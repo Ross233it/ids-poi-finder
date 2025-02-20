@@ -1,17 +1,18 @@
 package org.poifinder.controllers;
 
-
-import org.poifinder.httpServer.http.HttpRequest;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.services.MunicipalityService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+@RestController
+@RequestMapping("api/municipality")
+public class MunicipalityController extends BaseController<Municipality, MunicipalityService> {
 
-public class MunicipalityController extends Controller<Municipality, MunicipalityService> {
-
-    public  MunicipalityController(MunicipalityService service, HttpRequest request) {
-        super(service, request);
+    public  MunicipalityController(MunicipalityService service) {
+        super(service);
     }
 
 
@@ -21,8 +22,8 @@ public class MunicipalityController extends Controller<Municipality, Municipalit
      * @throws IOException
      */
     public void getWithPois() throws IOException {
-        long municipalityId = request.getRequestId();
-        handleRequest(()-> service.getWithPois(municipalityId), null);
+//        long municipalityId = request.getRequestId();
+//        handleRequest(()-> service.getWithPois(municipalityId), null);
     }
 }
 

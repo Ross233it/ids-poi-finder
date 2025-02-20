@@ -1,48 +1,52 @@
 package org.poifinder.models.activities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-import java.util.Arrays;
 
 /**
  * Classe Experience che estende Activity
  * Un'esperienza è una raccolta di punti di interesse senza un ordine specifico.
  */
 @Entity
+@DiscriminatorValue("experience")
 public class Experience extends Activity {
 
-    private String date;
+    @Column(name = "begin_date")
+    private String beginDate;
 
-    public Experience(String name, String description, String type, String eventDate) {
-        super(name, description, type);
-        this.getDate();
+    @Column(name = "end_date")
+    private String endDate;
+
+    public Experience(String name,
+                      String description,
+                      String beginDate,
+                      String endDate){
+        super(name, description, "experience");
+        this.beginDate = beginDate;
+        this.endDate = endDate;
     }
 
     public Experience() {
         super();
     }
 
-    /** Getters  **/
-    @Override
-    public Object[] getData() {
-        Object[] data = super.getData();
-        Object[] newData = Arrays.copyOf(data, data.length + 1);
-        newData[data.length] = getDate();
-        return newData;
-    }
-
     /** Getters **/
 
-    public String getDate() { return date; }
+    public String getBeginDate() { return beginDate; }
+
+    public String getEndDate() { return beginDate; }
 
     /** Setters **/
 
-    public void setDate(String date) { this.date = date; }
+    public void setBeginDate(String date) { this.beginDate = date; }
+
+    public void setEndDate(String date) { this.endDate = date; }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
-        sb.append("{\"date\": \"").append(getDate()).append("\"} ");
+        sb.append("{\"begin_date\": \"").append(getBeginDate()).append("\"} ");
+        sb.append("{\"end_date\": \"").append(getEndDate()).append("\"} ");
         return sb.toString();
     }
 }
