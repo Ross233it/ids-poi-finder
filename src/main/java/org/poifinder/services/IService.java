@@ -1,11 +1,13 @@
 package org.poifinder.services;
 
-import org.poifinder.models.Content;
+import org.poifinder.dataMappers.DataMapper;
+
+import org.poifinder.models.IModel;
 
 import java.util.List;
 import java.util.Map;
 
-public interface IService<D extends Content>{
+public interface IService<D extends IModel>{
 
     List<D> index();
 
@@ -15,9 +17,9 @@ public interface IService<D extends Content>{
 
     D getObjectById(long id) throws Exception;
 
-    D create(Map<String, Object> data) throws Exception;
+    DataMapper<D> create(DataMapper<D> entityData) throws Exception;
 
-    D update(long id, Map<String, Object> data) throws Exception;
+    DataMapper<D> update(long id, DataMapper<D> entityData) throws Exception;
 
     D delete(long id) throws Exception;
 }

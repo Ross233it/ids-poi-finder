@@ -1,15 +1,18 @@
 package org.poifinder.services;
 
-import org.poifinder.dataMappers.RegisteredUserMapper;
+import org.poifinder.dataMappers.users.UserCreateMapper;
+import org.poifinder.dataMappers.users.UserLoginMapper;
 import org.poifinder.httpServer.auth.AuthUtilities;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.users.RegisteredUser;
+import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.RegisteredUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -19,65 +22,67 @@ import java.util.Map;
 public class RegisteredUserService  extends BaseService<RegisteredUser>{
 
     @Autowired
+    RegisteredUserRepository userRepository;
+
+    @Autowired
+    private MunicipalityRepository municipalityRepository;
+
+    @Autowired
     public RegisteredUserService(RegisteredUserRepository repository,
-                                 RegisteredUserMapper mapper) {
+                                 UserCreateMapper mapper) {
         super(repository, mapper);
     }
 
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
      * fornisce una password criptata e un salt per i futuri token di autenticazione.
-     * @param objectData
+     * @param mapper UserCreateMapper i dati dell'utente da registrare
      * @return
      */
-    public RegisteredUser register(Map<String, Object> objectData){
-//        String salt = AuthUtilities.generateSalt();
-//        objectData.put("method", "insert");
-//        objectData.put("salt", salt);
-//        objectData.put("password", AuthUtilities.hashPassword((String) objectData.get("password"), salt));
-//
-//        RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(objectData);
-//        try {
-//            if(objectData.get("municipality_id") != null && !objectData.get("role").equals("contributor")){
-//                MunicipalityService service = new MunicipalityService();
-//                try {
-//                    Municipality municipality = service.getObjectById((Integer) objectData.get("municipality_id"));
-//                    user.setMunicipality(municipality);
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//            this.repository.create(user, "");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        return user;
-        return null;
+    public void register(UserCreateMapper mapper){
+        if (userRepository.existsByEmail(mapper.getEmail())) {
+            throw new RuntimeException("Email già registrata");
+        }
+        Municipality municipality = municipalityRepository.getObjectById(mapper.getMunicipality_id());
+        if(municipality == null){
+            throw new RuntimeException("Comune non valido o non trovato");
+        }
+        RegisteredUser newUser = new RegisteredUser(
+                mapper.getUsername(),
+                mapper.getEmail(),
+                mapper.getRole()
+        );
+        newUser.setSalt(AuthUtilities.generateSalt());
+        newUser.setPassword(AuthUtilities.hashPassword(mapper.getPassword(), newUser.getSalt()));
+        newUser.setMunicipality(municipality);
+        newUser.setRole(mapper.getRole());
+        userRepository.save(newUser);
     }
 
     /**
      * Verifica le credenziali di accesso di un utente e ritorna un token
      * di accesso in caso positivo.
-     * @param data
+     * @param mapper UserLoginMapper i dati di accesso dell'utent
      * @return
      */
-    public String login(Map<String, Object> data) {
-//        try {
-//            String username = (String) data.get("username");
-//            String password = (String) data.get("password");
-//            Map<String, Object> userData = ((RegisteredUserRepository) this.repository).getByUsername(username);
-//            if (userData == null)
-//                return "";
-//            if(AuthUtilities.verifyPassword(password, (String) userData.get("salt"), (String) userData.get("password"))){
-//                String accessToken =  AuthUtilities.generateAccessToken(username);
-//                ((RegisteredUserRepository) this.repository).saveAccessToken(accessToken, username);
-//                return accessToken;
-//            }else
-//                return "";
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        return "";
+    public RegisteredUser login(UserLoginMapper mapper) {
+        try {
+            String username = mapper.getUsername();
+            String password = mapper.getPassword();
+            RegisteredUser user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));;
+            if(user==null){
+              throw new RuntimeException("Nessun utente valido");
+            }
+            if(AuthUtilities.verifyPassword(password , user.getSalt(), user.getPassword() )){
+                String accessToken =  AuthUtilities.generateAccessToken(username);
+                user.setAccessToken(accessToken);
+                userRepository.save(user);
+                return user;
+            }else
+                throw new RuntimeException("La procedura di login non è stata completata");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -85,12 +90,12 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
      * @param user
      */
     public void logout(RegisteredUser user) {
-//        try {
-//            user.setAccessToken(null);
-//            ((RegisteredUserRepository) this.repository).saveAccessToken(null, user.getUsername());
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            user.setAccessToken(null);
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -99,20 +104,12 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
      * @return user se creato correttamente, null altrimenti
      */
     public RegisteredUser getByAccessToken(String token) {
-//        return ((RegisteredUserRepository)this.repository).getByAccessToken(token).orElse(null);
-//        try {
-//            Map<String, Object> userData =  ((RegisteredUserRepository)this.repository).getByAccessToken(token);
-//            if(userData == null)
-//                return null;
-//            RegisteredUser user = (RegisteredUser) this.mapper.mapDataToObject(userData);
-//            user.setAccessToken(token);
-//            user.setId((int)userData.get("id"));
-//            return user;
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        return null;
+        token = token.replaceFirst("^Bearer\\s+", "");
+        Optional<RegisteredUser> currentUser = userRepository.getByAccessToken(token);
+        return currentUser.orElseThrow(()-> new RuntimeException("Utente non trovato per il token in oggetto"));
     }
+
+
 
     /**
      * Imposta un nuovo ruolo per un utente.

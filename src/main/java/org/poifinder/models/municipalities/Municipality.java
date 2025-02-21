@@ -1,33 +1,46 @@
 package org.poifinder.models.municipalities;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.models.Content;
 import org.poifinder.models.GeoLocation;
+import org.poifinder.models.IModel;
+import org.poifinder.models.activities.Activity;
 import org.poifinder.models.poi.Poi;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="municipalities")
-public class Municipality extends Content {
-//    @NotNull
+public class Municipality extends Content implements IModel {
+
+    @JsonView(Views.Public.class)
     private String name;
 
-//    @NotNull
+    @JsonView(Views.Public.class)
     private String region;
 
-//    @NotNull
+    @JsonView(Views.Public.class)
     private String province;
 
+    @JsonView(Views.Public.class)
     private String status;
 
     @OneToOne
+    @JsonView(Views.Public.class)
     private GeoLocation geoLocation;
 
-    @OneToMany
-    private ArrayList<Poi> pois;
+    @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView(Views.Internal.class)
+    private List<Poi> pois;
+
+    @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView(Views.Internal.class)
+    private List<Activity> activities = new ArrayList<>();
 
     public Municipality(MunicipalityBuilder builder){
         this.name = builder.getName();
@@ -78,7 +91,7 @@ public class Municipality extends Content {
 
     public String getRegion()        { return region;}
 
-    public ArrayList<Poi> getPois() { return pois; }
+    public List<Poi> getPois() { return pois; }
 
     public GeoLocation getGeoLocation() { return this.geoLocation;}
 
@@ -91,7 +104,7 @@ public class Municipality extends Content {
         this.geoLocation = geoLocation;
     }
 
-    public void setPois(ArrayList<Poi> pois) { this.pois = pois; }
+    public void setPois(List<Poi> pois) { this.pois = pois; }
 
     /**
      * Aggiunge un punto di interesse alla lista

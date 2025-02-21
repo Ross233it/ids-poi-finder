@@ -1,40 +1,66 @@
 package org.poifinder.controllers;
 
-import org.poifinder.models.municipalities.Municipality;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.dataMappers.Views;
+import org.poifinder.dataMappers.poi.PoiCreateMapper;
+import org.poifinder.dataMappers.poi.PoiListMapper;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.services.PoiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/poi")
-public class PoiController extends BaseController<Poi, PoiService> {
+public class PoiController extends BaseController<Poi> {
 
-    @Autowired
-    public  PoiController(PoiService service) {
-        super(service);
-    }
+@Autowired
+private PoiService poiService;
 
 
+@Autowired
+public  PoiController(PoiService service) {
+    super(service);
+}
 
-    @GetMapping("/api/municipality/{id}")
-    public Poi showTest(@PathVariable long id){
+    @GetMapping("/search")
+    @JsonView(Views.Public.class)
+    public ResponseEntity<List<Poi>> searchPoi(
+            @RequestParam(required = false) String municipality,
+            @RequestParam(required = false) String search){
         try {
-            return service.getObjectById(id);
+            List<Poi> result =  poiService.search(municipality, search);
+
+            if (result.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    @Override
-    @GetMapping("/api/poi/")
-    public void create() throws IOException {
-//        Map<String, Object> data = request.getBodyStreamData();
+
+    @PostMapping
+    public ResponseEntity<PoiListMapper> create(@RequestBody PoiCreateMapper mapper) throws IOException {
+        try {
+            PoiListMapper createdPoi = null;
+            try {
+                createdPoi =  poiService.create(mapper);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return new ResponseEntity<>(createdPoi, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        //        Map<String, Object> data = request.getBodyStreamData();
 //        RegisteredUser author = UserContext.getCurrentUser();
 //        data.put("author", author);
 //        if(
@@ -45,6 +71,7 @@ public class PoiController extends BaseController<Poi, PoiService> {
 //            data.put("status", "published");
 //        }
 //        handleRequest(()->service.create(data), null);
+
     }
 
     /**
@@ -53,9 +80,13 @@ public class PoiController extends BaseController<Poi, PoiService> {
      */
 
 
-    public void getByMunicipalityId() throws IOException {
-//        long municipalityId = request.getRequestId();
-//        handleRequest(()-> service.getByMunicipalityId(municipalityId), null);
+    @GetMapping("/municipality/{id}")
+    public void getByMunicipalityId(@PathVariable long id) throws IOException {
+        try {
+            poiService.getByMunicipalityId(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -64,4 +95,8 @@ public class PoiController extends BaseController<Poi, PoiService> {
     }
 
 
+    @Override
+    public ResponseEntity<Poi> update(Long id, DataMapper<Poi> entityData) throws IOException {
+        return null;
+    }
 }

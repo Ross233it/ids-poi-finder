@@ -1,21 +1,22 @@
 package org.poifinder.services;
 
-import org.poifinder.dataMappers.MunicipalityMapper;
-import org.poifinder.httpServer.auth.UserContext;
-import org.poifinder.models.GeoLocation;
+import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.dataMappers.municipalities.MunicipalityListMapper;
 import org.poifinder.models.municipalities.Municipality;
-import org.poifinder.models.users.RegisteredUser;
+import org.poifinder.models.poi.Poi;
 import org.poifinder.repositories.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class MunicipalityService extends BaseService<Municipality> {
+
+    @Autowired
+    private MunicipalityRepository municipalityRepository;
 
     private GeoLocationService geoLocationService;
 
@@ -23,20 +24,41 @@ public class MunicipalityService extends BaseService<Municipality> {
 
     @Autowired
     public MunicipalityService(MunicipalityRepository repository,
-                               MunicipalityMapper municipalityMapper,
-                               GeoLocationService geoLocationService
+                               MunicipalityListMapper municipalityListMapper,
+                               GeoLocationService geoLocationService,
 //                               PoiService poiService
-    ) {
-        super(repository, municipalityMapper);
+                               MunicipalityRepository municipalityRepository) {
+        super(repository, municipalityListMapper);
         this.geoLocationService = geoLocationService;
 //        this.poiService = poiService;
+        this.municipalityRepository = municipalityRepository;
     }
 
 
     public Municipality get(Map<String, Object> result){
-        return (Municipality) this.mapper.mapDataToObject(result);
+//        return (Municipality) this.mapper.mapDataToObject(result);
+        return null;
     }
 
+
+    /**
+     * Servizio di ricerca di un Comune in base al nome e/o
+     * ad un termine di ricerca
+     * @param municipality
+     * @param search
+     * @return
+     */
+    public List<Municipality> search(String municipality, String search) {
+        if (municipality != null && search != null) {
+            return municipalityRepository.searchByMunicipalityAndSearch(municipality, search);
+        } else if (municipality != null) {
+            return municipalityRepository.searchByMunicipality(municipality);
+        } else if (search != null) {
+            return municipalityRepository.searchBySearch(search);
+        } else {
+            return repository.findAll();
+        }
+    }
 
     @Override
     public List<Municipality> filter(Map<String, String> queryParams) throws Exception {
@@ -48,26 +70,15 @@ public class MunicipalityService extends BaseService<Municipality> {
         return null;
     }
 
-    @Override
-    public Municipality getObjectById(long id) throws Exception {
-//        Map<String, Object> entityData =  this.repository.getById(id, null);
-//        if(entityData == null)
-//            return null;
-//        Municipality municipality= (Municipality) this.mapper.mapDataToObject(entityData);
-//        GeoLocation geoLocation = geoLocationService.get(entityData);
-//        municipality.setGeoLocation(geoLocation);
-//        return municipality;
-        return null;
-    }
-
     /**
      * Gestisce il servizio di creazione di una nuova entità a database
+     *
      * @param objectData struttura dati con informazioni dell'oggetto da creare
      * @return object Municipality l'oggetto creato e salvato nello strato di persistenza.
      * @throws Exception
      */
     @Override
-    public Municipality create(Map<String, Object> objectData) throws Exception{
+    public DataMapper<Municipality> create(DataMapper<Municipality> objectData) throws Exception{
 //        GeoLocation geoLocation = geoLocationService.create(objectData);
 //        Municipality municipality = (Municipality) this.mapper.mapDataToObject(objectData);
 //        municipality.setGeoLocation(geoLocation);
@@ -76,8 +87,8 @@ public class MunicipalityService extends BaseService<Municipality> {
         return null;
     }
 
-    @Override
-    public Municipality update(long id, Map<String, Object> objectData) throws Exception {
+//    @Override
+    public Municipality update(long id, Municipality municipality) throws Exception {
 //        Municipality municipality = this.getObjectById(id);
 //        Municipality modifiedMunicipality = (Municipality) this.mapper.mapDataToObject(objectData);
 //        GeoLocation modifiedGeolocation = geoLocationService.update(municipality.getGeoLocation().getId(), objectData);

@@ -1,6 +1,7 @@
 package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
+import org.poifinder.models.municipalities.Municipality;
 
 
 /**
@@ -20,8 +21,9 @@ public class Experience extends Activity {
     public Experience(String name,
                       String description,
                       String beginDate,
-                      String endDate){
-        super(name, description, "experience");
+                      String endDate,
+                      Municipality municipality){
+        super(name, description, "experience", municipality);
         this.beginDate = beginDate;
         this.endDate = endDate;
     }

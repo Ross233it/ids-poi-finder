@@ -1,49 +1,70 @@
 package org.poifinder.services;
 
-import org.poifinder.dataMappers.MunicipalityMapper;
-import org.poifinder.dataMappers.PoiMapper;
+import org.poifinder.dataMappers.poi.PoiCreateMapper;
+import org.poifinder.dataMappers.poi.PoiListMapper;
+import org.poifinder.dataMappers.poi.PoiMapper;
 
-import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
 import org.poifinder.models.poi.Poi;
-import org.poifinder.repositories.MunicipalityRepository;
+import org.poifinder.models.poi.PoiBuilder;
 import org.poifinder.repositories.PoiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
  * manipolazione ed all'interazione con gli oggetti di tipo POI.
  */
 @Service
+@Primary
 public class PoiService extends BaseService<Poi> {
 
+    @Autowired
     private GeoLocationService geoLocationService;
 
+    @Autowired
     private MunicipalityService municipalityService;
 
-//    @Autowired
-    public PoiService(PoiRepository repository,
-                      PoiMapper mapper,
-                      GeoLocationService geoLocationService,
-                      PoiService poiService) {
-        super(repository, mapper);
-        this.geoLocationService = geoLocationService;
-    }
+    @Autowired
+    private PoiRepository poiRepository;
 
     @Autowired
     public PoiService(PoiRepository repository,
                       PoiMapper mapper,
-//                      MunicipalityService municipalityService,
+                      MunicipalityService municipalityService,
                       GeoLocationService geoLocationService) {
         super(repository, mapper);
         this.geoLocationService = geoLocationService;
-//        this.municipalityService = municipalityService;
+        this.municipalityService = municipalityService;
     }
+
+    /**
+     * Servizio di ricerca di poi in base al comune e/o ad un termine di ricerca
+     * @param municipality
+     * @param search
+     * @return
+     */
+    public List<Poi> search(String municipality, String search) {
+        if (municipality != null && search != null) {
+            return poiRepository.searchByMunicipalityAndSearch(municipality, search);
+        } else if (municipality != null) {
+            return poiRepository.searchByMunicipality(municipality);
+        } else if (search != null) {
+            return poiRepository.searchBySearch(search);
+        } else {
+            return repository.findAll();
+        }
+    }
+
+
 
     @Override
     public List<Poi> filter(Map<String, String> queryParams) throws Exception {
@@ -55,28 +76,74 @@ public class PoiService extends BaseService<Poi> {
         return null;
     }
 
-    @Override
-    public Poi getObjectById(long id) throws Exception {
-//        Map<String, Object> entityData =  this.repository.getById(id, null);
-//        if(entityData == null)
-//            return null;
-//        Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
-//        GeoLocation geoLocation = geoLocationService.get(entityData);
-//        Municipality municipality = municipalityService.get(entityData);
-//        poi.setGeoLocation(geoLocation);
-//        poi.setMunicipality(municipality);
-//        return poi;
-        return null;
-    }
 
     /**
      * Gestisce il servizio di creazione di una nuova entità a database
-     * @param objectData struttura dati con informazioni dell'oggetto da creare
+     * @param poiCreateMapper struttura dati con informazioni dell'oggetto da creare
      * @return object Municipality l'oggetto creato e salvato nello strato di persistenza.
      * @throws Exception
      */
-    @Override
-    public Poi create(Map<String, Object> objectData) throws Exception{
+
+
+    public PoiListMapper create(PoiCreateMapper poiCreateMapper) throws Exception {
+//        if (poiRepository.existsByName(poiCreateMapper.getName())) {
+//            throw new RuntimeException("Poi con questo nome già esistente");
+//        }
+
+        Municipality municipality = municipalityService.getObjectById(poiCreateMapper.getMunicipality_id());
+
+        System.out.println("IO SONO il municipio");
+        System.out.println(municipality);
+
+        if(municipality == null){
+            throw new RuntimeException("Comune non trovato");
+        }
+
+        System.out.println("IO SONO il municipio");
+        System.out.println(municipality);
+
+
+        GeoLocation geolocation = new GeoLocation(
+                poiCreateMapper.getAddress(),
+                poiCreateMapper.getNumber(),
+                poiCreateMapper.getCap());
+        if(geolocation != null){
+                geolocation.setLatitude(poiCreateMapper.getLatitude());
+                geolocation.setLongitude(poiCreateMapper.getLongitude());
+        }
+
+        System.out.println("IO SONO GEOLOCATION");
+        System.out.println(geolocation);
+
+        geoLocationService.create(geolocation);
+
+        PoiBuilder poiBuilder = new PoiBuilder(
+                poiCreateMapper.getName(),
+                poiCreateMapper.getDescription(),
+                poiCreateMapper.isLogical());
+
+
+        Poi newPoi = poiBuilder
+                .type(poiCreateMapper.getType())
+                .municipality(municipality)
+                .geoLocation(geolocation)
+                .build();
+
+        System.out.println("IO SONO NEW POI");
+        System.out.println(newPoi);
+
+        poiRepository.save(newPoi);
+
+        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
+
+        return new PoiListMapper(newPoi.getId(), newPoi.getName(), newPoi.getDescription(),
+                newPoi.getType(), newPoi.isLogical(), newPoi.getGeoLocation());
+    }
+
+
+
+//    @Override
+//    public Poi create(Poi objectData) throws Exception{
 //        Poi poi = (Poi) this.mapper.mapDataToObject(objectData);
 //
 //        if(objectData.get("municipality_id") != null){
@@ -94,7 +161,7 @@ public class PoiService extends BaseService<Poi> {
 //        }else
 //            return null;
 
-        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
+//        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
 //        poi =  (Poi) repository.create(poi, null);
 //        if(objectData.containsKey("status")){
 //            objectData.put("id", poi.getId());
@@ -102,11 +169,11 @@ public class PoiService extends BaseService<Poi> {
 //            eventManager.notify("Nuovo Punto di interesse auto-validato", null);
 //        }
 //        return poi;
-        return null;
-    }
+//        return null;
+//    }
 
-    @Override
-    public Poi update(long id, Map<String, Object> objectData) throws Exception {
+//    @Override
+    public Poi update(long id, Poi poi) throws Exception {
 //        Poi poi = this.getObjectById(id);
 //        if(poi != null){
 //            poi.setAuthor(UserContext.getCurrentUser());
@@ -134,7 +201,9 @@ public class PoiService extends BaseService<Poi> {
     public List<Poi> getByMunicipalityId(long id) throws Exception {
 //        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
 //        return this.mapper.mapDbDataToObjects(results);
-        return null;
+
+        return poiRepository.getByMunicipalityId(id);
+
     }
 
 //    /**

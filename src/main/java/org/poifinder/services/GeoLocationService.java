@@ -18,8 +18,20 @@ public class GeoLocationService extends BaseService<GeoLocation> {
         super(repository,  mapper);    }
 
 
+    /**
+     * Servizio di creazione di una posizione geolocalizzata
+     * @param geolocation la geolocalizzazione da memorizzare
+     * @return la geolocalizzazione memorizzata
+     * @throws Exception
+     */
+    public GeoLocation create(GeoLocation geolocation) throws Exception {
+        return this.repository.save(geolocation);
+    }
+
+
     public GeoLocation get(Map<String, Object> result){
-        return (GeoLocation) this.mapper.mapDataToObject(result);
+//        return (GeoLocation) this.mapper.mapDataToObject(result);
+        return null;
     }
 
     @Override

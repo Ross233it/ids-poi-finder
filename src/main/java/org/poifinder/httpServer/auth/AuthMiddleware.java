@@ -1,8 +1,7 @@
 package org.poifinder.httpServer.auth;
 
-import com.sun.net.httpserver.HttpExchange;
 import org.poifinder.models.users.RegisteredUser;
-import org.poifinder.services.RegisteredUserService;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
@@ -11,15 +10,13 @@ import java.util.HashMap;
  * permessi di un utente in rapporto al suo ruolo
  */
 
-/** DEPRECATO - classe necessaria solo per la versione JAVA **/
-//TODO da rimuovere
+@Service
 public class AuthMiddleware {
 
     /**
      * La lista dei livelli di permesso
      */
     private HashMap<Integer,String[]>permissions;
-
 
     public AuthMiddleware(){
         this.permissions = new HashMap<Integer, String[]>();
@@ -48,18 +45,10 @@ public class AuthMiddleware {
 
     /**
      * Recupera e ritorna l'utente autenticato se presente, null altrimenti
-     * @param exchange
      * @return RegisteredUser l'utente correntemente autenticato.
      */
-    public RegisteredUser getCurrentUser(HttpExchange exchange) {
-//        String accessToken = AuthUtilities.getAccessToken(exchange);
-//        if (accessToken != null && accessToken != "") {
-//            RegisteredUserService userService = new RegisteredUserService();
-//            RegisteredUser currentUser = userService.getByAccessToken(accessToken);
-//            if (currentUser != null)
-//                return currentUser;
-//        }
-        return null;
+    public RegisteredUser getCurrentUser() {
+            return UserContext.getCurrentUser();
     }
 
     /**
@@ -92,5 +81,4 @@ public class AuthMiddleware {
         }
         return false;
     }
-
 }

@@ -1,19 +1,26 @@
 package org.poifinder.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import org.poifinder.dataMappers.Views;
 
 @Entity
 @Table(name="geolocations")
 public class GeoLocation extends Content {
 
+    @JsonView(Views.Public.class)
     private String address;
 
+    @JsonView(Views.Public.class)
     private String number;
 
+    @JsonView(Views.Public.class)
     private String cap;
 
+    @JsonView(Views.Public.class)
     private double latitude;
 
+    @JsonView(Views.Public.class)
     private double longitude;
 
 
@@ -42,6 +49,7 @@ public class GeoLocation extends Content {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 
 
     /** getters **/

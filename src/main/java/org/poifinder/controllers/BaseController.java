@@ -1,39 +1,32 @@
 package org.poifinder.controllers;
 
-import jakarta.persistence.MappedSuperclass;
-import org.poifinder.services.IService;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.poifinder.dataMappers.ContentReportMapper;
+import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.dataMappers.Views;
+import org.poifinder.httpServer.auth.AuthMiddleware;
+import org.poifinder.models.IModel;
+import org.poifinder.services.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
-@MappedSuperclass
-public class BaseController<T, S extends IService>  implements IController<T> {
+@RestController
+@RequestMapping("api/{resource}")
+public abstract class BaseController<T extends IModel>  implements IController<T> {
 
-    protected S service;
+    protected BaseService<T> service;
 
+    @Autowired
+    protected AuthMiddleware authMiddleware;
 
-    public BaseController(S service) {
+    public BaseController(BaseService<T> service) {
         this.service = service;
     }
-
-    /**
-     * Gestisce e centralizza l'esecuzione dei singoli metodi del controller.
-     * @param action la funzione da esseguire
-     * @param successMessage il messaggio da ritornare in caso di successo.
-     * @throws IOException
-     */
-    //todo remove
-//    protected void handleRequest(ControllerRequestHandler<Object> action, String successMessage) throws IOException {
-//        try {
-//            Object result = action.handle();
-//            if (result == null) {
-//                HttpResponses.error(exchange, 404, "Record non trovato");
-//            } else {
-//                HttpResponses.success(exchange, successMessage != null ? successMessage : result.toString());
-//            }
-//        } catch (Exception e) {
-//            HttpResponses.error(exchange, 500, e.getMessage());
-//        }
-//    }
 
     /**
      * Gestisce la richiesta di visualizzazione di numerosi oggetti in
@@ -41,12 +34,17 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * @throws IOException
      */
     @Override
-    public void index() throws IOException {
-//        Map<String, String>queryParams = request.getQueryParams();
-//        if(!queryParams.isEmpty()) {
-//            handleRequest(()-> service.filter(queryParams), null);
-//        }
-//        handleRequest(()-> service.index(), null);
+    @GetMapping
+    @JsonView(Views.Public.class)
+    public ResponseEntity<List<T>> index(@RequestParam String queryString) throws IOException {
+        try {
+            List<T> result = service.index();
+            if(result == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
@@ -55,7 +53,9 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * @throws IOException
      */
     @Override
-    public void create() throws IOException {
+//    @PostMapping
+    public ResponseEntity<T> create(@RequestBody DataMapper<T> data) throws IOException {
+       return null;
 //        Map<String, Object> data = request.getBodyStreamData();
 //        data.put("author", UserContext.getCurrentUser());
 //        handleRequest(()->service.create(data), null);
@@ -66,11 +66,16 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * @throws IOException
      */
     @Override
-    public void update() throws IOException {
-//        long id = request.getRequestId();
-//        Map<String, Object> data = this.request.getBodyStreamData();
-//        data.put("author", UserContext.getCurrentUser());
-//        handleRequest(()->service.update(id, data), null);
+    @PatchMapping("/{id}")
+    @JsonView(Views.Public.class)
+    public ResponseEntity<T> update(@PathVariable Long id,
+                                    DataMapper<T> entityData) throws IOException {
+//        try {
+//            return ResponseEntity.ok(service.update(id, entity));
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+        return null;
     }
 
     /**
@@ -78,10 +83,17 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * @throws IOException
      */
     @Override
-    public void show() throws IOException {
-//        if(this.request.getRequestId() > 0){
-//            handleRequest(()-> {return service.getObjectById(request.getRequestId());}, null);
-//        }
+    @GetMapping("/{id}")
+    public  ResponseEntity<T> show(@PathVariable Long id) throws IOException {
+        try {
+            T result = service.getObjectById(id);
+            if(result == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**
@@ -89,13 +101,19 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * @throws IOException
      */
     @Override
-    public void delete() throws IOException {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws IOException {
+        try {
+            service.delete(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.noContent().build();
 //        if(this.request.getRequestId() > 0) {
 //            handleRequest(() -> service.delete(
 //                    request.getRequestId()
 //            ), "Record eliminato con successo");
 //        }
-        return;
     }
 
     /**
@@ -108,7 +126,7 @@ public class BaseController<T, S extends IService>  implements IController<T> {
 //            data.put("approver", UserContext.getCurrentUser());
 //        long id = request.getRequestId();
 //        if(data.get("status") == null || id == 0)
-//            HttpResponses.error(this.exchange, 404, "Dati mancanti");
+//            CustomResponse.error(this.exchange, 404, "Dati mancanti");
 //        data.put("id", id);
 //        handleRequest(()-> service.setStatus(data), null);
     }
@@ -117,12 +135,9 @@ public class BaseController<T, S extends IService>  implements IController<T> {
      * Gestisce le richieste di segnalazione dei Poi ad
      * un utente responsabile.
      */
-    public void reportContent() throws Exception {
-//        handleRequest(() -> {
-//                    BaseService myservice = (BaseService) this.service;
-//                    myservice.reportContent(this.request);
-//                    return "success";
-//                },
-//                "Segnalazione inviata con successo");
+    @PostMapping("/{id}/report-content")
+    public void reportContent(@PathVariable Long id, @RequestBody ContentReportMapper data) throws Exception {
+        service.reportContent(id, data);
+        return "success";
     }
 }

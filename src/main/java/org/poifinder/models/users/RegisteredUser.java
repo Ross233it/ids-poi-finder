@@ -1,8 +1,9 @@
 package org.poifinder.models.users;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.poifinder.httpServer.auth.AuthUtilities;
-import org.poifinder.models.Content;
 import org.poifinder.models.municipalities.Municipality;
 
 
@@ -11,16 +12,23 @@ import org.poifinder.models.municipalities.Municipality;
  */
 @Entity
 @Table(name="users")
-public class RegisteredUser extends Content implements IUser {
+public class RegisteredUser implements IUser {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
     private String username;
 
+    @NotNull
+    @Email(message = "Fornire un indirizzo email valido")
     private String email;
 
+    @NotNull
     private String password;
 
     private String salt = null;
-
 
     private String role = null;
 
@@ -51,24 +59,18 @@ public class RegisteredUser extends Content implements IUser {
 
     /** getters **/
     public String getUsername() { return username; }
+
     public String getEmail()    { return email; }
+
     public String getPassword() { return password; }
+
     public String getRole()     { return role; }
+
     public String getSalt()     { return salt; }
+
     public String getToken()    { return this.accessToken; }
 
     public Municipality getMunicipality() { return municipality; }
-
-    public Object[]getData()    { return new Object[] {
-            this.getId(),
-            this.getUsername(),
-            this.getEmail(),
-            this.getPassword(),
-            this.getSalt(),
-            this.getRole(),
-            this.getMunicipality() == null ? null : this.getMunicipality().getId()
-        };
-    }
 
     /**
      * Verifica se un utente ha un determinato ruolo
@@ -100,4 +102,13 @@ public class RegisteredUser extends Content implements IUser {
     public void setRole(String role)         { this.role = role; }
     public void setMunicipality(Municipality municipality) { this.municipality = municipality; }
 
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(long id) {
+        this.id = id;
+    }
 }

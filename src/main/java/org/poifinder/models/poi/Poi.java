@@ -1,6 +1,8 @@
 package org.poifinder.models.poi;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.models.Content;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.taxonomy.Category;
@@ -12,38 +14,46 @@ import java.util.List;
 @Table(name="pois")
 public class Poi extends Content implements IPoi {
 
-    private String  poiname;
+    @JsonView(Views.Public.class)
+    private String name;
 
+    @JsonView(Views.Public.class)
     private String  description;
 
+    @JsonView(Views.Public.class)
     private String  type;
 
+    @JsonView(Views.Public.class)
     @Column(name = "is_logical")
     private Boolean isLogical = false;
 
-    @OneToOne
-    @JoinColumn(name="municipality_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name="municipality_id", referencedColumnName = "id", nullable = false, unique = false)
+    @JsonView(Views.Public.class)
     private Municipality municipality = null;
 
     @OneToOne
-    @JoinColumn(name="geolocation_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="geolocation_id", referencedColumnName = "id", nullable = false, unique = false)
+    @JsonView(Views.Public.class)
     private GeoLocation geoLocation = null;
 
     @ManyToMany
     @JoinTable(name= "pois_categories",
             joinColumns = @JoinColumn(name = "poi_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonView(Views.Public.class)
     private List<Category> categories;
 
     @ManyToMany
     @JoinTable(name= "pois_itineraries",
             joinColumns = @JoinColumn(name = "poi_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonView(Views.Public.class)
     private List<Tag> tags;
 
 
     public Poi(PoiBuilder builder) {
-        this.poiname =     builder.getPoiName();
+        this.name =     builder.getPoiName();
         this.description = builder.getDescription();
         this.isLogical =   builder.getIsLogical();
         this.municipality= builder.getMunicipality();
@@ -62,7 +72,7 @@ public class Poi extends Content implements IPoi {
     public String toString() {
         String resultString = "{"
                 + "\"id\":\"" + getId() + "\","
-                + "\"poiname\":\"" + poiname + "\","
+                + "\"poiname\":\"" + name + "\","
                 + "\"description\":\"" + description + "\","
                 + "\"type\":\"" + type + "\","
                 + "\"is_logical\":\"" + isLogical + "\","
@@ -85,10 +95,13 @@ public class Poi extends Content implements IPoi {
     @Override
     public GeoLocation getGeoLocation() { return geoLocation; }
 
-    public String  getName() { return poiname; }
+    public String  getName() { return name; }
 
     public Boolean isLogical(){ return this.isLogical;}
 
+    public String  getDescription() { return description; }
+
+    public String  getType() { return type; }
 
     /** setters **/
 
@@ -100,5 +113,29 @@ public class Poi extends Content implements IPoi {
     @Override
     public void setMunicipality(Municipality municipality) {
         this.municipality = municipality;
+    }
+
+    public void setName(String poiname) {
+        this.name = poiname;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setLogical(Boolean logical) {
+        isLogical = logical;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 }

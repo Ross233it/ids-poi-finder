@@ -1,10 +1,15 @@
 package org.poifinder.controllers;
 
+import org.poifinder.dataMappers.users.UserCreateMapper;
+import org.poifinder.dataMappers.users.UserLoginMapper;
+import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.users.RegisteredUser;
 
 import org.poifinder.services.RegisteredUserService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -14,51 +19,65 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("api/user")
-public class RegisteredUserController extends BaseController<RegisteredUser, RegisteredUserService> {
+public class RegisteredUserController extends BaseController<RegisteredUser> {
 
-    public RegisteredUserController(RegisteredUserService userService) {
+    private final RegisteredUserService registeredUserService;
+
+    @Autowired
+    public RegisteredUserController(RegisteredUserService userService, RegisteredUserService registeredUserService) {
         super(userService);
+        this.registeredUserService = registeredUserService;
     }
 
-
-    public void register() throws IOException {
-//        Map<String, Object> data = request.getBodyStreamData();
-//        handleRequest(()->service.register(data), null);
+    /**
+     * Gestisce la richiesta di registrazione di un nuovo utente
+     * @param mapper UserCreateMapper i dati dell'utente da registrare
+     * @return ResponseEntity<String> messaggio di conferma o di errore
+     * @throws IOException
+     */
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserCreateMapper mapper) throws IOException {
+        try {
+            registeredUserService.register(mapper);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Utente registrato con successo");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR - Si è verificato un problema durante la registrazione : " + e.getMessage());
+        }
     }
 
     /**
      * Gestisce la richiesta di login
      * @throws IOException
      */
-    public void login() throws Exception {
-//        try {
-//            Map<String, Object> data = request.getBodyStreamData();
-//            String accessToken =  this.service.login(data);
-//            if(accessToken == null || accessToken == "")
-//                HttpResponses.error(exchange, 404, "Autenticazione fallita");
-//            else
-//                HttpResponses.success(exchange, "{ accessToken: " + accessToken + " }" );
-//        } catch (Exception e) {
-//            HttpResponses.error(exchange, 500, e.getMessage());
-//        }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginMapper mapper) throws Exception {
+        try {
+            RegisteredUser currentUser = registeredUserService.login(mapper);
+            UserContext.setCurrentUser(currentUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Utente autenticato con successo Token: " + currentUser.getToken());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR - Si è verificato un problema durante la registrazione : " + e.getMessage());
+        }
     }
 
     /**
      * Gestisce la richiesta di logout
      * @throws Exception
      */
-    public void logout() throws Exception{
-//        try {
-//            String accessToken = getAccessToken(exchange);
-//            RegisteredUser currentUser = this.service.getByAccessToken(accessToken);
-//            if(currentUser != null){
-//                this.service.logout(currentUser);
-//                HttpResponses.success(exchange, "Logout effettuato");
-//            }else
-//                HttpResponses.error(exchange, 404, "Nessun utente loggato");
-//        } catch (Exception e) {
-//            HttpResponses.error(exchange, 500, e.getMessage());
-//        }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) throws Exception{
+        try {
+            RegisteredUser currentUser = registeredUserService.getByAccessToken(accessToken);
+            if(currentUser != null) {
+                this.registeredUserService.logout(currentUser);
+                UserContext.setCurrentUser(currentUser);
+                UserContext.clear();
+                return ResponseEntity.status(HttpStatus.CREATED).body("Utente disconnesso con successo" );
+            }
+        }catch(Exception e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR - Si è verificato un problema - utente non autenticato");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Non è stato possibile completare la procedura di logout");
     }
 
     /**
@@ -69,14 +88,14 @@ public class RegisteredUserController extends BaseController<RegisteredUser, Reg
 //            try {
 //                Map<String, Object> data = request.getBodyStreamData();
 //                if(data.get("role") == null || data.get("id") == null)
-//                    HttpResponses.error(exchange, 404, "Dati mancanti");
+//                    CustomResponse.error(exchange, 404, "Dati mancanti");
 //                RegisteredUser user = this.service.setRole(data);
 //                if(user == null)
-//                    HttpResponses.error(exchange, 404, "Modifica fallita");
+//                    CustomResponse.error(exchange, 404, "Modifica fallita");
 //                else
-//                    HttpResponses.success(exchange, DataMapper.mapObjectToJson(user));
+//                    CustomResponse.success(exchange, DataMapper.mapObjectToJson(user));
 //            } catch (Exception e) {
-//                    HttpResponses.error(exchange, 500, e.getMessage());
+//                    CustomResponse.error(exchange, 500, e.getMessage());
 //            }
     }
 

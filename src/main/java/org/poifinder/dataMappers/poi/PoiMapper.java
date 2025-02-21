@@ -1,0 +1,62 @@
+package org.poifinder.dataMappers.poi;
+
+import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.models.GeoLocation;
+import org.poifinder.models.municipalities.Municipality;
+import org.poifinder.models.poi.Poi;
+import org.poifinder.models.poi.PoiBuilder;
+import org.poifinder.models.users.RegisteredUser;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+@Service
+@Primary
+public class PoiMapper extends DataMapper<Poi> {
+
+    private String  poiname;
+
+    private String  description;
+
+    private String  type;
+
+    private Boolean isLogical = false;
+
+
+
+
+
+    /**
+     * Mappa una serie di dati in un oggetto della classe
+     * @param result struttura dati contenenete informazioni sull'oggetto
+     * @return istanza dell'oggetto
+     */
+    public Poi mapDataToObject(Map<String, Object> result){
+//
+//        PoiBuilder poiBuilder =  new PoiBuilder(
+//                (String) result.getOrDefault("poiname", null),
+//                (String) result.getOrDefault("description", null),
+//                (Boolean) result.getOrDefault("is_logical", null));
+//
+//                poiBuilder.type((String) result.getOrDefault("type", null))
+//                    .geoLocation((GeoLocation) result.getOrDefault("geolocation", null))
+//                    .municipality((Municipality) result.getOrDefault("municipality", null))
+//                    .author((RegisteredUser) result.getOrDefault("author", null))
+//                    .status((String) result.getOrDefault("status", null));
+//
+//        Poi poi = (Poi) poiBuilder.build();
+//
+//        if(result.containsKey("P_id") && result.get("P_id") != null){
+//           long id = castIdvalue(result.get("P_id"));
+//           poi.setId(id);
+//        }
+//        return poi;
+        return null;
+    }
+
+//    @Override
+    public Poi updateEntityFromMap(Poi item, Map<String, Object> result) {
+        return null;
+    }
+}

@@ -1,11 +1,62 @@
 package org.poifinder.repositories;
 
 import org.poifinder.models.municipalities.Municipality;
+import org.poifinder.models.poi.Poi;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MunicipalityRepository extends JpaRepository<Municipality, Long> {
+
+
+    @Query("SELECT p FROM Poi p WHERE p.municipality.id = :municipalityId")
+    List<Poi> findPoisByMunicipalityId(@Param("municipalityId") long municipalityId);
+
+
+    @Query("SELECT m FROM Municipality m WHERE m.id = :municipalityId")
+    Municipality getObjectById(@Param("municipalityId") long municipalityId);
+
+
+    /**
+     * Query di ricerca Comuni in base al nome  E al parametro "search"
+     * @param municipality il nome del Comune da ricercare
+     * @param search il parametro di ricerca
+     * @return List<Municipality> lista di comuni attinenti alla ricerca
+     */
+    @Query("SELECT m FROM Municipality m WHERE m.name LIKE %:municipality% AND (m.name LIKE %:search% OR m.region LIKE %:search% OR m.province LIKE %:search%)")
+    List<Municipality> searchByMunicipalityAndSearch(@Param("municipality") String municipality, @Param("search") String search);
+
+
+
+    /**
+     * Query di ricerca Comuni in base al nome del municipality
+     * @param municipality il nome del Comune da ricercare
+     * @return List<Municipality> lista di comuni attinenti alla ricerca
+     */
+    @Query("SELECT m FROM Municipality m WHERE m.name LIKE %:municipality%")
+    List<Municipality> searchByMunicipality(@Param("municipality") String municipality);
+
+
+
+    /**
+     * Query di ricerca Comuni in base ad un termine di ricerca
+     * @param search termine di ricerca
+     * @return List<Municipality> lista di comuni attinenti alla ricerca
+     */
+    @Query("SELECT m FROM Municipality m WHERE m.name LIKE %:search% OR m.region LIKE %:search% OR m.province LIKE %:search%")
+    List<Municipality> searchBySearch(@Param("search") String search);
+
+
+
+
+
+//    @Query("SELECT new org.poifinder.dataMappers.municipality.MunicipalityListMapper(m.id, m.name, m.description, m.geoLocation) " +
+//            "FROM Municipality m WHERE m.id = :municipalityId")
+//                  MunicipalityListMapper getMunicipalityById(@Param("municipalityId") long municipalityId);
 
 
 //    public MunicipalityRepository() {
@@ -30,7 +81,7 @@ public interface MunicipalityRepository extends JpaRepository<Municipality, Long
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-//    }
+    }
 //
 //    @Override
 //    public Municipality create(Municipality municipality, String query) throws Exception {
@@ -72,6 +123,6 @@ public interface MunicipalityRepository extends JpaRepository<Municipality, Long
 //        "WHERE M.id = ?; ";
 //        return super.delete(municiaplity, query);
 //    }
-}
+//}
 
 

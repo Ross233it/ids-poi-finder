@@ -1,22 +1,25 @@
 package org.poifinder.services;
 
+import jakarta.persistence.MappedSuperclass;
+import org.poifinder.dataMappers.ContentReportMapper;
 import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.eventManager.EmailNotifier;
 import org.poifinder.eventManager.EventManager;
 import org.poifinder.eventManager.LogNotifier;
 import org.poifinder.models.Content;
 
+import org.poifinder.models.IModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
-public  class BaseService<D extends Content> implements IService<D> {
+@MappedSuperclass
+public class BaseService<D extends IModel> implements IService<D> {
 
     protected JpaRepository<D, Long> repository;
 
@@ -43,6 +46,11 @@ public  class BaseService<D extends Content> implements IService<D> {
     }
 
 
+    /**
+     * Fornisce il servizio di ricerca di tutte le entità di un certo
+     * tipo presenti a sistema.
+     * @return
+     */
     @Override
     public List<D> index() {
         return repository.findAll();
@@ -58,7 +66,13 @@ public  class BaseService<D extends Content> implements IService<D> {
         return null;
     }
 
-
+    /**
+     * Fornisce il servizio di ricerca di un oggetto in base al suo
+     * identificativo univoco
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
     public D getObjectById(long id) throws Exception {
         Optional<D> result = repository.findById(id);
@@ -67,29 +81,39 @@ public  class BaseService<D extends Content> implements IService<D> {
 
 
     @Override
-    @Transactional
-    public D create(Map<String, Object> data) throws Exception {
-        D entity = (D) mapper.mapDataToObject(data);
-        return repository.save(entity);
+    public DataMapper<D> create(DataMapper<D> entity) throws Exception {
+//        D entity = (D) mapper.mapDataToObject(data);
+//        return repository.save(entity);
+        return null;
     }
 
     @Override
-    @Transactional
-    public D update(long id, Map<String, Object> data) throws Exception {
-        D entity = getObjectById(id);
-        mapper.updateEntityFromMap(entity, data);
-        return repository.save(entity);
+    public DataMapper<D> update(long id, DataMapper<D> entity) throws Exception {
+//        Optional<D> existingEntity = repository.findById(id);
+//        if (existingEntity.isEmpty()) {
+//            throw new EntityNotFoundException("Entità con ID " + id + " non trovata.");
+//        }
+//        D updatedEntity = existingEntity.get();
+//
+//        BeanUtils.copyProperties(entity, updatedEntity, "id");
+//
+//        return repository.save(updatedEntity);
+
+        return null;
     }
+
+
 
     @Override
     public D delete(long id) throws Exception {
         return null;
     }
 
+//        D entity = getObjectById(id);
+//        mapper.updateEntityFromMap(entity, data);
+//        return repository.save(entity);
+//    }
 
-    public void deleteById(Long id) {
-         repository.deleteById(id);
-    }
 
 
     public List<D> search(Map<String, String> params) throws Exception {
@@ -102,12 +126,8 @@ public  class BaseService<D extends Content> implements IService<D> {
      * Servizio di segnalazione di un contenuto ad un utente
      * responsabile.
      */
-    public void reportContent() throws Exception {
-//        long id = request.getRequestId();
-//        Map<String, Object> reportData = request.getBodyStreamData();
-//        Map<String, Object> entityData =  this.repository.getById(id, null);
-//        D entity = (D) this.mapper.mapDataToObject(entityData);
-//        reportData.put("Poi id", id);
-//        this.eventManager.notify("content report", reportData);
+    public void reportContent(Long id, ContentReportMapper data) throws Exception {
+        D entity = D this.repository.getReferenceById(id);
+        this.eventManager.notify("Content Report", data);
     }
 }

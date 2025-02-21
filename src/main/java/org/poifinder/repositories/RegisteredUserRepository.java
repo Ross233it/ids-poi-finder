@@ -18,6 +18,8 @@ import java.util.Optional;
 public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, Long> {
 
 
+    boolean existsByEmail(String email);
+
 //    public RegisteredUserRepository() {
 //        super("users");
 //    }
@@ -28,18 +30,16 @@ public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, 
      * @return Map<String, Object> userData i dati dell'utente
      * @throws Exception
      */
-//    @Query("SELECT u FROM RegisteredUser u WHERE u.username LIKE %:username%")
-//    Optional<List<RegisteredUser>> getByUsername(@Param("username") String username);
-
+    Optional<RegisteredUser> findByUsername(String username);
 
     /**
-     * Ritorna il record dell'utente in base all'access token
+     * Ritorna un utente in base all'access token
      * @param token String il token di accesso
      * @return List<Map<String, Object>> userData i dati dell'utente
      * @throws Exception
      */
-//    @Query("SELECT u FROM RegisteredUser u WHERE u.accessToken = :token")
-//    Optional<RegisteredUser> getByAccessToken(@Param("token") String token);
+    @Query("SELECT u FROM RegisteredUser u WHERE u.accessToken = :token")
+    Optional<RegisteredUser> getByAccessToken(@Param("token") String token);
 
 
     /**
@@ -47,10 +47,6 @@ public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, 
      * utilizzi futuri legati all'autenticazione.
      * @return true se il token viene salvato correttamente.
      */
-//    public int saveAccessToken(String token, String username) throws Exception {
-//        String query = "UPDATE " + this.tableName + " SET access_token = ? WHERE username = ?";
-//        return DbUtilities.executeQuery(query, new Object[]{token, username});
-//    }
 //    @Modifying
 //    @Query("UPDATE RegisteredUser u SET u.accessToken = :token WHERE u.username = :username")
 //    int saveAccessToken(@Param("token") String token, @Param("username") String username);

@@ -1,6 +1,7 @@
 package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
+import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 
 import java.util.*;
@@ -23,8 +24,9 @@ public class Itinerary extends Activity {
     public Itinerary(String name,
                      String description,
                      List<Long> orderedIds,
-                     List<Poi> poiList) {
-        super(name, description, "itinerary");
+                     List<Poi> poiList,
+                     Municipality municipality) {
+        super(name, description, "itinerary", municipality);
         this.poiList = poiList;
         this.orderPoi(orderedIds);
     }

@@ -1,5 +1,6 @@
 package org.poifinder.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.models.users.RegisteredUser;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.*;
  */
 
 @MappedSuperclass
+@JsonIgnoreProperties({ "author" , "approver" })
 public abstract  class Content implements IModel {
 
     @Id
@@ -20,7 +22,7 @@ public abstract  class Content implements IModel {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = true)
     private RegisteredUser author;
 
     @ManyToOne
@@ -57,10 +59,11 @@ public abstract  class Content implements IModel {
      */
     @Override
     public String toString(){
-        try {
-            return DataMapper.mapObjectToJson(this);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return "";
+//        try {
+//            return DataMapper.mapObjectToJson(this);
+//        } catch (IllegalAccessException e) {
+//            throw new RuntimeException(e);
+//        }
     };
 }

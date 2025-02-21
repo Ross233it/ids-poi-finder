@@ -8,36 +8,65 @@ import java.util.Map;
 @Component
 public class GeoLocationMapper extends DataMapper<GeoLocation> {
 
-    @Override
-    public GeoLocation mapDataToObject(Map<String, Object> result) {
-        if(result.containsKey("geoLocation")) {
-            result = (Map<String, Object>) result.get("geoLocation");
-            result.put("G_id", result.get("id"));
-        }
-        double def =  0;
-        Object latitudeObj = result.getOrDefault("latitude", def);
-        Object longitudeObj = result.getOrDefault("longitude", def);
-        double latitude = latitudeObj instanceof Number ? ((Number) latitudeObj).doubleValue() : def;
-        double longitude = longitudeObj instanceof Number ? ((Number) longitudeObj).doubleValue() : def;
+    private Long  id;
 
-        GeoLocation geoLocation = new GeoLocation(
-                (String) result.getOrDefault("address", null),
-                (String) result.getOrDefault("number", null),
-                (String) result.getOrDefault("cap",null),
-                latitude,
-                longitude
-        );
+    private String address;
 
-        if(result.containsKey("G_id")){
-            long id = castIdvalue(result.get("G_id"));
-            geoLocation.setId(id);
-        }
+    private String number;
 
-        return geoLocation;
+    private String cap;
+
+    private double latitude;
+
+    private double longitude;
+
+
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public GeoLocation updateEntityFromMap(GeoLocation item, Map<String, Object> result) {
-        return null;
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getCap() {
+        return cap;
+    }
+
+    public void setCap(String cap) {
+        this.cap = cap;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
 }

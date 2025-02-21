@@ -1,6 +1,7 @@
 package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
+import org.poifinder.models.municipalities.Municipality;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,8 @@ public class Contest extends Activity{
             inverseJoinColumns = @JoinColumn(name = "prize_id"))
     private List<Prize> prizes;
 
-    public Contest(String name, String description) {
-        super(name, description, "contest");
+    public Contest(String name, String description, Municipality municipality) {
+        super(name, description, "contest", municipality);
         this.listInit();
     }
 

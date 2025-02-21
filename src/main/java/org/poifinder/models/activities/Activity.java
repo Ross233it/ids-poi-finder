@@ -2,7 +2,9 @@ package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
 import org.poifinder.models.Content;
+import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
+import org.poifinder.services.MunicipalityService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +29,24 @@ public class Activity extends Content {
     @Column(nullable = false)
     private String type;
 
+
+    @ManyToOne
+    @JoinColumn(name = "municipality_id", nullable = false)
+    private Municipality municipality;
+
     @ManyToMany
     @JoinTable(name= "activities_pois",
             joinColumns = @JoinColumn(name = "activity_id"),
             inverseJoinColumns = @JoinColumn(name = "poi_id"))
     private List<Poi> poiList;
 
-    public Activity(String name, String description, String type) {
+    public Activity(String name, String description, String type, Municipality municipality) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.setStatus("pending");
         this.poiList = new ArrayList<Poi>();
+        this.municipality = municipality;
     }
 
     public Activity(ActivityBuilder builder){
