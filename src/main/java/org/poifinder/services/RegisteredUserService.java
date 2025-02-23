@@ -1,8 +1,11 @@
 package org.poifinder.services;
 
+import jakarta.transaction.Transactional;
 import org.poifinder.dataMappers.users.UserCreateMapper;
 import org.poifinder.dataMappers.users.UserLoginMapper;
+import org.poifinder.dataMappers.users.UserUpdateMapper;
 import org.poifinder.httpServer.auth.AuthUtilities;
+import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.repositories.MunicipalityRepository;
@@ -25,6 +28,12 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
     RegisteredUserRepository userRepository;
 
     @Autowired
+    PoiService poiService;
+
+    @Autowired
+    ActivityService activityService;
+
+    @Autowired
     private MunicipalityRepository municipalityRepository;
 
     @Autowired
@@ -32,6 +41,7 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
                                  UserCreateMapper mapper) {
         super(repository, mapper);
     }
+
 
     /**
      * Crea un nuovo poi partendo da una serie di dati già validati
@@ -58,6 +68,43 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
         newUser.setRole(mapper.getRole());
         userRepository.save(newUser);
     }
+
+
+    /**
+     * Modifica le informazioni di un utente in base a dati ricevuti
+     * @param id l'id dell'utente da modificare
+     * @param mapper le informazioni aggiornate
+     * @return RegisteredUser utente aggiornato.
+     * @throws Exception
+     */
+    public RegisteredUser update(Long id, UserUpdateMapper mapper) throws Exception {
+        RegisteredUser existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser == null) {
+            throw new RuntimeException("Utente non trovato");
+        }
+        if (!existingUser.getEmail().equals(mapper.getEmail()) && userRepository.existsByEmail(mapper.getEmail())) {
+            throw new RuntimeException("Email già registrata");
+        }
+
+        if (mapper.getMunicipality_id() != null && !mapper.getMunicipality_id().equals(existingUser.getMunicipality().getId())) {
+            Municipality municipality = municipalityRepository.getObjectById(mapper.getMunicipality_id());
+            if (municipality == null) {
+                throw new RuntimeException("Comune non valido o non trovato");
+            }
+            existingUser.setMunicipality(municipality);
+        }
+        String salt = existingUser.getSalt();
+        String newPassword = AuthUtilities.hashPassword(mapper.getPassword(), salt);
+        existingUser.setPassword(newPassword);
+        existingUser.setUsername(mapper.getUsername());
+        existingUser.setEmail(mapper.getEmail());
+        existingUser.setRole(mapper.getRole());
+        userRepository.save(existingUser);
+        return existingUser;
+    }
+
+
+
 
     /**
      * Verifica le credenziali di accesso di un utente e ritorna un token
@@ -105,11 +152,9 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
      */
     public RegisteredUser getByAccessToken(String token) {
         token = token.replaceFirst("^Bearer\\s+", "");
-        Optional<RegisteredUser> currentUser = userRepository.getByAccessToken(token);
+        Optional<RegisteredUser> currentUser = userRepository.getByAccessTokenParam(token);
         return currentUser.orElseThrow(()-> new RuntimeException("Utente non trovato per il token in oggetto"));
     }
-
-
 
     /**
      * Imposta un nuovo ruolo per un utente.
@@ -125,6 +170,7 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
         user.setRole(newRole);
         return repository.save(user);
     }
+
 
     //        try {
 //            int userId = (int) data.get("id");
@@ -149,12 +195,32 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
     }
 
     @Override
-    public RegisteredUser setStatus(Map<String, Object> data) throws Exception {
-        return null;
+    public RegisteredUser setStatus(Long id, String status) throws Exception {
+       return null;
     }
-
+    /**
+     * Rimuove un utente e riassegna tutti i suoi contenuti ad un utente di
+     * default
+     * @param id dell'utente da rimuovere
+     * @return l'utente di default riassegnatario.
+     * @throws Exception
+     */
     @Override
-    public RegisteredUser delete(long id) throws Exception {
+    @Transactional
+    public RegisteredUser delete(Long id) throws Exception {
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if (currentUser.getId() == id || currentUser.hasRole("platformAdmin")) {
+            RegisteredUser userToDelete = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+            RegisteredUser newUser = userRepository.findById(1L)
+                    .orElseThrow(() -> new RuntimeException("Utente sostitutivo non trovato"));
+
+            activityService.setAuthorAndApproverMassively(userToDelete, newUser);
+            poiService.setAuthorAndApproverMassively(userToDelete, newUser);
+            userRepository.delete(userToDelete);
+            return newUser;
+        }
         return null;
     }
 }

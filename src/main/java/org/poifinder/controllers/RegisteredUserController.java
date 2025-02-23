@@ -1,15 +1,21 @@
 package org.poifinder.controllers;
 
+import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.dataMappers.users.UserCreateMapper;
 import org.poifinder.dataMappers.users.UserLoginMapper;
+import org.poifinder.dataMappers.users.UserUpdateMapper;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.users.RegisteredUser;
 
+import org.poifinder.repositories.RegisteredUserRepository;
 import org.poifinder.services.RegisteredUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.io.IOException;
 
@@ -22,11 +28,14 @@ import java.io.IOException;
 public class RegisteredUserController extends BaseController<RegisteredUser> {
 
     private final RegisteredUserService registeredUserService;
+    private final RegisteredUserRepository registeredUserRepository;
+
 
     @Autowired
-    public RegisteredUserController(RegisteredUserService userService, RegisteredUserService registeredUserService) {
+    public RegisteredUserController(RegisteredUserService userService, RegisteredUserService registeredUserService, RegisteredUserRepository registeredUserRepository) {
         super(userService);
         this.registeredUserService = registeredUserService;
+        this.registeredUserRepository = registeredUserRepository;
     }
 
     /**
@@ -54,10 +63,37 @@ public class RegisteredUserController extends BaseController<RegisteredUser> {
         try {
             RegisteredUser currentUser = registeredUserService.login(mapper);
             UserContext.setCurrentUser(currentUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Utente autenticato con successo Token: " + currentUser.getToken());
+            return ResponseEntity.status(HttpStatus.CREATED).body("Utente autenticato con successo Token: " + currentUser.getAccessToken());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR - Si è verificato un problema durante la registrazione : " + e.getMessage());
         }
+    }
+
+
+    /**
+     * Aggiorna un utente esistente
+     * @param id l'id dell'utente da aggiornare
+     * @param entityData dati sull'utente
+     * @return
+     * @throws Exception
+     */
+    @PatchMapping("/{id}/update")
+    @JsonView(Views.Public.class)
+    public ResponseEntity<RegisteredUser> update(@PathVariable Long id,
+                                                 @RequestBody UserUpdateMapper entityData)
+                                                 throws Exception{
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+
+        if(currentUser.getId() == id || currentUser.getRole().equals("platformAdmin")){
+            try {
+                RegisteredUser updatedEntity = registeredUserService.update(id, entityData);
+                if(updatedEntity != null )
+                    return ResponseEntity.status(HttpStatus.OK).body(updatedEntity);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     /**
@@ -79,6 +115,34 @@ public class RegisteredUserController extends BaseController<RegisteredUser> {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Non è stato possibile completare la procedura di logout");
     }
+
+
+    public RegisteredUser getObjectById(Long id){
+        return registeredUserRepository.getById(id);
+    }
+
+
+    /**
+     * Gestisce la richiesta di eleiminazione di un utente.
+     * @throws Exception
+     */
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) throws RuntimeException{
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(currentUser != null &&
+            (currentUser.getId() == id ||
+             currentUser.hasRole("platformAdmin"))){
+            try {
+                service.delete(id);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Utente eliminato con successo");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Eliminazione non possibile o non consentita");
+    }
+
 
     /**
      * Gestisce la richiesta di impostazione nuovo ruolo per un utente.

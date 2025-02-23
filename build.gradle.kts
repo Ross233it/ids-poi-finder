@@ -22,7 +22,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.hibernate.validator:hibernate-validator:6.2.0.Final")
-//    implementation("javax.validation:javax.validation-api:2.0.1.Final")
+
+    implementation("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
 }
 
 tasks.test {

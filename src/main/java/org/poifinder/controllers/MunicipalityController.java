@@ -7,10 +7,7 @@ import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.services.MunicipalityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +34,16 @@ public class MunicipalityController extends BaseController<Municipality> {
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Municipality> create(@RequestBody Municipality municipality) {
+        try {
+            Municipality createdMunicipality = ((MunicipalityService)service).create(municipality);
+            return ResponseEntity.ok(createdMunicipality);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 

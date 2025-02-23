@@ -39,13 +39,13 @@ public class GeoLocationService extends BaseService<GeoLocation> {
         return List.of();
     }
 
-    @Override
-    public GeoLocation setStatus(Map<String, Object> data) throws Exception {
-        return null;
-    }
+//    @Override
+//    public GeoLocation setStatus(Long id, String status) throws Exception {
+//        return super(id, status);
+//    }
 
     @Override
-    public GeoLocation delete(long id) throws Exception {
+    public GeoLocation delete(Long id) throws Exception {
         return null;
     }
 }

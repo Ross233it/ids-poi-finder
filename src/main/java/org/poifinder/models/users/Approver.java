@@ -8,15 +8,19 @@ import org.poifinder.models.poi.Poi;
 
 import java.util.List;
 
+/**
+ * Rappresenta l'utente registrato nell'ambito dell'approvazione dei
+ * contenuti
+ */
 @Setter
 @Getter
-public class Author extends RegisteredUser{
+public class Approver extends RegisteredUser{
 
-    public List<Poi> writtenPois;
+    public List<Poi> approvedPois;
 
-    public List<Activity> writtenActivities;
+    public List<Activity> approvedActivities;
 
-    public List<Municipality> writtenMunicipalities;
+    public List<Municipality> approvedMunicipalities;
 
 
 }

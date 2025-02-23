@@ -9,12 +9,12 @@ public interface IModel {
      * Restituisce l'identificativo univoco dell'informazione
      * @return id univoco
      **/
-    long getId();
+    Long getId();
 
     /**
      * Setta l'identificativo univoco dell'informazione
      * @param id un valore numerico da assegnare
      */
-    void setId(long id);
+    void setId(Long id);
 
 }

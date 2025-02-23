@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @return istanza dell'oggetto
  */
 @Component
-public class MunicipalityListMapper extends DataMapper<Municipality> {
+public class MunicipalityListMapper implements DataMapper{
 
 
     private String name;

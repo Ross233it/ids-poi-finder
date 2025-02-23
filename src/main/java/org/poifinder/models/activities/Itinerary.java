@@ -23,12 +23,8 @@ public class Itinerary extends Activity {
 
     public Itinerary(String name,
                      String description,
-                     List<Long> orderedIds,
-                     List<Poi> poiList,
                      Municipality municipality) {
         super(name, description, "itinerary", municipality);
-        this.poiList = poiList;
-        this.orderPoi(orderedIds);
     }
 
     public Itinerary() {

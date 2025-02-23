@@ -1,10 +1,16 @@
 package org.poifinder.models.users;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.httpServer.auth.AuthUtilities;
 import org.poifinder.models.municipalities.Municipality;
+
+import java.util.List;
 
 
 /**
@@ -12,16 +18,21 @@ import org.poifinder.models.municipalities.Municipality;
  */
 @Entity
 @Table(name="users")
+@Getter
+@Setter
 public class RegisteredUser implements IUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.Public.class)
     private Long id;
 
     @NotNull
+    @JsonView(Views.Public.class)
     private String username;
 
     @NotNull
+    @JsonView(Views.Public.class)
     @Email(message = "Fornire un indirizzo email valido")
     private String email;
 
@@ -35,7 +46,9 @@ public class RegisteredUser implements IUser {
     @Column(name = "access_token")
     private  String accessToken = null;
 
-    @OneToOne
+    @ManyToOne
+    @JsonView(Views.Public.class)
+    @JoinColumn(name = "municipality_id", nullable = true, unique = false)
     private Municipality municipality;
 
     public RegisteredUser(String username, String email,  String role) {
@@ -57,20 +70,6 @@ public class RegisteredUser implements IUser {
                 + "}";
     }
 
-    /** getters **/
-    public String getUsername() { return username; }
-
-    public String getEmail()    { return email; }
-
-    public String getPassword() { return password; }
-
-    public String getRole()     { return role; }
-
-    public String getSalt()     { return salt; }
-
-    public String getToken()    { return this.accessToken; }
-
-    public Municipality getMunicipality() { return municipality; }
 
     /**
      * Verifica se un utente ha un determinato ruolo
@@ -81,8 +80,16 @@ public class RegisteredUser implements IUser {
         return this.role.equals(role);
     }
 
+    /**
+     * Verifica se un utente ha almeno un ruolo fra quelli richiesti
+     * @param roles ArrayList i ruoli richiesti.
+     * @return
+     */
+    public Boolean hasOneRole(List<String> roles) {
+        return  roles.contains(role);
+    }
 
-    /** SETTERS **/
+
 
     /**
      * Imposta il token di accesso per l'utente
@@ -95,20 +102,5 @@ public class RegisteredUser implements IUser {
             this.accessToken = AuthUtilities.generateAccessToken(this.username);
     };
 
-    public void setSalt(String salt)         { this.salt = salt; }
-    public void setUsername(String username) { this.username = username; }
-    public void setEmail(String email)       { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
-    public void setRole(String role)         { this.role = role; }
-    public void setMunicipality(Municipality municipality) { this.municipality = municipality; }
 
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
 }

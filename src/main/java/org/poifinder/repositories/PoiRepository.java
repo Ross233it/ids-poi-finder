@@ -34,6 +34,19 @@ public interface PoiRepository extends JpaRepository<Poi, Long> {
 
 
     /**
+     * Query di ricerca Poi in base all'autore
+     * @return List<Poi> lista di punti di interesse ritrovata
+     */
+    List<Poi> findByAuthor(RegisteredUser author);
+
+    /**
+     * Query di ricerca Poi in base all'utente che lo ha pubblicato
+     * @return List<Poi> lista di punti di interesse ritrovata
+     */
+    List<Poi> findByApprover(RegisteredUser approver);
+
+
+    /**
      * Query di ricerca Poi in base al nome del municipality E al parametro "search"
      * @param municipality il nome del municipality di appartenenza del poi
      * @param search il parametro di ricerca
@@ -50,6 +63,7 @@ public interface PoiRepository extends JpaRepository<Poi, Long> {
      */
     @Query("SELECT p FROM Poi p WHERE p.municipality.name LIKE %:municipality%")
     List<Poi> searchByMunicipality(@Param("municipality") String municipality);
+
 
 
     /**

@@ -1,11 +1,16 @@
 package org.poifinder.httpServer.router;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 
 /**
  * Questa classe ha la responsabilità di rappresentare le rotte raggiungibili
  * tramite richieste http.
  */
+@Getter
+@Setter
 public class Route {
 
     /**
@@ -52,32 +57,34 @@ public class Route {
             this.authLevel = authLevel;
     }
 
-    /**
-     * Ritorna l'endpoint della rotta
-     * @return String path
-     */
-    public String getPath() {
-        return path;
-    }
+// todo remove commented
 
-    /**
-     * Ritorna l'handler correlato alla rotta
-     * @return
-     */
-    public String getControllerName() { return controllerName; }
-
-    /**
-     * Ritorna l'endpoint della rotta
-     * @return String path
-     */
-    public String getMethodName() {
-        return methodName;
-    }
-
-    /**
-     * Ritorna il livello di autorizzazione necessario per la rotta
-     */
-    public int getAuthLevel(){ return authLevel; }
+//    /**
+//     * Ritorna l'endpoint della rotta
+//     * @return String path
+//     */
+//    public String getPath() {
+//        return path;
+//    }
+//
+//    /**
+//     * Ritorna l'handler correlato alla rotta
+//     * @return
+//     */
+//    public String getControllerName() { return controllerName; }
+//
+//    /**
+//     * Ritorna l'endpoint della rotta
+//     * @return String path
+//     */
+//    public String getMethodName() {
+//        return methodName;
+//    }
+//
+//    /**
+//     * Ritorna il livello di autorizzazione necessario per la rotta
+//     */
+//    public int getAuthLevel(){ return authLevel; }
 
 
 }

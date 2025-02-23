@@ -2,6 +2,8 @@ package org.poifinder.models.poi;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.models.Content;
 import org.poifinder.models.municipalities.Municipality;
@@ -10,6 +12,8 @@ import org.poifinder.models.GeoLocation;
 import org.poifinder.models.taxonomy.Tag;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name="pois")
 public class Poi extends Content implements IPoi {
@@ -32,7 +36,7 @@ public class Poi extends Content implements IPoi {
     @JsonView(Views.Public.class)
     private Municipality municipality = null;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="geolocation_id", referencedColumnName = "id", nullable = false, unique = false)
     @JsonView(Views.Public.class)
     private GeoLocation geoLocation = null;
@@ -51,6 +55,8 @@ public class Poi extends Content implements IPoi {
     @JsonView(Views.Public.class)
     private List<Tag> tags;
 
+    @Transient
+    private Long municipality_id;
 
     public Poi(PoiBuilder builder) {
         this.name =     builder.getPoiName();
@@ -95,13 +101,6 @@ public class Poi extends Content implements IPoi {
     @Override
     public GeoLocation getGeoLocation() { return geoLocation; }
 
-    public String  getName() { return name; }
-
-    public Boolean isLogical(){ return this.isLogical;}
-
-    public String  getDescription() { return description; }
-
-    public String  getType() { return type; }
 
     /** setters **/
 
@@ -115,27 +114,8 @@ public class Poi extends Content implements IPoi {
         this.municipality = municipality;
     }
 
-    public void setName(String poiname) {
-        this.name = poiname;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void setLogical(Boolean logical) {
         isLogical = logical;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
 }

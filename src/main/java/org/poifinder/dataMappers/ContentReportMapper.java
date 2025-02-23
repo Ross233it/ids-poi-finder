@@ -20,6 +20,17 @@ public class ContentReportMapper {
         this.surname = surname;
     }
 
+    @Override
+    public String toString(){
+        return "{" +
+                "content_type='" + content_type + '\'' +
+                ", email='" + email + '\'' +
+                ", motivation='" + motivation + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                '}';
+    }
+
     public String getContent_type() { return content_type; }
 
     public String getEmail() { return email; }

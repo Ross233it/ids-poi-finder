@@ -5,7 +5,9 @@ import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.dataMappers.poi.PoiCreateMapper;
 import org.poifinder.dataMappers.poi.PoiListMapper;
+import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
+import org.poifinder.services.MunicipalityService;
 import org.poifinder.services.PoiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +23,11 @@ public class PoiController extends BaseController<Poi> {
 
 @Autowired
 private PoiService poiService;
+    @Autowired
+    private MunicipalityService municipalityService;
 
 
-@Autowired
+    @Autowired
 public  PoiController(PoiService service) {
     super(service);
 }
@@ -45,35 +49,6 @@ public  PoiController(PoiService service) {
         }
     }
 
-
-    @PostMapping
-    public ResponseEntity<PoiListMapper> create(@RequestBody PoiCreateMapper mapper) throws IOException {
-        try {
-            PoiListMapper createdPoi = null;
-            try {
-                createdPoi =  poiService.create(mapper);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            return new ResponseEntity<>(createdPoi, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-
-        //        Map<String, Object> data = request.getBodyStreamData();
-//        RegisteredUser author = UserContext.getCurrentUser();
-//        data.put("author", author);
-//        if(
-//            author.hasRole("platformAdmin") ||
-//            author.hasRole("animator") ||
-//            author.hasRole("authContributor")
-//        ){
-//            data.put("status", "published");
-//        }
-//        handleRequest(()->service.create(data), null);
-
-    }
-
     /**
      * Gestisce la richiesta di tutti i poi di un municipio
      * @throws IOException
@@ -90,13 +65,8 @@ public  PoiController(PoiService service) {
     }
 
 
-    public void validate(){
-
-    }
-
-
     @Override
-    public ResponseEntity<Poi> update(Long id, DataMapper<Poi> entityData) throws IOException {
+    public ResponseEntity<Poi> update(Long id, DataMapper entityData) throws IOException {
         return null;
     }
 }

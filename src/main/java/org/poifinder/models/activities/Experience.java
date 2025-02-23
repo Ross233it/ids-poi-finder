@@ -1,6 +1,8 @@
 package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.models.municipalities.Municipality;
 
 
@@ -8,6 +10,8 @@ import org.poifinder.models.municipalities.Municipality;
  * Classe Experience che estende Activity
  * Un'esperienza è una raccolta di punti di interesse senza un ordine specifico.
  */
+@Getter
+@Setter
 @Entity
 @DiscriminatorValue("experience")
 public class Experience extends Activity {
@@ -25,24 +29,12 @@ public class Experience extends Activity {
                       Municipality municipality){
         super(name, description, "experience", municipality);
         this.beginDate = beginDate;
-        this.endDate = endDate;
+        this.endDate   = endDate;
     }
 
     public Experience() {
         super();
     }
-
-    /** Getters **/
-
-    public String getBeginDate() { return beginDate; }
-
-    public String getEndDate() { return beginDate; }
-
-    /** Setters **/
-
-    public void setBeginDate(String date) { this.beginDate = date; }
-
-    public void setEndDate(String date) { this.endDate = date; }
 
     @Override
     public String toString() {

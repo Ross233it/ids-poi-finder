@@ -1,23 +1,21 @@
 package org.poifinder.services;
 
-import org.poifinder.dataMappers.poi.PoiCreateMapper;
-import org.poifinder.dataMappers.poi.PoiListMapper;
 import org.poifinder.dataMappers.poi.PoiMapper;
 
+import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
 import org.poifinder.models.poi.Poi;
-import org.poifinder.models.poi.PoiBuilder;
+import org.poifinder.models.users.RegisteredUser;
+import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.PoiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -35,6 +33,8 @@ public class PoiService extends BaseService<Poi> {
 
     @Autowired
     private PoiRepository poiRepository;
+    @Autowired
+    private MunicipalityRepository municipalityRepository;
 
     @Autowired
     public PoiService(PoiRepository repository,
@@ -65,114 +65,111 @@ public class PoiService extends BaseService<Poi> {
     }
 
 
-
     @Override
     public List<Poi> filter(Map<String, String> queryParams) throws Exception {
         return List.of();
     }
 
+    /**
+     * Recupera un oggetto Poi in base all'id e ne memorizza lo stato
+     * @param id identificativo dell'entità
+     * @param status lo stato da memorizzare per l'entità
+     * @return poi l'oggetto con lo stato settato.
+     * @throws Exception
+     */
     @Override
-    public Poi setStatus(Map<String, Object> data) throws Exception {
+    public Poi setStatus(Long id, String status) throws Exception {
+        Poi poi = getObjectById(id);
+        if(poi != null && poi.getStatus().equals("pending")){
+            RegisteredUser approver = UserContext.getCurrentUser();
+            //approvazione solo dei comuni di propria competenza
+            if(approver.getMunicipality().getId() == poi.getMunicipality().getId()){
+                if(status.equals("rejected"))
+                    this.delete(id);
+                poi.getGeoLocation().setStatus(status);
+                poi.setApprover(approver);
+                poi.setStatus(status);
+                return poiRepository.save(poi);
+            }
+        }
         return null;
     }
 
-
     /**
      * Gestisce il servizio di creazione di una nuova entità a database
-     * @param poiCreateMapper struttura dati con informazioni dell'oggetto da creare
+     * @param poi informazioni dell'oggetto da creare
      * @return object Municipality l'oggetto creato e salvato nello strato di persistenza.
      * @throws Exception
      */
+    @Override
+    public Poi create(Poi poi) throws Exception {
+        RegisteredUser author = UserContext.getCurrentUser();
+        Municipality municipality = municipalityService.getObjectById(poi.getMunicipality_id());
 
-
-    public PoiListMapper create(PoiCreateMapper poiCreateMapper) throws Exception {
-//        if (poiRepository.existsByName(poiCreateMapper.getName())) {
-//            throw new RuntimeException("Poi con questo nome già esistente");
-//        }
-
-        Municipality municipality = municipalityService.getObjectById(poiCreateMapper.getMunicipality_id());
-
-        System.out.println("IO SONO il municipio");
-        System.out.println(municipality);
-
-        if(municipality == null){
-            throw new RuntimeException("Comune non trovato");
+        if (author == null || municipality == null) {
+            throw new RuntimeException();
         }
 
-        System.out.println("IO SONO il municipio");
-        System.out.println(municipality);
-
-
-        GeoLocation geolocation = new GeoLocation(
-                poiCreateMapper.getAddress(),
-                poiCreateMapper.getNumber(),
-                poiCreateMapper.getCap());
-        if(geolocation != null){
-                geolocation.setLatitude(poiCreateMapper.getLatitude());
-                geolocation.setLongitude(poiCreateMapper.getLongitude());
+        if (poi.getIsLogical()) {
+            GeoLocation geolocation = municipality.getGeoLocation();
+            poi.setGeoLocation(geolocation);
         }
 
-        System.out.println("IO SONO GEOLOCATION");
-        System.out.println(geolocation);
+        poi.setMunicipality(municipality);
+        poi.setAuthor(author);
+        poi = (Poi) publishOrPending(poi);
 
-        geoLocationService.create(geolocation);
-
-        PoiBuilder poiBuilder = new PoiBuilder(
-                poiCreateMapper.getName(),
-                poiCreateMapper.getDescription(),
-                poiCreateMapper.isLogical());
-
-
-        Poi newPoi = poiBuilder
-                .type(poiCreateMapper.getType())
-                .municipality(municipality)
-                .geoLocation(geolocation)
-                .build();
-
-        System.out.println("IO SONO NEW POI");
-        System.out.println(newPoi);
-
-        poiRepository.save(newPoi);
-
-        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
-
-        return new PoiListMapper(newPoi.getId(), newPoi.getName(), newPoi.getDescription(),
-                newPoi.getType(), newPoi.isLogical(), newPoi.getGeoLocation());
+        if (poi.getMunicipality().getId() == poi.getAuthor().getMunicipality().getId()) {
+            Poi newPoi = poiRepository.save(poi);
+            this.notify(newPoi);
+            return newPoi;
+        }
+        return null;
     }
 
-
-
-//    @Override
-//    public Poi create(Poi objectData) throws Exception{
-//        Poi poi = (Poi) this.mapper.mapDataToObject(objectData);
+    /**
+     * Riassegna tutti i poi che un utente ha pubblicato o approvato ad un altro
+     * autore - responsabile
+     * @param currentUser l'attuale autore - responsabile del poi
+     * @param newUser  l'utente a cui il poi viene riassegnato
+     */
+    public void setAuthorAndApproverMassively(RegisteredUser currentUser, RegisteredUser newUser){
+        List<Poi> poisAsAuthor = poiRepository.findByAuthor(currentUser);
+        for (Poi poi : poisAsAuthor) {
+            poi.setAuthor(newUser);
+        }
+        List<Poi> poisAsApprover = poiRepository.findByApprover(currentUser);
+                for (Poi poi : poisAsApprover) {
+            poi.setApprover(newUser);
+        }
+        poiRepository.saveAll(poisAsAuthor);
+        poiRepository.saveAll(poisAsApprover);
+    }
 //
-//        if(objectData.get("municipality_id") != null){
-//            int municipalityId = (int) objectData.get("municipality_id");
-//            Municipality municipality = municipalityService.getObjectById(municipalityId);
-//            poi.setMunicipality(municipality);
-//
-//            if(poi.isLogical()){
-//                poi.setGeoLocation(municipality.getGeoLocation());
-//            }else if(objectData.get("geoLocation") != null){
-//                GeoLocation geolocation = geoLocationService.create ((Map<String, Object>) objectData.get("geoLocation"));
-//                poi.setGeoLocation(geolocation);
-//            }else
-//                return null;
-//        }else
-//            return null;
-
-//        eventManager.notify("Nuovo Punto di interesse in attesa di validazione", null);
-//        poi =  (Poi) repository.create(poi, null);
-//        if(objectData.containsKey("status")){
-//            objectData.put("id", poi.getId());
-//            poi = this.setStatus(objectData);
-//            eventManager.notify("Nuovo Punto di interesse auto-validato", null);
+//    /**
+//     * Verifica se l'autore di un poi dispone dei privilegi necessari
+//     * per l'autopubblicazione di un poi.
+//     * @param poi da valutare
+//     * @return il poi autopubblicato se l'utente dispone dei privilegi.
+//     */
+//    private Poi publishOrPending(Poi poi){
+//        List<String>roles = List.of("authContributor","curator", "animator", "platformAdmin");
+//        String eventType =  "new-pending-poi";
+//        if(poi.getAuthor().hasOneRole(roles)
+//           && poi.getMunicipality().getId() == poi.getAuthor().getMunicipality().getId()) {
+//            poi.setStatus("published");
+//            eventType = "new-published-poi";
 //        }
+//        Map<String, Object>eventData = Map.of("NuovoPoi", poi);
+//        eventManager.notify(eventType, eventData);
 //        return poi;
-//        return null;
 //    }
 
-//    @Override
+
+
+
+
+    //    @Override
     public Poi update(long id, Poi poi) throws Exception {
 //        Poi poi = this.getObjectById(id);
 //        if(poi != null){
@@ -193,10 +190,31 @@ public class PoiService extends BaseService<Poi> {
         return null;
     }
 
+    /**
+     * Rimuove il poi senza interferire con i dati del comune
+     * @param id l'identificativo del Poi da rimuovere
+     * @return il poi eliminato
+     * @throws Exception
+     */
     @Override
-    public Poi delete(long id) throws Exception {
-        return null;
+    public Poi delete(Long id) throws Exception {
+        Poi toDelete = poiRepository.getById(id);
+        toDelete.setMunicipality(null);
+        poiRepository.delete(toDelete);
+        return toDelete;
     }
+
+    //    @Override
+//    @Transactional
+//    public Municipality delete(long id) throws Exception {
+//
+//            Municipality userToDelete = municipalityRepository.findById(id)
+//                    .orElseThrow(() -> new RuntimeException("Muunicipio non trovato"));
+//
+//
+//        }
+//
+//    }
 
     public List<Poi> getByMunicipalityId(long id) throws Exception {
 //        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);

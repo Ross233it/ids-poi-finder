@@ -2,7 +2,8 @@ package org.poifinder.models.municipalities;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.models.Content;
 import org.poifinder.models.GeoLocation;
@@ -14,6 +15,8 @@ import org.poifinder.models.poi.Poi;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name="municipalities")
 public class Municipality extends Content implements IModel {
@@ -28,9 +31,9 @@ public class Municipality extends Content implements IModel {
     private String province;
 
     @JsonView(Views.Public.class)
-    private String status;
+    private String status = "published";
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView(Views.Public.class)
     private GeoLocation geoLocation;
 
@@ -52,10 +55,12 @@ public class Municipality extends Content implements IModel {
         this.pois = builder.getPois();
     }
 
-
     public Municipality() {
         this.pois = new ArrayList<>();
     }
+
+
+//    public  long getId(){return super.getId();}
 
     /**
      * Restituisce una rappresentazione testuale dell'oggetto
@@ -70,42 +75,18 @@ public class Municipality extends Content implements IModel {
                 ;
         if(getId() != 0)
             resultString += "\"id:\""+getId();
-        if(!pois.isEmpty()){
-            resultString += ",\"pois\": {";
-            for(Poi poi : pois)
-                resultString += poi.toString()+",";
-            resultString +="}";
-        }
+//        if(!pois.isEmpty()){
+//            resultString += ",\"pois\": {";
+//            for(Poi poi : pois)
+//                resultString += poi.toString()+",";
+//            resultString +="}";
+//        }
         if(geoLocation != null)
             resultString += ",\"geoLocation\": "+ geoLocation.toString();
         if(getAuthor() != null)
             resultString += ",\"author\": " + getAuthor().toString();
         return resultString +     "}";
     }
-
-    /** getters **/
-
-    public String getName()          { return name; }
-
-    public String getProvince()      { return province; }
-
-    public String getRegion()        { return region;}
-
-    public List<Poi> getPois() { return pois; }
-
-    public GeoLocation getGeoLocation() { return this.geoLocation;}
-
-
-    /** setters **/
-
-    public void setName(String name) { this.name = name; }
-
-    public void setGeoLocation(GeoLocation geoLocation) {
-        this.geoLocation = geoLocation;
-    }
-
-    public void setPois(List<Poi> pois) { this.pois = pois; }
-
     /**
      * Aggiunge un punto di interesse alla lista
      * @param poi punto di interesse da aggiungere

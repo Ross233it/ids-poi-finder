@@ -13,18 +13,18 @@ import java.util.List;
  * Le classi che implementano questa interfaccia assumono il ruolo di Controller
  * che nel pattern Mvc ha la responsabilità di gestire le interazioni fra il sistema
  * e l'interfaccia utente.
- * @param <O>
+ * @param <T>
  */
-public interface IController<O>{
+public interface IController<T>{
 
-   ResponseEntity<List<O>> index(@RequestParam String queryString)         throws IOException;
+   ResponseEntity index(@RequestParam String queryString) throws Exception;
 
-   ResponseEntity<O> show(@PathVariable Long id) throws IOException;
+   ResponseEntity show(@PathVariable Long id) throws Exception;
 
-   ResponseEntity<O> create(@RequestBody DataMapper<O> entityData) throws IOException;
+   ResponseEntity create(@RequestBody T entity) throws Exception;
 
-   ResponseEntity<O> update(@PathVariable Long id, @RequestBody DataMapper<O> entityData) throws IOException;
+   ResponseEntity update(@PathVariable Long id, @RequestBody DataMapper entityData) throws Exception;
 
-   ResponseEntity<Void> delete(@PathVariable Long id) throws IOException;
+   ResponseEntity delete(@PathVariable Long id) throws Exception;
 
 }

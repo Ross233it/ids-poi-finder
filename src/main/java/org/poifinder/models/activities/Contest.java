@@ -1,11 +1,15 @@
 package org.poifinder.models.activities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.models.municipalities.Municipality;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @DiscriminatorValue("contest")
 public class Contest extends Activity{
@@ -28,7 +32,12 @@ public class Contest extends Activity{
             inverseJoinColumns = @JoinColumn(name = "prize_id"))
     private List<Prize> prizes;
 
-    public Contest(String name, String description, Municipality municipality) {
+    public Contest(String name,
+                   String description,
+                   Municipality municipality,
+                   List<Rule> rules,
+                   List<Prize> prizes
+                   ){
         super(name, description, "contest", municipality);
         this.listInit();
     }
@@ -45,23 +54,23 @@ public class Contest extends Activity{
 
     @Override
     public String toString() { return ""; }
-
-    public void setBeginDate(String beginDate) { this.beginDate = beginDate; }
-
-    public void setEndDate(String endDate) { this.endDate = endDate; }
-
-    public void setPrices(List<Prize> prizes) { this.prizes = prizes;}
-
-    public void setRules(List<Rule> rules) { this.rules = rules;}
+//
+//    public void setBeginDate(String beginDate) { this.beginDate = beginDate; }
+//
+//    public void setEndDate(String endDate) { this.endDate = endDate; }
+//
+//    public void setPrices(List<Prize> prizes) { this.prizes = prizes;}
+//
+//    public void setRules(List<Rule> rules) { this.rules = rules;}
 
     /** Getters **/
-    public String getBeginDate() { return beginDate; }
+//    public String getBeginDate() { return beginDate; }
+//
+//    public String getEndDate() { return endDate; }
 
-    public String getEndDate() { return endDate; }
-
-    public List<Rule> getRules() { return rules; }
-
-    public List<Prize> getPrizes() { return prizes; }
+//    public List<Rule> getRules() { return rules; }
+//
+//    public List<Prize> getPrizes() { return prizes; }
 
     public void addRule(Rule rule) { rules.add(rule); }
 

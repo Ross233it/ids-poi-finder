@@ -1,10 +1,14 @@
 package org.poifinder.dataMappers.poi;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.models.GeoLocation;
-import org.poifinder.models.poi.Poi;
 
-public class PoiListMapper extends DataMapper<Poi> {
+
+@Getter
+@Setter
+public class PoiListMapper implements DataMapper{
 
     private Long  id;
 
@@ -31,19 +35,4 @@ public class PoiListMapper extends DataMapper<Poi> {
         this.geoLocation = geoLocation;
     }
 
-    public String getPoiname() {
-        return poiname;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Boolean getLogical() {
-        return isLogical;
-    }
 }

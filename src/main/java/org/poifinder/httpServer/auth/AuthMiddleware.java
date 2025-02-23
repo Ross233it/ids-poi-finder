@@ -1,25 +1,36 @@
 package org.poifinder.httpServer.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import org.poifinder.models.users.RegisteredUser;
+import org.poifinder.repositories.RegisteredUserRepository;
+import org.poifinder.services.RegisteredUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Questa classe ha la responsabilità di consentire la valutazione dei
  * permessi di un utente in rapporto al suo ruolo
  */
-
+@Getter
 @Service
 public class AuthMiddleware {
+
 
     /**
      * La lista dei livelli di permesso
      */
     private HashMap<Integer,String[]>permissions;
 
-    public AuthMiddleware(){
-        this.permissions = new HashMap<Integer, String[]>();
+    @Autowired
+    private RegisteredUserRepository userRepository;
+
+    @Autowired
+    public AuthMiddleware(RegisteredUserService userService) {
+        this.permissions = new HashMap<>();
         this.permissionsInit();
     }
 
@@ -35,20 +46,26 @@ public class AuthMiddleware {
     }
 
     /**
-     * Ritorna i livelli di privilegio disponibili a sistema. - Getter
-     * @return
-     */
-    public HashMap<Integer,String[]> getPermissions(){
-        return this.permissions;
-    }
-
-
-    /**
      * Recupera e ritorna l'utente autenticato se presente, null altrimenti
      * @return RegisteredUser l'utente correntemente autenticato.
      */
     public RegisteredUser getCurrentUser() {
             return UserContext.getCurrentUser();
+    }
+
+
+    /**
+     * Definisce l'utente corrente nel contesto di utilizzo
+     * @param request HttpServletRequest la richiesta http
+     */
+    public void setCurrentUser(HttpServletRequest request){
+        String accessToken = AuthUtilities.getAccessToken(request);
+
+        Optional<RegisteredUser> currentUser = userRepository.getByAccessTokenParam(accessToken);
+        if(currentUser.isPresent())
+            UserContext.setCurrentUser(currentUser.orElse(null));
+        else
+            UserContext.setCurrentUser(null);
     }
 
     /**
@@ -69,7 +86,7 @@ public class AuthMiddleware {
      * @param requiredPermission
      * @return
      */
-    public boolean hasPermissions(int requiredPermission){
+    public  boolean hasPermissions(int requiredPermission){
         String currentUserRole = this.getUserRole();
         String[] authorizedRoles = this.permissions.get(requiredPermission);
         if (authorizedRoles != null) {

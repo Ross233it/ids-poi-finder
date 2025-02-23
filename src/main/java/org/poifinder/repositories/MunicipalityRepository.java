@@ -2,6 +2,7 @@ package org.poifinder.repositories;
 
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
+import org.poifinder.models.users.RegisteredUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,12 +14,34 @@ import java.util.List;
 public interface MunicipalityRepository extends JpaRepository<Municipality, Long> {
 
 
+    /**
+     * Verifica se un comune con lo stesso nome esiste
+     * @param name il nome del comune
+     * @return true se esiste già, false altrimenti
+     */
+    boolean existsByName(String name);
+
     @Query("SELECT p FROM Poi p WHERE p.municipality.id = :municipalityId")
     List<Poi> findPoisByMunicipalityId(@Param("municipalityId") long municipalityId);
 
 
     @Query("SELECT m FROM Municipality m WHERE m.id = :municipalityId")
     Municipality getObjectById(@Param("municipalityId") long municipalityId);
+
+
+    /**
+     * Query di ricerca Comuni in base all'autore
+     * @return List<Municipality> lista di punti di interesse ritrovata
+     */
+    List<Municipality>findByAuthor(RegisteredUser author);
+
+    /**
+     * Query di ricerca Comuni in base all'utente che lo ha pubblicato
+     * @return List<Municipality> lista di punti di interesse ritrovata
+     */
+    List<Municipality> findByApprover(RegisteredUser approver);
+
+
 
 
     /**
@@ -69,18 +92,7 @@ public interface MunicipalityRepository extends JpaRepository<Municipality, Long
 //        return super.index(this.queryBuilder.toString());
 //    }
 //
-//    @Override
-//    public Map<String, Object> getById(long id, String query) {
-//            query = this.queryBuilder
-//                    .append(  "WHERE M.id = ?;")
-//                    .toString();
-//        try {
-//            return super.getById(id, query);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+
     }
 //
 //    @Override

@@ -1,6 +1,7 @@
 package org.poifinder.httpServer.auth;
 
 import com.sun.net.httpserver.HttpExchange;
+import jakarta.servlet.http.HttpServletRequest;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.users.RegisteredUser;
 
@@ -79,17 +80,13 @@ public class AuthUtilities {
 
     /**
      * Recupera l'access token dall'intestazione della chiamata http
-     * @param exchange HttpExchange
+     * @param request HttpServletRequest richiesta http
      */
-    public static String getAccessToken(HttpExchange exchange) {
-        Map<String, List<String>> headers = exchange.getRequestHeaders();
-        List<String> authHeader = (headers.get("Authorization"));
-        if (authHeader != null && !authHeader.isEmpty()) {
-            String accessToken = authHeader.get(0);
-            if (!accessToken.isEmpty()) {
-                accessToken = accessToken.replaceFirst("^Bearer\\s", "");
-                return accessToken;
-            }
+    public static String getAccessToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String accessToken = authorizationHeader.substring(7);
+            return accessToken;
         }
         return "";
     }
@@ -109,5 +106,6 @@ public class AuthUtilities {
         }
         return  municipality_id == userMunicipalityId;
     };
+
 
 }

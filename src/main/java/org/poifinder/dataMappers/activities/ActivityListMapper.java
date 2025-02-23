@@ -1,8 +1,8 @@
 package org.poifinder.dataMappers.activities;
 
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
 import org.poifinder.dataMappers.DataMapper;
-import org.poifinder.models.activities.Activity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
  * @return istanza dell'oggetto
  */
 
+@Getter
 @Service
 @MappedSuperclass
-public class ActivityListMapper extends DataMapper<Activity> {
+public class ActivityListMapper implements DataMapper {
 
     private Long id;
 
@@ -33,18 +34,20 @@ public class ActivityListMapper extends DataMapper<Activity> {
         this.type = type;
     }
 
-    public String getName() { return name; }
+    //todo remove
 
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-
-    public void setDescription(String description) { this.description = description;}
-
-    public String getType() { return type; }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+//    public String getName() { return name; }
+//
+//    public void setName(String name) { this.name = name; }
+//
+//    public String getDescription() { return description; }
+//
+//    public void setDescription(String description) { this.description = description;}
+//
+//    public String getType() { return type; }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
 }

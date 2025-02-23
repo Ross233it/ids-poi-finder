@@ -3,6 +3,8 @@ package org.poifinder.models.activities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 import org.poifinder.models.taxonomy.Taxonomy;
 
 /**
@@ -10,6 +12,8 @@ import org.poifinder.models.taxonomy.Taxonomy;
  * Tiene traccia della linea guida da seguire e di "punti" bonus o penalità
  * in caso di trasgressione o ottemperanza.
  */
+@Getter
+@Setter
 @Entity
 @Table(name="rules")
 public class Rule extends Taxonomy {
@@ -32,21 +36,14 @@ public class Rule extends Taxonomy {
         this.bonus = bonus;
     }
 
-    /** getters **/
-
-    public String getDescription() { return description; }
-
-    public Integer getPenalty() { return penalty; }
-
-    public Integer getBonus() { return bonus; }
 
     /** setters **/
 
-    public void setId(Long id) { this.id = id; }
-
-    public void setDescription(String description) { this.description = description; }
-
-    public void setPenalty(Integer penalty) { this.penalty = penalty; }
-
-    public void setBonus(Integer bonus) { this.bonus = bonus; }
+//    public void setId(Long id) { this.id = id; }
+//
+//    public void setDescription(String description) { this.description = description; }
+//
+//    public void setPenalty(Integer penalty) { this.penalty = penalty; }
+//
+//    public void setBonus(Integer bonus) { this.bonus = bonus; }
 }

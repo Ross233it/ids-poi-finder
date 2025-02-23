@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component;
 /**
  * Questa classe ha la responsabilità di "tradurre" i dati del baseRepository
  * in oggetti e viceversa.
- * @param <D>
  */
 @Component
 @MappedSuperclass
-public abstract class DataMapper<D> {
+public interface DataMapper {
 
 
     /**

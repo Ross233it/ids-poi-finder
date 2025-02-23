@@ -1,17 +1,12 @@
 package org.poifinder.repositories;
 
-import org.poifinder.httpServer.DbUtilities;
-import org.poifinder.models.activities.Activity;
 import org.poifinder.models.users.RegisteredUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -39,10 +34,9 @@ public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, 
      * @throws Exception
      */
     @Query("SELECT u FROM RegisteredUser u WHERE u.accessToken = :token")
-    Optional<RegisteredUser> getByAccessToken(@Param("token") String token);
+    Optional<RegisteredUser> getByAccessTokenParam(@Param("token") String token);
 
-
-    /**
+     /**
      * Inserisce il token nello strato di persistenza per
      * utilizzi futuri legati all'autenticazione.
      * @return true se il token viene salvato correttamente.

@@ -6,6 +6,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.poifinder.httpServer.auth.AuthMiddleware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -21,9 +22,10 @@ public class Router implements HandlerInterceptor {
 
     private AuthMiddleware authMiddleware;
 
-    public Router() {
+    @Autowired
+    public Router(AuthMiddleware authMiddleware) {
         this.routes = new HashMap<String, Route>();
-        this.authMiddleware = new AuthMiddleware();
+        this.authMiddleware = authMiddleware;
     }
 
     /**
@@ -70,21 +72,21 @@ public class Router implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         this.routesInit(request);
+        authMiddleware.setCurrentUser(request);
         String path = request.getRequestURI();
         String matchedRoute = matchRoute(path);
-        Route route = null;
         if (matchedRoute != null) {
-            route = routes.get(matchedRoute);
+            Route route = routes.get(matchedRoute);
+            if (this.checkAuth(route)){
+                return true;
+            }else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Accesso non autorizzato: Permessi insufficienti per la rotta " + matchedRoute);
+                return false;
+            }
         }else{
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("404 Risorsa non trovata ");
-            return false;
-        }
-        if (this.checkAuth(route)){
-            return true;
-        }else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Accesso non autorizzato: Permessi insufficienti per la rotta " + matchedRoute);
             return false;
         }
     }

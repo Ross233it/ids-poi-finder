@@ -3,23 +3,28 @@ package org.poifinder.services;
 import jakarta.persistence.MappedSuperclass;
 import org.poifinder.dataMappers.ContentReportMapper;
 import org.poifinder.dataMappers.DataMapper;
+import org.poifinder.dataMappers.users.UserUpdateMapper;
 import org.poifinder.eventManager.EmailNotifier;
 import org.poifinder.eventManager.EventManager;
 import org.poifinder.eventManager.LogNotifier;
+import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.Content;
 
 import org.poifinder.models.IModel;
+import org.poifinder.models.poi.Poi;
+import org.poifinder.models.users.RegisteredUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 @MappedSuperclass
-public class BaseService<D extends IModel> implements IService<D> {
+public abstract class BaseService<D extends IModel> implements IService<D> {
 
     protected JpaRepository<D, Long> repository;
 
@@ -56,15 +61,14 @@ public class BaseService<D extends IModel> implements IService<D> {
         return repository.findAll();
     }
 
+
+
     @Override
     public List<D> filter(Map<String, String> queryParams) throws Exception {
         return List.of();
     }
 
-    @Override
-    public D setStatus(Map<String, Object> data) throws Exception {
-        return null;
-    }
+
 
     /**
      * Fornisce il servizio di ricerca di un oggetto in base al suo
@@ -74,21 +78,25 @@ public class BaseService<D extends IModel> implements IService<D> {
      * @throws Exception
      */
     @Override
-    public D getObjectById(long id) throws Exception {
+    public D getObjectById(Long id) throws Exception {
         Optional<D> result = repository.findById(id);
         return result.orElseThrow(() -> new Exception("Elemento non trovato"));
     }
 
-
+    /**
+     * Gestisce il servizio di creazione di una nuova entità a database
+     * @param entity D  informazioni dell'oggetto da creare
+     * @return object l'oggetto creato e salvato nello strato di persistenza.
+     * @throws Exception
+     */
     @Override
-    public DataMapper<D> create(DataMapper<D> entity) throws Exception {
-//        D entity = (D) mapper.mapDataToObject(data);
-//        return repository.save(entity);
-        return null;
+    public D create(D entity) throws Exception {
+        RegisteredUser author = UserContext.getCurrentUser();
+        return repository.save(entity);
     }
 
     @Override
-    public DataMapper<D> update(long id, DataMapper<D> entity) throws Exception {
+    public D update(Long id, DataMapper entityData) throws Exception {
 //        Optional<D> existingEntity = repository.findById(id);
 //        if (existingEntity.isEmpty()) {
 //            throw new EntityNotFoundException("Entità con ID " + id + " non trovata.");
@@ -103,17 +111,36 @@ public class BaseService<D extends IModel> implements IService<D> {
     }
 
 
-
+    /**
+     * Recupera un entità in base all'id e ne memorizza lo stato
+     * @param id identificativo dell'entità
+     * @param status lo stato da memorizzare per l'entità
+     * @return entity l'entità con lo stato settato.
+     * @throws Exception
+     */
     @Override
-    public D delete(long id) throws Exception {
-        return null;
+    public D setStatus(Long id, String status) throws Exception {
+        D entity = getObjectById(id);
+        if(entity instanceof Content ){
+            RegisteredUser approver = UserContext.getCurrentUser();
+            ((Content) entity).setApprover(approver);
+            ((Content) entity).setStatus(status);
+        }
+        return repository.save(entity);
     }
 
-//        D entity = getObjectById(id);
-//        mapper.updateEntityFromMap(entity, data);
-//        return repository.save(entity);
-//    }
-
+    /**
+     * Recupera una entità in base all'id quindi la elimina
+     * @param id l'identificativo dell'entità
+     * @return l'entità eliminata
+     * @throws Exception
+     */
+    @Override
+    public D delete(Long id) throws Exception {
+        D entity = repository.getById(id);
+        repository.delete(entity);
+        return entity;
+    }
 
 
     public List<D> search(Map<String, String> params) throws Exception {
@@ -125,9 +152,45 @@ public class BaseService<D extends IModel> implements IService<D> {
     /**
      * Servizio di segnalazione di un contenuto ad un utente
      * responsabile.
+     * @param id l'id del contenuto segnalato
+     * @param data informazione inviate con la segnalazione
      */
+
     public void reportContent(Long id, ContentReportMapper data) throws Exception {
-        D entity = D this.repository.getReferenceById(id);
-        this.eventManager.notify("Content Report", data);
+        D entity =  repository.getById(id);
+        Map<String, Object> reportData = new HashMap();
+        String emailAddress = ((Content) entity).getApprover().getEmail();
+            reportData.put("emailAddress", emailAddress);
+            reportData.put("userData", data);
+            reportData.put("reportedEntity", entity);
+        eventManager.notify("content-report", reportData);
+    }
+
+
+    /**
+     * Verifica se l'autore di un contenuto dispone dei privilegi necessari
+     * per l'autopubblicazione di un poi.
+     * @param content da valutare
+     * @return il poi autopubblicato se l'utente dispone dei privilegi.
+     */
+    protected Content publishOrPending(Content content){
+        RegisteredUser author = UserContext.getCurrentUser();
+        List<String>roles = List.of("authContributor","curator", "animator", "platformAdmin");
+        if(author != null && author.hasOneRole(roles)) {
+            content.setStatus("published");
+        }
+        return content;
+    }
+
+    /**
+     * Esegue la notifica di un evento di gestione contenuti.
+     * @param content l'oggetto modificato
+     */
+    protected void notify(Content content){
+        String eventType =  "new-pending-content";
+        if(content.getStatus().equals("published"))
+                eventType = "new-published-content";
+        Map<String, Object>eventData = Map.of("NuovoPoi", content);
+        eventManager.notify(eventType, eventData);
     }
 }
