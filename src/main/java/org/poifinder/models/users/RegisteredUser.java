@@ -37,13 +37,17 @@ public class RegisteredUser implements IUser {
     private String email;
 
     @NotNull
+    @JsonView(Views.Admin.class)
     private String password;
 
+    @JsonView(Views.Admin.class)
     private String salt = null;
 
+    @JsonView(Views.Admin.class)
     private String role = null;
 
     @Column(name = "access_token")
+    @JsonView(Views.Admin.class)
     private  String accessToken = null;
 
     @ManyToOne

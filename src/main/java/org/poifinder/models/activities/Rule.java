@@ -35,15 +35,4 @@ public class Rule extends Taxonomy {
         this.penalty = penalty;
         this.bonus = bonus;
     }
-
-
-    /** setters **/
-
-//    public void setId(Long id) { this.id = id; }
-//
-//    public void setDescription(String description) { this.description = description; }
-//
-//    public void setPenalty(Integer penalty) { this.penalty = penalty; }
-//
-//    public void setBonus(Integer bonus) { this.bonus = bonus; }
 }

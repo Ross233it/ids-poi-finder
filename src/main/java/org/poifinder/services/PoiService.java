@@ -120,9 +120,17 @@ public class PoiService extends BaseService<Poi> {
         poi = (Poi) publishOrPending(poi);
 
         if (poi.getMunicipality().getId() == poi.getAuthor().getMunicipality().getId()) {
-            Poi newPoi = poiRepository.save(poi);
-            this.notify(newPoi);
-            return newPoi;
+            Poi newPoi;
+            try {
+                newPoi = poiRepository.save(poi);
+            }catch (Exception e){
+                System.out.println(e);
+                throw new Exception("Si è verificato un problema durante il salvataggio: " + e.getMessage(), e);
+            }
+            if(newPoi != null){
+                this.notify(newPoi);
+                return newPoi;
+            }
         }
         return null;
     }
@@ -145,50 +153,38 @@ public class PoiService extends BaseService<Poi> {
         poiRepository.saveAll(poisAsAuthor);
         poiRepository.saveAll(poisAsApprover);
     }
-//
-//    /**
-//     * Verifica se l'autore di un poi dispone dei privilegi necessari
-//     * per l'autopubblicazione di un poi.
-//     * @param poi da valutare
-//     * @return il poi autopubblicato se l'utente dispone dei privilegi.
-//     */
-//    private Poi publishOrPending(Poi poi){
-//        List<String>roles = List.of("authContributor","curator", "animator", "platformAdmin");
-//        String eventType =  "new-pending-poi";
-//        if(poi.getAuthor().hasOneRole(roles)
-//           && poi.getMunicipality().getId() == poi.getAuthor().getMunicipality().getId()) {
-//            poi.setStatus("published");
-//            eventType = "new-published-poi";
-//        }
-//        Map<String, Object>eventData = Map.of("NuovoPoi", poi);
-//        eventManager.notify(eventType, eventData);
-//        return poi;
-//    }
 
 
-
-
-
-    //    @Override
-    public Poi update(long id, Poi poi) throws Exception {
-//        Poi poi = this.getObjectById(id);
-//        if(poi != null){
-//            poi.setAuthor(UserContext.getCurrentUser());
-//
-////            if(authorId != UserContext.getCurrentUser().getId())
-////                return null;
-//        }
-//        Poi modifiedPoi = (Poi) this.mapper.mapDataToObject(objectData);
-//        poi.setStatus("pending");
-//        GeoLocation modifiedGeolocation = geoLocationService.update(poi.getGeoLocation().getId(), objectData);
-//        modifiedPoi.setGeoLocation(modifiedGeolocation);
-//        modifiedPoi = (Poi) this.repository.update(modifiedPoi , null);
-//
-//        //todo implements notification and autovalidation
-//        eventManager.notify("Nuovo Punto di interesse auto-validato", null);
-//        return modifiedPoi;
-        return null;
+    /**
+     * Aggiorna un Poi con nuove informazioni
+     * @param id l'id del poi da aggiornare
+     * @param poi il poi di cui aggiornare le informazioni
+     * @return poi il poi aggiornato
+     * @throws Exception
+     */
+    @Override
+    public Poi update(Long id, Poi poi) throws Exception {
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        Poi oldPoi = poiRepository.getObjectById(id);
+        if(currentUser == null)
+            throw new IllegalArgumentException("Non sei autenticato");
+        if(oldPoi.getAuthor().getId() != currentUser.getId() || !currentUser.getRole().equals("platformAdmin"))
+            throw new IllegalArgumentException("Author Exception: Non puoi modificare questo punto di interesse");
+        poi.setMunicipality(oldPoi.getMunicipality());
+        poi.setAuthor(currentUser);
+        poi.setStatus("pending");
+        poi.setApprover(null);
+        poi = (Poi) publishOrPending(poi);
+        this.notify(poi);
+        try {
+            return poiRepository.save(poi);
+        }catch (Exception e){
+            System.out.println(e);
+            throw new Exception("Si è verificato un problema durante l'aggiornamento: " + e.getMessage(), e);
+        }
     }
+
+
 
     /**
      * Rimuove il poi senza interferire con i dati del comune

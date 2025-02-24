@@ -24,7 +24,7 @@ public interface IService<D extends IModel>{
 
     D create(D entity) throws Exception;
 
-    D update(Long id, DataMapper entityData) throws Exception;
+    D update(Long id, D entity) throws Exception;
 
     D delete(Long id) throws Exception;
 }

@@ -1,8 +1,10 @@
 package org.poifinder.models.activities;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.models.municipalities.Municipality;
 
 import java.util.ArrayList;
@@ -15,21 +17,25 @@ import java.util.List;
 public class Contest extends Activity{
 
     @Column(name = "begin_date")
+    @JsonView(Views.Public.class)
     private String beginDate;
 
     @Column(name = "end_date")
+    @JsonView(Views.Public.class)
     private String endDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name= "contests_rules",
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "rule_id"))
+    @JsonView(Views.Internal.class)
     private List<Rule> rules;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name= "contests_prizes",
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "prize_id"))
+    @JsonView(Views.Internal.class)
     private List<Prize> prizes;
 
     public Contest(String name,
@@ -52,25 +58,6 @@ public class Contest extends Activity{
         this.prizes = new ArrayList<Prize>();
     }
 
-    @Override
-    public String toString() { return ""; }
-//
-//    public void setBeginDate(String beginDate) { this.beginDate = beginDate; }
-//
-//    public void setEndDate(String endDate) { this.endDate = endDate; }
-//
-//    public void setPrices(List<Prize> prizes) { this.prizes = prizes;}
-//
-//    public void setRules(List<Rule> rules) { this.rules = rules;}
-
-    /** Getters **/
-//    public String getBeginDate() { return beginDate; }
-//
-//    public String getEndDate() { return endDate; }
-
-//    public List<Rule> getRules() { return rules; }
-//
-//    public List<Prize> getPrizes() { return prizes; }
 
     public void addRule(Rule rule) { rules.add(rule); }
 

@@ -23,7 +23,7 @@ public interface IController<T>{
 
    ResponseEntity create(@RequestBody T entity) throws Exception;
 
-   ResponseEntity update(@PathVariable Long id, @RequestBody DataMapper entityData) throws Exception;
+   ResponseEntity update(@PathVariable Long id, @RequestBody T entity) throws Exception;
 
    ResponseEntity delete(@PathVariable Long id) throws Exception;
 

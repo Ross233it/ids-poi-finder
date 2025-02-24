@@ -32,18 +32,6 @@ public class ActivityController extends BaseController<Activity> {
         return null;
     }
 
-
-    /**
-     * Gestisce la richiesta di visualizzazione di una specifica risorsa.
-     * @throws IOException
-     */
-    @Override
-    @GetMapping("/{id}")
-    @JsonView(Views.Public.class)
-    public  ResponseEntity show(@PathVariable Long id) throws IOException {
-        return super.show(id);
-    }
-
     /**
      * Gestisce le chiamate di creazione di tutte le tipologie di
      * activity.

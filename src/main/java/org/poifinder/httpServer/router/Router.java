@@ -76,13 +76,22 @@ public class Router implements HandlerInterceptor {
         String path = request.getRequestURI();
         String matchedRoute = matchRoute(path);
         if (matchedRoute != null) {
-            Route route = routes.get(matchedRoute);
-            if (this.checkAuth(route)){
-                return true;
-            }else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Accesso non autorizzato: Permessi insufficienti per la rotta " + matchedRoute);
-                return false;
+            try {
+                Route route = routes.get(matchedRoute);
+                if(route == null)
+                    throw new NullPointerException("La rotta non risulta definita");
+                if (this.checkAuth(route)){
+                    return true;
+                }else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().write("Accesso non autorizzato: Permessi insufficienti per la rotta " + matchedRoute);
+                    return false;
+                }
+            }catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.getWriter().write("Errore interno durante l'elaborazione della richiesta: " + e.getMessage());
+                    e.printStackTrace();
+                    return false;
             }
         }else{
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

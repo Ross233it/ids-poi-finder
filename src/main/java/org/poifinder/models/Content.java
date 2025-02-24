@@ -17,7 +17,6 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @MappedSuperclass
-@JsonIgnoreProperties({ "author" , "approver" })
 public abstract  class Content implements IModel {
 
     @Id
@@ -43,36 +42,11 @@ public abstract  class Content implements IModel {
     @Override
     public Long getId() { return id; }
 
-//    public String getStatus() { return status; }
-//
-//    public RegisteredUser getAuthor() { return author; }
-//
-//    public RegisteredUser getApprover() { return approver; }
-
 
     /** SETTERS **/
 
     @Override
     public void setId(Long id) { this.id = id; }
 
-//    public void setStatus(String status) { this.status = status; }
-//
-//    public void setAuthor(RegisteredUser author) { this.author = author; }
-//
-//    public void setApprover(RegisteredUser approver) { this.approver = approver; }
 
-
-    /**
-     * Restituisce una rappresentazione testuale dell'oggetto
-     * @return
-     */
-    @Override
-    public String toString(){
-        return "";
-//        try {
-//            return DataMapper.mapObjectToJson(this);
-//        } catch (IllegalAccessException e) {
-//            throw new RuntimeException(e);
-//        }
-    };
 }

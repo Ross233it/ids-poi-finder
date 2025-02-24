@@ -1,8 +1,10 @@
 package org.poifinder.models.activities;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.models.municipalities.Municipality;
 
 
@@ -17,9 +19,11 @@ import org.poifinder.models.municipalities.Municipality;
 public class Experience extends Activity {
 
     @Column(name = "begin_date")
+    @JsonView(Views.Public.class)
     private String beginDate;
 
     @Column(name = "end_date")
+    @JsonView(Views.Public.class)
     private String endDate;
 
     public Experience(String name,

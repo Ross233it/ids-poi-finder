@@ -1,5 +1,6 @@
 package org.poifinder.models.poi;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,10 +35,11 @@ public class Poi extends Content implements IPoi {
     @ManyToOne
     @JoinColumn(name="municipality_id", referencedColumnName = "id", nullable = false, unique = false)
     @JsonView(Views.Public.class)
+    @JsonBackReference
     private Municipality municipality = null;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="geolocation_id", referencedColumnName = "id", nullable = false, unique = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="geolocation_id", referencedColumnName = "id",  unique = false)
     @JsonView(Views.Public.class)
     private GeoLocation geoLocation = null;
 

@@ -22,16 +22,4 @@ public class Prize extends Content {
         this.value = value;
         this.sponsor = sponsor;
     }
-
-    /** setters **/
-
-//    public void setValue(Integer value) { this.value = value; }
-//
-//    public void setSponsor(String sponsor) { this.sponsor = sponsor; }
-
-    /** getters **/
-
-//    public Integer getValue() { return value; }
-//
-//    public String getSponsor() { return sponsor; }
 }

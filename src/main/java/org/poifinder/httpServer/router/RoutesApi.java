@@ -71,9 +71,6 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "create", 4);
         this.addRoute("/"+prefix+"/poi/{id}/report-content" ,         "PoiController", "create", 5);
 
-
-
-
         this.addRoute("/"+prefix+"/migrate/{id}",      "migrationController", "index",  1);
         return this.getRoutes();
     }
@@ -86,6 +83,7 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/user/set-role",     "RegisteredUserController", "setRole", 1);
 
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 1);
+        this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "edit", 4);
         this.addRoute("/"+prefix+"/poi/{id}/validate" ,         "PoiController", "validate", 3);
         this.addRoute("/"+prefix+"/poi/{id}/reject" ,         "PoiController", "validate", 3);
 

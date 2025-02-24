@@ -80,14 +80,17 @@ public class MunicipalityService extends BaseService<Municipality> {
      * @throws Exception
      */
 //    @Override
-    public Municipality create(Municipality municipality) throws Exception{
-        if(municipalityRepository.existsByName(municipality.getName()))
+    public Municipality create(Municipality municipality) throws Exception {
+        if (municipalityRepository.existsByName(municipality.getName()))
             return null;
         municipality.setAuthor(UserContext.getCurrentUser());
         municipality.setApprover(UserContext.getCurrentUser());
-        return municipalityRepository.save(municipality);
+        try {
+            return municipalityRepository.save(municipality);
+        } catch (Exception e) {
+            throw new RuntimeException("Si è verificato un errore durante il salvataggio: " + e);
+        }
     }
-
 
     public Municipality getObjectById(Long id){
         return municipalityRepository.getById(id);

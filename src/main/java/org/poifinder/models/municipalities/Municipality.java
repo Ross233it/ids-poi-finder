@@ -1,5 +1,6 @@
 package org.poifinder.models.municipalities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,11 +39,12 @@ public class Municipality extends Content implements IModel {
     private GeoLocation geoLocation;
 
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
+    @JsonManagedReference
     private List<Poi> pois;
 
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     private List<Activity> activities = new ArrayList<>();
 
     public Municipality(MunicipalityBuilder builder){

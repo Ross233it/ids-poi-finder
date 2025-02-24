@@ -53,8 +53,6 @@ public  PoiController(PoiService service) {
      * Gestisce la richiesta di tutti i poi di un municipio
      * @throws IOException
      */
-
-
     @GetMapping("/municipality/{id}")
     public void getByMunicipalityId(@PathVariable long id) throws IOException {
         try {
@@ -62,11 +60,5 @@ public  PoiController(PoiService service) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    @Override
-    public ResponseEntity<Poi> update(Long id, DataMapper entityData) throws IOException {
-        return null;
     }
 }

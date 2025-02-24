@@ -76,13 +76,14 @@ public class BaseController<T extends IModel>  implements IController<T> {
     @Override
     @PatchMapping("/{id}")
     @JsonView(Views.Public.class)
-    public ResponseEntity<T> update(@PathVariable Long id, @RequestBody DataMapper entityData) throws Exception {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody T entity) throws Exception {
         try {
-            T updatedEntity = service.update(id, entityData);
+            T updatedEntity = service.update(id, entity);
             if(updatedEntity != null )
                 return ResponseEntity.ok(updatedEntity);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(500).body("Impossibile aggiornare l'entità");
+
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
@@ -98,11 +99,11 @@ public class BaseController<T extends IModel>  implements IController<T> {
         try {
             T result = service.getObjectById(id);
             if(result == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Impossibile trovare la risorsa richiesta");
             }
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un problema durante la ricerca: " + e);
         }
     }
 

@@ -84,7 +84,8 @@ public class ActivityService extends BaseService<Activity> {
             this.notify(savedActivity);
             return savedActivity;
         }
-        return null;
+        throw new RuntimeException("Si è verificato un errore durante il salvataggio dell'attività");
+
     }
 
     @Override

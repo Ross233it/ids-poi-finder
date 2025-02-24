@@ -96,17 +96,7 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
     }
 
     @Override
-    public D update(Long id, DataMapper entityData) throws Exception {
-//        Optional<D> existingEntity = repository.findById(id);
-//        if (existingEntity.isEmpty()) {
-//            throw new EntityNotFoundException("Entità con ID " + id + " non trovata.");
-//        }
-//        D updatedEntity = existingEntity.get();
-//
-//        BeanUtils.copyProperties(entity, updatedEntity, "id");
-//
-//        return repository.save(updatedEntity);
-
+    public D update(Long id, D entityData) throws Exception {
         return null;
     }
 
@@ -178,6 +168,7 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
         List<String>roles = List.of("authContributor","curator", "animator", "platformAdmin");
         if(author != null && author.hasOneRole(roles)) {
             content.setStatus("published");
+            content.setApprover(author);
         }
         return content;
     }
