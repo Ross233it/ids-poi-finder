@@ -36,10 +36,11 @@ public class Municipality extends Content implements IModel {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView(Views.Public.class)
+    @JoinColumn(name = "geolocation_id", referencedColumnName = "id", nullable = false)
     private GeoLocation geoLocation;
 
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Internal.class)
     @JsonManagedReference
     private List<Poi> pois;
 
@@ -68,27 +69,27 @@ public class Municipality extends Content implements IModel {
      * Restituisce una rappresentazione testuale dell'oggetto
      * @return String rappresentazione testuale
      */
-    @Override
-    public String toString() {
-        String resultString = "{"
-                + "\"name\":\"" + name + "\","
-                + "\"region\":\"" + region + "\","
-                + "\"province\":\"" + province + "\","
-                ;
-        if(getId() != 0)
-            resultString += "\"id:\""+getId();
-//        if(!pois.isEmpty()){
-//            resultString += ",\"pois\": {";
-//            for(Poi poi : pois)
-//                resultString += poi.toString()+",";
-//            resultString +="}";
-//        }
-        if(geoLocation != null)
-            resultString += ",\"geoLocation\": "+ geoLocation.toString();
-        if(getAuthor() != null)
-            resultString += ",\"author\": " + getAuthor().toString();
-        return resultString +     "}";
-    }
+//    @Override
+//    public String toString() {
+//        String resultString = "{"
+//                + "\"name\":\"" + name + "\","
+//                + "\"region\":\"" + region + "\","
+//                + "\"province\":\"" + province + "\","
+//                ;
+//        if(getId() != 0)
+//            resultString += "\"id:\""+getId();
+////        if(!pois.isEmpty()){
+////            resultString += ",\"pois\": {";
+////            for(Poi poi : pois)
+////                resultString += poi.toString()+",";
+////            resultString +="}";
+////        }
+//        if(geoLocation != null)
+//            resultString += ",\"geoLocation\": "+ geoLocation.toString();
+//        if(getAuthor() != null)
+//            resultString += ",\"author\": " + getAuthor().toString();
+//        return resultString +     "}";
+//    }
     /**
      * Aggiunge un punto di interesse alla lista
      * @param poi punto di interesse da aggiungere

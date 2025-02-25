@@ -1,11 +1,7 @@
 package org.poifinder.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.dataMappers.Views;
-import org.poifinder.dataMappers.poi.PoiCreateMapper;
-import org.poifinder.dataMappers.poi.PoiListMapper;
-import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.services.MunicipalityService;
 import org.poifinder.services.PoiService;
@@ -21,14 +17,14 @@ import java.util.List;
 @RequestMapping("api/poi")
 public class PoiController extends BaseController<Poi> {
 
-@Autowired
-private PoiService poiService;
+    @Autowired
+    private PoiService poiService;
+
     @Autowired
     private MunicipalityService municipalityService;
 
-
     @Autowired
-public  PoiController(PoiService service) {
+    public  PoiController(PoiService service) {
     super(service);
 }
 

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface IController<T>{
 
-   ResponseEntity index(@RequestParam String queryString) throws Exception;
+   ResponseEntity index() throws Exception;
 
    ResponseEntity show(@PathVariable Long id) throws Exception;
 

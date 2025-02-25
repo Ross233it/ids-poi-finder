@@ -37,9 +37,8 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
     private MunicipalityRepository municipalityRepository;
 
     @Autowired
-    public RegisteredUserService(RegisteredUserRepository repository,
-                                 UserCreateMapper mapper) {
-        super(repository, mapper);
+    public RegisteredUserService(RegisteredUserRepository repository){
+        super(repository);
     }
 
 
@@ -171,28 +170,6 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
         return repository.save(user);
     }
 
-
-    //        try {
-//            int userId = (int) data.get("id");
-//            String newRole = (String) data.get("role");
-//            RegisteredUser user = this.getObjectById(userId);
-//            if(user == null)
-//                return null;
-//            user.setRole(newRole);
-//            user.setId(userId);
-//            ((RegisteredUserRepository) this.repository).setRole(userId);
-//            return user;
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//}
-
-
-
-    @Override
-    public List<RegisteredUser> filter(Map<String, String> queryParams) throws Exception {
-        return List.of();
-    }
 
     @Override
     public RegisteredUser setStatus(Long id, String status) throws Exception {

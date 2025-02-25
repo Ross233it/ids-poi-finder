@@ -28,14 +28,14 @@ public class Contest extends Activity{
     @JoinTable(name= "contests_rules",
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "rule_id"))
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     private List<Rule> rules;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name= "contests_prizes",
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "prize_id"))
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     private List<Prize> prizes;
 
     public Contest(String name,

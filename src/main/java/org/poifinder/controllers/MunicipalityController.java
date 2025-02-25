@@ -37,18 +37,6 @@ public class MunicipalityController extends BaseController<Municipality> {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<Municipality> create(@RequestBody Municipality municipality) {
-        try {
-            Municipality createdMunicipality = ((MunicipalityService)service).create(municipality);
-            return ResponseEntity.ok(createdMunicipality);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
-
-
-
     /**
      * Gestisce le richieste di visualizzazione del comune con
      * tutti i poi a lui correlati

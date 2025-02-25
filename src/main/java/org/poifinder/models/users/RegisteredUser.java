@@ -43,7 +43,7 @@ public class RegisteredUser implements IUser {
     @JsonView(Views.Admin.class)
     private String salt = null;
 
-    @JsonView(Views.Admin.class)
+    @JsonView(Views.Public.class)
     private String role = null;
 
     @Column(name = "access_token")

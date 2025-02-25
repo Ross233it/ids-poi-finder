@@ -42,7 +42,8 @@ public class RoutesApi {
     }
 
     /**
-     * Costruisce la struttura dati che contiene le informazioni di associazione fra rotte, controller e metodi
+     * Rotte registrate per il metodo http GET
+     * @return Map ritorna una serie di rotte con i relativi metodi e permessi
      */
     public Map<String, Route> setUpGetRoutes(){
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 5);
@@ -53,9 +54,17 @@ public class RoutesApi {
         this.addRoute("/"+prefix+"/user/{id}",         "RegisteredUserController", "show", 1);
         this.addRoute("/"+prefix+"/activity/{id}",     "ActivityController", "show", 5);
         this.addRoute("/"+prefix+"/migrate",      "migrationController", "index", 5);
+
+        this.addRoute("/"+prefix+"/favorites",      "FavoriteController", "index", 4);
+        this.addRoute("/"+prefix+"/favorites/{id}/handle",      "FavoriteController", "handleFavorite", 4);
+
         return this.getRoutes();
     }
 
+    /**
+     * Rotte registrate per il metodo http POST
+     * @return Map ritorna una serie di rotte con i relativi metodi e permessi
+     */
     public Map<String, Route> setUpPostRoutes(){
         this.addRoute("/"+prefix+"/user/login",        "RegisteredUserController", "login", 5);
         this.addRoute("/"+prefix+"/user/logout",       "RegisteredUserController", "logout", 4);
@@ -78,22 +87,30 @@ public class RoutesApi {
         return this.getRoutes();
     }
 
+    /**
+     * Rotte registrate per il metodo http PATCH
+     * @return Map ritorna una serie di rotte con i relativi metodi e permessi
+     */
     public Map<String, Route> setUpPatchRoutes(){
         this.addRoute("/"+prefix+"/user/{id}/update",         "RegisteredUserController", "update",4);
-        this.addRoute("/"+prefix+"/user/set-role",     "RegisteredUserController", "setRole", 1);
+        this.addRoute("/"+prefix+"/user/{id}/set-role",     "RegisteredUserController", "setRole", 1);
 
         this.addRoute("/"+prefix+"/poi" ,         "PoiController", "index", 1);
         this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "edit", 4);
         this.addRoute("/"+prefix+"/poi/{id}/validate" ,         "PoiController", "validate", 3);
         this.addRoute("/"+prefix+"/poi/{id}/reject" ,         "PoiController", "validate", 3);
 
-        this.addRoute("/"+prefix+"/municipality", "MunicipalityController", "index", 1);
+        this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "index", 1);
 
         this.addRoute("/"+prefix+"/activity",     "ActivityController", "index", 1);
         this.addRoute("/"+prefix+"/migrate",      "migrationController", "index", 1);
         return this.getRoutes();
     }
 
+    /**
+     * Rotte registrate per il metodo http DELETE
+     * @return Map ritorna una serie di rotte con i relativi metodi e permessi
+     */
     public Map<String, Route> setUpDeleteRoutes(){
         this.addRoute("/"+prefix+"/poi/{id}" ,         "PoiController", "delete",1);
         this.addRoute("/"+prefix+"/municipality/{id}", "MunicipalityController", "delete",1);

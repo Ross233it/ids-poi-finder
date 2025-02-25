@@ -19,12 +19,12 @@ import java.util.List;
 @RequestMapping("/api/activity")
 public class ActivityController extends BaseController<Activity> {
 
-    private final ActivityService activityService;
+    @Autowired
+    private ActivityService activityService;
 
     @Autowired
-    public  ActivityController(ActivityService service, ActivityService activityService) {
+    public  ActivityController(ActivityService service) {
         super(service);
-        this.activityService = activityService;
     }
 
 
@@ -87,18 +87,34 @@ public class ActivityController extends BaseController<Activity> {
         return this.create(contest);
     }
 
+    @Override
+    @GetMapping("/{id}")
+    @JsonView(Views.Public.class)
+    public  ResponseEntity show(@PathVariable Long id) throws IOException {
+        try {
+            Activity result = service.getObjectById(id);
+            if(result == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Impossibile trovare la risorsa richiesta");
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un problema durante la ricerca: " + e);
+        }
+    }
+
 
     @PostMapping("/{id}/add")
     @JsonView(Views.Public.class)
     public ResponseEntity addPois(@PathVariable Long id, @RequestBody List<Long> poi_ids) throws IOException {
         try {
             Activity editedActivity = activityService.addPois(id, poi_ids);
+            if(editedActivity.getType().equals("contest"))
+                editedActivity = (Contest) editedActivity;
             return ResponseEntity.status(HttpStatus.CREATED).body("Poi correttamente associati a " + editedActivity);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Impossibile associare i Poi all'attivita " + e);
         }
     }
-
     public void deleteActivity(){
 
     }

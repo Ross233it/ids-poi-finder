@@ -13,6 +13,10 @@ import org.poifinder.models.GeoLocation;
 import org.poifinder.models.taxonomy.Tag;
 import java.util.List;
 
+/**
+ * Questa classe rappresenta un punto di interesse (POI) con
+ * attributi e relazioni.
+ */
 @Setter
 @Getter
 @Entity

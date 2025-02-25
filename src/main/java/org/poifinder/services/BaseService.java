@@ -33,8 +33,7 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
     protected DataMapper mapper;
 
     @Autowired
-    public BaseService(JpaRepository<D, Long> repository,
-                       DataMapper mapper) {
+    public BaseService(JpaRepository<D, Long> repository) {
         this.repository = repository;
         this.mapper = mapper;
         this.initListeners();
@@ -61,15 +60,6 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
         return repository.findAll();
     }
 
-
-
-    @Override
-    public List<D> filter(Map<String, String> queryParams) throws Exception {
-        return List.of();
-    }
-
-
-
     /**
      * Fornisce il servizio di ricerca di un oggetto in base al suo
      * identificativo univoco
@@ -95,9 +85,16 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
         return repository.save(entity);
     }
 
+    /**
+     * Gestisce il servizio di aggiornamento di una entità esistente a database
+     * @param entity D  informazioni dell'oggetto da creare
+     * @return object l'oggetto creato e salvato nello strato di persistenza.
+     * @throws Exception
+     */
     @Override
-    public D update(Long id, D entityData) throws Exception {
-        return null;
+    public D update(Long id, D entity) throws Exception {
+        entity.setId(id);
+        return this.create(entity);
     }
 
 

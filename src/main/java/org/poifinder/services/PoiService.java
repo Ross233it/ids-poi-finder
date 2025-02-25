@@ -1,7 +1,5 @@
 package org.poifinder.services;
 
-import org.poifinder.dataMappers.poi.PoiMapper;
-
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
@@ -14,8 +12,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -38,10 +34,9 @@ public class PoiService extends BaseService<Poi> {
 
     @Autowired
     public PoiService(PoiRepository repository,
-                      PoiMapper mapper,
                       MunicipalityService municipalityService,
                       GeoLocationService geoLocationService) {
-        super(repository, mapper);
+        super(repository);
         this.geoLocationService = geoLocationService;
         this.municipalityService = municipalityService;
     }
@@ -62,12 +57,6 @@ public class PoiService extends BaseService<Poi> {
         } else {
             return repository.findAll();
         }
-    }
-
-
-    @Override
-    public List<Poi> filter(Map<String, String> queryParams) throws Exception {
-        return List.of();
     }
 
     /**
@@ -200,17 +189,6 @@ public class PoiService extends BaseService<Poi> {
         return toDelete;
     }
 
-    //    @Override
-//    @Transactional
-//    public Municipality delete(long id) throws Exception {
-//
-//            Municipality userToDelete = municipalityRepository.findById(id)
-//                    .orElseThrow(() -> new RuntimeException("Muunicipio non trovato"));
-//
-//
-//        }
-//
-//    }
 
     public List<Poi> getByMunicipalityId(long id) throws Exception {
 //        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
@@ -219,20 +197,4 @@ public class PoiService extends BaseService<Poi> {
         return poiRepository.getByMunicipalityId(id);
 
     }
-
-//    /**
-//     * Servizio di segnalazione di un poi ad un utente
-//     * responsabile.
-//     * @param request
-//     */
-//    public void reportContent(HttpRequest request) throws Exception{
-//        long id = request.getRequestId();
-//        Map<String, Object> reportData = request.getBodyStreamData();
-//        Map<String, Object> entityData =  this.baseRepository.getById(id, null);
-//        Poi poi = (Poi) this.mapper.mapDataToObject(entityData);
-//        reportData.put("author_email", poi.getAuthor().getEmail());
-//        reportData.put("approver_email", poi.getApprover().getEmail());
-//        reportData.put("poi_content", poi.getData());
-//        this.eventManager.notify("content report", entityData);
-//    }
 }

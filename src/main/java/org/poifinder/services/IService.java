@@ -16,8 +16,6 @@ public interface IService<D extends IModel>{
 
     List<D> index();
 
-    List<D> filter(Map<String, String> queryParams) throws Exception;
-
     D setStatus(Long id, String status) throws Exception;
 
     D getObjectById(Long id) throws Exception;

@@ -8,6 +8,7 @@ import org.poifinder.dataMappers.users.UserUpdateMapper;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.users.RegisteredUser;
 
+import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.RegisteredUserRepository;
 import org.poifinder.services.RegisteredUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte
@@ -29,13 +31,15 @@ public class RegisteredUserController extends BaseController<RegisteredUser> {
 
     private final RegisteredUserService registeredUserService;
     private final RegisteredUserRepository registeredUserRepository;
+    private final MunicipalityRepository municipalityRepository;
 
 
     @Autowired
-    public RegisteredUserController(RegisteredUserService userService, RegisteredUserService registeredUserService, RegisteredUserRepository registeredUserRepository) {
+    public RegisteredUserController(RegisteredUserService userService, RegisteredUserService registeredUserService, RegisteredUserRepository registeredUserRepository, MunicipalityRepository municipalityRepository) {
         super(userService);
         this.registeredUserService = registeredUserService;
         this.registeredUserRepository = registeredUserRepository;
+        this.municipalityRepository = municipalityRepository;
     }
 
     /**
@@ -148,19 +152,24 @@ public class RegisteredUserController extends BaseController<RegisteredUser> {
      * Gestisce la richiesta di impostazione nuovo ruolo per un utente.
      * @throws Exception
      */
-    public void setRole() throws Exception{
-//            try {
-//                Map<String, Object> data = request.getBodyStreamData();
-//                if(data.get("role") == null || data.get("id") == null)
-//                    CustomResponse.error(exchange, 404, "Dati mancanti");
-//                RegisteredUser user = this.service.setRole(data);
-//                if(user == null)
-//                    CustomResponse.error(exchange, 404, "Modifica fallita");
-//                else
-//                    CustomResponse.success(exchange, DataMapper.mapObjectToJson(user));
-//            } catch (Exception e) {
-//                    CustomResponse.error(exchange, 500, e.getMessage());
-//            }
+    @PatchMapping("/{id}/set-role")
+    @JsonView(Views.Public.class)
+    public RegisteredUser setRole(@PathVariable Long id, @RequestParam String role) throws Exception{
+        RegisteredUser userToEdit = null;
+        try{
+                userToEdit = registeredUserRepository.getById(id);
+                if(userToEdit == null)
+                    throw new RuntimeException("Utente inesistente");
+            } catch (Exception e) {
+                throw new RuntimeException("Errore durante il recupero dell'utente", e);
+            }
+            RegisteredUser currentUser = UserContext.getCurrentUser();
+            if(currentUser.hasRole("platformAdmin") &&
+                currentUser.getMunicipality().getId().equals(userToEdit.getMunicipality().getId())){
+                userToEdit.setRole(role);
+                return registeredUserRepository.save(userToEdit);
+            }else{
+                throw new RuntimeException("Errore durante il recupero dell'utente");
+            }
     }
-
 }

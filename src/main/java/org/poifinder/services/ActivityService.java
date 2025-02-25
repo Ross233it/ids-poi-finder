@@ -1,7 +1,7 @@
 package org.poifinder.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.poifinder.dataMappers.activities.ActivityListMapper;
+
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.activities.Activity;
 import org.poifinder.models.activities.Contest;
@@ -19,8 +19,9 @@ import org.poifinder.repositories.activities.RuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class ActivityService extends BaseService<Activity> {
@@ -39,15 +40,8 @@ public class ActivityService extends BaseService<Activity> {
     private PoiRepository poiRepository;
 
     @Autowired
-    public ActivityService(ActivityRepository repository,
-                           ActivityListMapper mapper) {
-            super(repository, mapper);
-    }
-
-
-    @Override
-    public List<Activity> filter(Map<String, String> queryParams) throws Exception {
-        return List.of();
+    public ActivityService(ActivityRepository repository) {
+            super(repository);
     }
 
     @Override
@@ -86,14 +80,6 @@ public class ActivityService extends BaseService<Activity> {
         }
         throw new RuntimeException("Si è verificato un errore durante il salvataggio dell'attività");
 
-    }
-
-    @Override
-    public Activity getObjectById(Long id) {
-        return  activityRepository.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Activity con ID " + id + " non trovata")
-                );
     }
 
 

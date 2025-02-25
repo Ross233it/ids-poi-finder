@@ -2,17 +2,13 @@ package org.poifinder.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import jakarta.transaction.Transactional;
 import org.poifinder.dataMappers.ContentReportMapper;
-import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.httpServer.auth.AuthMiddleware;
 
 import org.poifinder.models.IModel;
 
-import org.poifinder.models.poi.Poi;
 import org.poifinder.services.BaseService;
-import org.poifinder.services.PoiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +37,14 @@ public class BaseController<T extends IModel>  implements IController<T> {
     @Override
     @GetMapping
     @JsonView(Views.Public.class)
-    public ResponseEntity<List<T>> index(@RequestParam String queryString) throws IOException {
+    public ResponseEntity index() throws IOException {
         try {
             List<T> result = service.index();
             if(result == null)
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Impossibile recuperare le entità.");
         }
     }
 
@@ -63,9 +59,9 @@ public class BaseController<T extends IModel>  implements IController<T> {
     public ResponseEntity create(@RequestBody T entity) throws IOException {
         try {
             T createdEntity = service.create(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdEntity.toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdEntity);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Impossibile creare la nuova entità");
+            throw new RuntimeException("Errore durante la creazione dell'entità", e);
         }
     }
 
@@ -79,13 +75,10 @@ public class BaseController<T extends IModel>  implements IController<T> {
     public ResponseEntity update(@PathVariable Long id, @RequestBody T entity) throws Exception {
         try {
             T updatedEntity = service.update(id, entity);
-            if(updatedEntity != null )
-                return ResponseEntity.ok(updatedEntity);
+            return ResponseEntity.ok(updatedEntity);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Impossibile aggiornare l'entità");
-
+            throw new RuntimeException("Errore durante l'aggiornamento dell'entità", e);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     /**
@@ -163,12 +156,12 @@ public class BaseController<T extends IModel>  implements IController<T> {
      * un utente responsabile.
      */
     @PostMapping("/{id}/report-content")
-    public ResponseEntity<String>  reportContent(@PathVariable Long id, @RequestBody ContentReportMapper data) throws Exception {
+    public ResponseEntity reportContent(@PathVariable Long id, @RequestBody ContentReportMapper data) throws Exception {
         try {
             service.reportContent(id, data);
             return ResponseEntity.ok("Segnalazione inviata con successo, grazie per il tuo contributo.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Non è stato possibile trasmettere la segnalazione");
         }
     }
 }
