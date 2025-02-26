@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import org.poifinder.dataMappers.ContentReportMapper;
 import org.poifinder.dataMappers.Views;
-import org.poifinder.httpServer.auth.AuthMiddleware;
 
 import org.poifinder.models.IModel;
 
 import org.poifinder.services.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +19,6 @@ import java.util.List;
 public class BaseController<T extends IModel>  implements IController<T> {
 
     protected BaseService<T> service;
-
-    @Autowired
-    protected AuthMiddleware authMiddleware;
 
     public BaseController(BaseService<T> service) {
         this.service = service;

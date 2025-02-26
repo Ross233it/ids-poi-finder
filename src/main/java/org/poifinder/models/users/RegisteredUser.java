@@ -90,7 +90,7 @@ public class RegisteredUser implements IUser {
      * @return
      */
     public Boolean hasOneRole(List<String> roles) {
-        return  roles.contains(role);
+        return  roles.contains(roles);
     }
 
 

@@ -71,6 +71,7 @@ public class MunicipalityService extends BaseService<Municipality> {
             throw new RuntimeException("Esiste già un comune con lo stesso nome");
         municipality.setAuthor(UserContext.getCurrentUser());
         municipality.setApprover(UserContext.getCurrentUser());
+        municipality.getGeoLocation().setStatus("published");
         try {
             return municipalityRepository.save(municipality);
         } catch (Exception e) {

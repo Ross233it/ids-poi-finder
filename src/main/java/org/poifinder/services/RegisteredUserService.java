@@ -13,7 +13,7 @@ import org.poifinder.repositories.RegisteredUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,7 +64,7 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
         newUser.setSalt(AuthUtilities.generateSalt());
         newUser.setPassword(AuthUtilities.hashPassword(mapper.getPassword(), newUser.getSalt()));
         newUser.setMunicipality(municipality);
-        newUser.setRole(mapper.getRole());
+        newUser.setRole("contributor");
         userRepository.save(newUser);
     }
 
@@ -167,7 +167,13 @@ public class RegisteredUserService  extends BaseService<RegisteredUser>{
             return null;
         }
         user.setRole(newRole);
-        return repository.save(user);
+        RegisteredUser savedUser = repository.save(user);
+        if(savedUser != null){
+            Map<String, Object>userData = new HashMap<>();
+            userData.put("Utente Modificato", savedUser);
+            this.eventManager.notify("new-role-notification", userData);
+        }
+        return savedUser;
     }
 
 

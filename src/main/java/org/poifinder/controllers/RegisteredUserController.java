@@ -1,6 +1,5 @@
 package org.poifinder.controllers;
 
-import org.poifinder.dataMappers.DataMapper;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.dataMappers.users.UserCreateMapper;
 import org.poifinder.dataMappers.users.UserLoginMapper;
@@ -12,14 +11,13 @@ import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.RegisteredUserRepository;
 import org.poifinder.services.RegisteredUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.io.IOException;
-import java.util.Optional;
+
 
 /**
  * Questa classe ha la responsabilità di gestire le chiamate e le risposte

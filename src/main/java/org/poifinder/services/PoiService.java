@@ -1,6 +1,8 @@
 package org.poifinder.services;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.EntityNotFoundException;
+import org.poifinder.dataMappers.Views;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Ha la responsabilità di gestire la logica di business connessa alla
@@ -33,6 +36,39 @@ public class PoiService extends BaseService<Poi> {
         super(repository);
     }
 
+
+    /**
+     * Ritorna i Poi presenti a sistema differenziando i pubblici
+     * dai pending
+     * @return List<Poi> i risultati della ricerca
+     */
+    @Override
+    @JsonView(Views.Public.class)
+    public List<Poi> index() {
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(currentUser != null &&currentUser.hasRole("platformAdmin"))
+            return poiRepository.findAll();
+        else
+            return poiRepository.findByStatus("published");
+    }
+
+
+    /**
+     * Ritorna un poi in base alla sua visibilità
+     * @param id l'id del poi da visualizzare
+     * @return il poi ritrovato
+     * @throws Exception
+     */
+    @Override
+    public Poi getObjectById(Long id) throws Exception {
+        Poi result = poiRepository.getById(id);
+        if(result.getStatus().equals("pending")) {
+            RegisteredUser currentUser = UserContext.getCurrentUser();
+            if (currentUser == null)
+                throw new RuntimeException("Visualizzazione non consentita");
+        }
+        return result;
+    }
     /**
      * Servizio di ricerca di poi in base al comune e/o ad un termine di ricerca
      * @param municipality
@@ -60,7 +96,7 @@ public class PoiService extends BaseService<Poi> {
      */
     @Override
     public Poi setStatus(Long id, String status) throws Exception {
-        Poi poi = getObjectById(id);
+        Poi poi = poiRepository.getObjectById(id);
         if(poi != null && poi.getStatus().equals("pending")){
             RegisteredUser approver = UserContext.getCurrentUser();
             if(approver == null)

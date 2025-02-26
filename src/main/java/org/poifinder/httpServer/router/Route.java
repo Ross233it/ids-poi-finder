@@ -56,37 +56,6 @@ public class Route {
             this.methodName = method;
             this.authLevel = authLevel;
     }
-
-// todo remove commented
-
-//    /**
-//     * Ritorna l'endpoint della rotta
-//     * @return String path
-//     */
-//    public String getPath() {
-//        return path;
-//    }
-//
-//    /**
-//     * Ritorna l'handler correlato alla rotta
-//     * @return
-//     */
-//    public String getControllerName() { return controllerName; }
-//
-//    /**
-//     * Ritorna l'endpoint della rotta
-//     * @return String path
-//     */
-//    public String getMethodName() {
-//        return methodName;
-//    }
-//
-//    /**
-//     * Ritorna il livello di autorizzazione necessario per la rotta
-//     */
-//    public int getAuthLevel(){ return authLevel; }
-
-
 }
 
 

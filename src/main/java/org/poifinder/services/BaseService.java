@@ -2,12 +2,9 @@ package org.poifinder.services;
 
 import jakarta.persistence.MappedSuperclass;
 import org.poifinder.dataMappers.ContentReportMapper;
-import org.poifinder.dataMappers.DataMapper;
-import org.poifinder.dataMappers.users.UserUpdateMapper;
 import org.poifinder.eventManager.EmailNotifier;
 import org.poifinder.eventManager.EventManager;
 import org.poifinder.eventManager.LogNotifier;
-import org.poifinder.httpServer.auth.AuthUtilities;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.Content;
 
@@ -15,9 +12,7 @@ import org.poifinder.models.IModel;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.repositories.IRepository;
-import org.poifinder.repositories.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,7 +24,6 @@ import java.util.Optional;
 @MappedSuperclass
 public abstract class BaseService<D extends IModel> implements IService<D> {
 
-//    protected JpaRepository<D, Long> repository;
     protected IRepository<D> repository;
 
     protected EventManager eventManager;

@@ -1,5 +1,6 @@
 package org.poifinder.repositories;
 
+import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
 import org.springframework.context.annotation.Primary;
@@ -17,12 +18,21 @@ import java.util.List;
 @Primary
 public interface PoiRepository extends IRepository<Poi> {
 
+
+
+    /**
+     * Ritorna i dettagli pubblici dei comuni
+     * @return
+     */
+    List<Poi> findByStatus(String status);
+
+
     /**
      * Ritorna un poi identificato dal proprio id
      * @param poiId
      * @return
      */
-    @Query("SELECT p FROM Poi p WHERE p.id = :poiId")
+    @Query("SELECT p FROM Poi p JOIN FETCH p.municipality WHERE p.id = :poiId")
     Poi getObjectById(@Param("poiId") long poiId);
 
 
