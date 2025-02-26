@@ -2,14 +2,13 @@ package org.poifinder.repositories;
 
 
 import org.poifinder.models.users.FavoriteContents;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Repository
-public interface FavoriteRespository extends JpaRepository<FavoriteContents, Long> {
+public interface FavoriteRespository extends IRepository<FavoriteContents> {
 
 
     /**

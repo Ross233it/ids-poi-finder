@@ -44,7 +44,7 @@ public class BaseController<T extends IModel>  implements IController<T> {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Impossibile recuperare le entità.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Impossibile recuperare le entità. "+ e);
         }
     }
 

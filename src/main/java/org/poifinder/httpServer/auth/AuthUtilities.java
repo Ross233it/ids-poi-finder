@@ -97,7 +97,7 @@ public class AuthUtilities {
      * @param municipality_id l'id del comune con cui interagire
      * @return
      */
-    public static boolean canUserHandleMunicipality(int municipality_id){
+    public static boolean canUserHandleMunicipality(Long municipality_id){
         RegisteredUser currentUser = UserContext.getCurrentUser();
         long userMunicipalityId = 0;
         if(currentUser != null && currentUser.getMunicipality() != null) {

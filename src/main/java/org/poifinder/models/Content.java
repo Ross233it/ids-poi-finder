@@ -24,7 +24,7 @@ public abstract  class Content implements IModel {
     @JsonView(Views.Public.class)
     private Long id;
 
-
+    @JsonView(Views.Public.class)
     private String status = "pending";
 
     @ManyToOne

@@ -3,7 +3,6 @@ package org.poifinder.repositories;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 @Repository
 @Primary
-public interface PoiRepository extends JpaRepository<Poi, Long> {
+public interface PoiRepository extends IRepository<Poi> {
 
     /**
      * Ritorna un poi identificato dal proprio id

@@ -1,7 +1,11 @@
 package org.poifinder.services;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.poifinder.dataMappers.Views;
+import org.poifinder.httpServer.auth.AuthUtilities;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
+import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.repositories.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,21 @@ public class MunicipalityService extends BaseService<Municipality> {
     public MunicipalityService(MunicipalityRepository repository) {
         super(repository);
     }
+
+    /**
+     * Ritorna i comuni presenti a sistema.
+     * @return
+     */
+    @Override
+    @JsonView(Views.Public.class)
+    public List<Municipality> index() {
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(currentUser != null &&currentUser.hasOneRole(List.of("platformAdmin")))
+            return municipalityRepository.findAll();
+        else
+            return municipalityRepository.findPublicMunicipality();
+    }
+
     /**
      * Servizio di ricerca di un Comune in base al nome e/o
      * ad un termine di ricerca
@@ -61,7 +80,12 @@ public class MunicipalityService extends BaseService<Municipality> {
 
     @Override
     public Municipality getObjectById(Long id){
-        return municipalityRepository.getById(id);
+        RegisteredUser currentUser = UserContext.getCurrentUser();
+        if(AuthUtilities.canUserHandleMunicipality(id)
+            && currentUser.hasOneRole(List.of("platformAdmin", "animator", "curator")))
+            return municipalityRepository.getById(id);
+        else
+            return municipalityRepository.findByIdWithPublishedPois(id);
     }
 
     @Override

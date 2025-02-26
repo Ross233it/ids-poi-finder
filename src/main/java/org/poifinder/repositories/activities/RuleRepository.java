@@ -1,7 +1,7 @@
 package org.poifinder.repositories.activities;
 
 import org.poifinder.models.activities.Rule;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.poifinder.repositories.IRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RuleRepository extends JpaRepository<Rule, Long> {
+public interface RuleRepository extends IRepository<Rule> {
 
     /**
      * Ritorna tutte le regole di un contest presenti nello

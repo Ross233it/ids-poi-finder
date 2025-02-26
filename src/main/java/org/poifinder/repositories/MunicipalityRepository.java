@@ -3,7 +3,6 @@ package org.poifinder.repositories;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,8 +10,29 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MunicipalityRepository extends JpaRepository<Municipality, Long> {
+public interface MunicipalityRepository extends IRepository<Municipality> {
 
+
+    /**
+     * Ritorna i dettagli pubblici dei comuni
+     * @return
+     */
+    @Query("SELECT m FROM Municipality m " +
+                "LEFT JOIN FETCH m.pois p " +
+                "WHERE m.status = 'published' " +
+                "AND (p.status = 'published' OR p.status IS NULL) ")
+    List<Municipality> findPublicMunicipality();
+
+
+    /**
+     * Ritorna una serie di Comuni filtrati per stato
+     * @param status lo stato del comune
+     * @return List<Municipality> una lista di comuni
+     */
+    List<Municipality> findByStatus(String status);
+
+    @Query("SELECT m FROM Municipality m LEFT JOIN FETCH m.pois p WHERE m.id = :id AND (p.status = 'published' OR p.status IS NULL)")
+    Municipality findByIdWithPublishedPois(@Param("id") Long id);
 
     /**
      * Verifica se un comune con lo stesso nome esiste

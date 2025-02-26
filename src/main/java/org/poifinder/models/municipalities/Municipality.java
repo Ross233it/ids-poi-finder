@@ -40,12 +40,12 @@ public class Municipality extends Content implements IModel {
     private GeoLocation geoLocation;
 
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     @JsonManagedReference
     private List<Poi> pois;
 
     @OneToMany(mappedBy = "municipality", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Internal.class)
     private List<Activity> activities = new ArrayList<>();
 
     public Municipality(MunicipalityBuilder builder){
@@ -62,34 +62,6 @@ public class Municipality extends Content implements IModel {
         this.pois = new ArrayList<>();
     }
 
-
-//    public  long getId(){return super.getId();}
-
-    /**
-     * Restituisce una rappresentazione testuale dell'oggetto
-     * @return String rappresentazione testuale
-     */
-//    @Override
-//    public String toString() {
-//        String resultString = "{"
-//                + "\"name\":\"" + name + "\","
-//                + "\"region\":\"" + region + "\","
-//                + "\"province\":\"" + province + "\","
-//                ;
-//        if(getId() != 0)
-//            resultString += "\"id:\""+getId();
-////        if(!pois.isEmpty()){
-////            resultString += ",\"pois\": {";
-////            for(Poi poi : pois)
-////                resultString += poi.toString()+",";
-////            resultString +="}";
-////        }
-//        if(geoLocation != null)
-//            resultString += ",\"geoLocation\": "+ geoLocation.toString();
-//        if(getAuthor() != null)
-//            resultString += ",\"author\": " + getAuthor().toString();
-//        return resultString +     "}";
-//    }
     /**
      * Aggiunge un punto di interesse alla lista
      * @param poi punto di interesse da aggiungere

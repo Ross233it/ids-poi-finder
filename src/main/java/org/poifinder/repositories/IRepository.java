@@ -3,9 +3,6 @@ package org.poifinder.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Astrae il concetto di Persistenza dei dati. Le classi che implementano
  * questa interfaccia hanno la responsabilità di gestire le interazioni fra il
@@ -21,12 +18,4 @@ public interface IRepository<D> extends JpaRepository<D, Long> {
      * presente in JpaRepository
      */
 
-
-    /**
-     * Ricerca un elemento in base ad una query ed un parametro di ricerca
-     * @param filters i parametri di ricerca
-     * @return
-     * @throws Exception
-     */
-    List<D> search(Map<String, String> filters) throws Exception;
 }

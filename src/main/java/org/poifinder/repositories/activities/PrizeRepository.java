@@ -2,6 +2,7 @@ package org.poifinder.repositories.activities;
 
 import org.poifinder.models.activities.Prize;
 import org.poifinder.models.users.RegisteredUser;
+import org.poifinder.repositories.IRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PrizeRepository extends JpaRepository<Prize, Long> {
+public interface PrizeRepository extends IRepository<Prize> {
 
 
     /**
