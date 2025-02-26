@@ -1,11 +1,11 @@
 package org.poifinder.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.poifinder.httpServer.auth.UserContext;
 import org.poifinder.models.municipalities.Municipality;
 import org.poifinder.models.GeoLocation;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.RegisteredUser;
-import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.PoiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -21,24 +21,16 @@ import java.util.List;
 @Primary
 public class PoiService extends BaseService<Poi> {
 
-    @Autowired
-    private GeoLocationService geoLocationService;
 
     @Autowired
     private MunicipalityService municipalityService;
 
     @Autowired
     private PoiRepository poiRepository;
-    @Autowired
-    private MunicipalityRepository municipalityRepository;
 
     @Autowired
-    public PoiService(PoiRepository repository,
-                      MunicipalityService municipalityService,
-                      GeoLocationService geoLocationService) {
+    public PoiService(PoiRepository repository) {
         super(repository);
-        this.geoLocationService = geoLocationService;
-        this.municipalityService = municipalityService;
     }
 
     /**
@@ -71,6 +63,8 @@ public class PoiService extends BaseService<Poi> {
         Poi poi = getObjectById(id);
         if(poi != null && poi.getStatus().equals("pending")){
             RegisteredUser approver = UserContext.getCurrentUser();
+            if(approver == null)
+                throw new RuntimeException("Impossibile validare il contenuto: Approver non identificato");
             //approvazione solo dei comuni di propria competenza
             if(approver.getMunicipality().getId() == poi.getMunicipality().getId()){
                 if(status.equals("rejected"))
@@ -79,7 +73,8 @@ public class PoiService extends BaseService<Poi> {
                 poi.setApprover(approver);
                 poi.setStatus(status);
                 return poiRepository.save(poi);
-            }
+            }else
+                throw new RuntimeException("Errore durante la validazione dell'entità: assicurati di avere i permessi necessari");
         }
         return null;
     }
@@ -108,7 +103,6 @@ public class PoiService extends BaseService<Poi> {
         poi.setAuthor(author);
         poi = (Poi) publishOrPending(poi);
 
-        if (poi.getMunicipality().getId() == poi.getAuthor().getMunicipality().getId()) {
             Poi newPoi;
             try {
                 newPoi = poiRepository.save(poi);
@@ -120,8 +114,7 @@ public class PoiService extends BaseService<Poi> {
                 this.notify(newPoi);
                 return newPoi;
             }
-        }
-        return null;
+        throw new Exception("Impossibile salvare il POI: verifica i tuoi permessi per il comune proposto");
     }
 
     /**
@@ -183,18 +176,18 @@ public class PoiService extends BaseService<Poi> {
      */
     @Override
     public Poi delete(Long id) throws Exception {
-        Poi toDelete = poiRepository.getById(id);
+        Poi toDelete = poiRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("POI con ID " + id + " non trovato"));
+        if((toDelete.getGeoLocation().getId()).equals(toDelete.getMunicipality().getGeoLocation().getId()))
+            toDelete.setGeoLocation(null);
         toDelete.setMunicipality(null);
+        toDelete.setAuthor(null);
+        toDelete.setApprover(null);
         poiRepository.delete(toDelete);
         return toDelete;
     }
 
-
     public List<Poi> getByMunicipalityId(long id) throws Exception {
-//        List<Map<String, Object>> results =  ((PoiRepository)this.repository).getByMunicipalityId(id);
-//        return this.mapper.mapDbDataToObjects(results);
-
         return poiRepository.getByMunicipalityId(id);
-
     }
 }

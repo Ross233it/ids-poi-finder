@@ -1,7 +1,6 @@
 package org.poifinder.services;
 
 import org.poifinder.httpServer.auth.UserContext;
-import org.poifinder.models.IModel;
 import org.poifinder.models.activities.Activity;
 import org.poifinder.models.poi.Poi;
 import org.poifinder.models.users.FavoriteContents;
@@ -12,7 +11,6 @@ import org.poifinder.repositories.activities.ActivityRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -59,7 +57,7 @@ public class FavoriteService extends BaseService<FavoriteContents>  {
             FavoriteContents favoriteContents = favoriteRespository.findByUserId(currentUser.getId());
             if(favoriteContents == null)
                 favoriteContents = new FavoriteContents(currentUser);
-            return this.addContent(id, contentType, favoriteContents, operationType);
+            return this.performChange(id, contentType, favoriteContents, operationType);
         }catch (Exception e){
             throw new RuntimeException("Nessun contenuto preferito trovato per l'utente con ID: " + e);
         }
@@ -73,10 +71,10 @@ public class FavoriteService extends BaseService<FavoriteContents>  {
      * @param operation type remove or add
      * @return
      */
-    private FavoriteContents addContent(Long id,
-                                        String contentType,
-                                        FavoriteContents favoriteContent,
-                                        String operation){
+    private FavoriteContents performChange(Long id,
+                                           String contentType,
+                                           FavoriteContents favoriteContent,
+                                           String operation){
         if(contentType.equals("activity")){
             Activity favoriteActivity;
                 favoriteActivity = activityRepository.getById(id);

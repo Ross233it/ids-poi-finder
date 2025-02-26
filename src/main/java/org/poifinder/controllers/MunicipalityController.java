@@ -1,6 +1,5 @@
 package org.poifinder.controllers;
 
-
 import com.fasterxml.jackson.annotation.JsonView;
 import org.poifinder.dataMappers.Views;
 import org.poifinder.models.municipalities.Municipality;
@@ -35,16 +34,6 @@ public class MunicipalityController extends BaseController<Municipality> {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    }
-
-    /**
-     * Gestisce le richieste di visualizzazione del comune con
-     * tutti i poi a lui correlati
-     * @throws IOException
-     */
-    public void getWithPois() throws IOException {
-//        long municipalityId = request.getRequestId();
-//        handleRequest(()-> service.getWithPois(municipalityId), null);
     }
 }
 

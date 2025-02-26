@@ -13,16 +13,6 @@ public class GeoLocationService extends BaseService<GeoLocation> {
 
     @Autowired
     public GeoLocationService(GeoLocationRepository repository) {
-        super(repository);    }
-
-
-//    /**
-//     * Servizio di creazione di una posizione geolocalizzata
-//     * @param geolocation la geolocalizzazione da memorizzare
-//     * @return la geolocalizzazione memorizzata
-//     * @throws Exception
-//     */
-//    public GeoLocation create(GeoLocation geolocation) throws Exception {
-//        return this.repository.save(geolocation);
-//    }
+        super(repository);
+    }
 }

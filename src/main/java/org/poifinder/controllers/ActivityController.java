@@ -28,13 +28,8 @@ public class ActivityController extends BaseController<Activity> {
     }
 
 
-    public Activity askForContest(){
-        return null;
-    }
-
     /**
-     * Gestisce le chiamate di creazione di tutte le tipologie di
-     * activity.
+     * Gestisce le richieste di creazione di una delle attività.
      * @param activity l'attività da creare
      * @return ResponseEntity la risposta alla chiamata.
      */
@@ -49,10 +44,9 @@ public class ActivityController extends BaseController<Activity> {
     }
 
     /**
-     * Gestisce la chiamata a creazione di una esperienza.
-     * @param experience
-     * @param experience l'attività da creare
-     * @return ResponseEntity la risposta alla chiamata.
+     * Gestisce le richieste di creazione di una attività esperienza.
+     * @param experience le informazioni relative alla nuova esperienza
+     * @return ResponseEntity la risposta http alla richiesta
      */
     @PostMapping ("experience")
     @JsonView(Views.Public.class)
@@ -62,10 +56,9 @@ public class ActivityController extends BaseController<Activity> {
     }
 
     /**
-     * Gestisce la chiamata a creazione di un itinerario.
-     * @param itinerary
-     * @param itinerary l'attività da creare
-     * @return ResponseEntity la risposta alla chiamata.
+     * Gestisce le richieste di creazione di una attività itinerario.
+     * @param itinerary le informazioni relative al nuovo itinerario
+     * @return ResponseEntity la risposta http alla richiesta
      */
     @PostMapping ("itinerary")
     @JsonView(Views.Public.class)
@@ -75,10 +68,9 @@ public class ActivityController extends BaseController<Activity> {
     }
 
     /**
-     * Gestisce la chiamata a creazione di un itinerario.
-     * @param contest
-     * @param contest l'attività da creare
-     * @return ResponseEntity la risposta alla chiamata.
+     * Gestisce le richieste di creazione di una attività contest.
+     * @param contest le informazioni relative al nuovo contest
+     * @return ResponseEntity la risposta http alla richiesta.
      */
     @PostMapping ("contest")
     @JsonView(Views.Public.class)
@@ -87,22 +79,14 @@ public class ActivityController extends BaseController<Activity> {
         return this.create(contest);
     }
 
-    @Override
-    @GetMapping("/{id}")
-    @JsonView(Views.Public.class)
-    public  ResponseEntity show(@PathVariable Long id) throws IOException {
-        try {
-            Activity result = service.getObjectById(id);
-            if(result == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Impossibile trovare la risorsa richiesta");
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un problema durante la ricerca: " + e);
-        }
-    }
-
-
+    /**
+     * Gestisce le richieste di associazione di una attività ad
+     * una serie di Poi
+     * @param id l'id dell'attività
+     * @param poi_ids l'id dei poi da associare
+     * @return ResponseEntity responseHTTP
+     * @throws IOException
+     */
     @PostMapping("/{id}/add")
     @JsonView(Views.Public.class)
     public ResponseEntity addPois(@PathVariable Long id, @RequestBody List<Long> poi_ids) throws IOException {
@@ -114,8 +98,5 @@ public class ActivityController extends BaseController<Activity> {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Impossibile associare i Poi all'attivita " + e);
         }
-    }
-    public void deleteActivity(){
-
     }
 }

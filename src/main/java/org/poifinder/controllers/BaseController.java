@@ -96,7 +96,7 @@ public class BaseController<T extends IModel>  implements IController<T> {
             }
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un problema durante la ricerca: " + e);
+            throw new RuntimeException("Errore durante la validazione dell'entità", e);
         }
     }
 
@@ -129,7 +129,7 @@ public class BaseController<T extends IModel>  implements IController<T> {
             T  entity = (T) service.setStatus(id, "published");
             return ResponseEntity.ok(entity);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un errore - impossibile aggiornare lo stato dell'entità");
+            throw new RuntimeException("Errore durante la validazione dell'entità", e);
         }
     }
 
@@ -147,7 +147,7 @@ public class BaseController<T extends IModel>  implements IController<T> {
             T  entity = (T) service.setStatus(id, "rejected");
             return ResponseEntity.ok(entity);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un errore - impossibile aggiornare lo stato dell'entità");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Si è verificato un errore - impossibile aggiornare lo stato dell'entità "+ e);
         }
     }
 

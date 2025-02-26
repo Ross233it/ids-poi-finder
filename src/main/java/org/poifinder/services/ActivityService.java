@@ -13,7 +13,6 @@ import org.poifinder.models.users.RegisteredUser;
 import org.poifinder.repositories.PoiRepository;
 import org.poifinder.repositories.activities.ActivityRepository;
 
-import org.poifinder.repositories.MunicipalityRepository;
 import org.poifinder.repositories.activities.PrizeRepository;
 import org.poifinder.repositories.activities.RuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +27,16 @@ public class ActivityService extends BaseService<Activity> {
 
     @Autowired
     ActivityRepository activityRepository;
-    @Autowired
-    private MunicipalityRepository municipalityRepository;
+
     @Autowired
     private MunicipalityService municipalityService;
+
     @Autowired
     private RuleRepository ruleRepository;
+
     @Autowired
     private PrizeRepository prizeRepository;
+
     @Autowired
     private PoiRepository poiRepository;
 

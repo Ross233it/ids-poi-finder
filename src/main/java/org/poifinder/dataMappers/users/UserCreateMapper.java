@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.poifinder.dataMappers.DataMapper;
-import org.poifinder.httpServer.auth.AuthUtilities;
 import org.springframework.stereotype.Component;
 
 @Getter

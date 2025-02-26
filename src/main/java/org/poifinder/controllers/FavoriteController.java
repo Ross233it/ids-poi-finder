@@ -14,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class FavoriteController extends BaseController<FavoriteContents>{
 
 
-
     @Autowired
     public FavoriteController(FavoriteService service) {
         super(service);
     }
-
 
 
     /**

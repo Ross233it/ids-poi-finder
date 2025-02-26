@@ -130,19 +130,12 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
     }
 
 
-    public List<D> search(Map<String, String> params) throws Exception {
-//        return repository.search(params);
-        return null;
-    }
-
-
     /**
      * Servizio di segnalazione di un contenuto ad un utente
      * responsabile.
      * @param id l'id del contenuto segnalato
      * @param data informazione inviate con la segnalazione
      */
-
     public void reportContent(Long id, ContentReportMapper data) throws Exception {
         D entity =  repository.getById(id);
         Map<String, Object> reportData = new HashMap();
@@ -164,8 +157,10 @@ public abstract class BaseService<D extends IModel> implements IService<D> {
         RegisteredUser author = UserContext.getCurrentUser();
         List<String>roles = List.of("authContributor","curator", "animator", "platformAdmin");
         if(author != null && author.hasOneRole(roles)) {
-            content.setStatus("published");
-            content.setApprover(author);
+            if (((Poi)content).getMunicipality().getId() == content.getAuthor().getMunicipality().getId()) {
+                content.setStatus("published");
+                content.setApprover(author);
+            }
         }
         return content;
     }
